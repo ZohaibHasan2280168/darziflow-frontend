@@ -1,30 +1,85 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = "https://darziflow-backend.onrender.com/api";
+
+// Get token from localStorage
+const getToken = () => {
+  const storedData = localStorage.getItem("useraccesstoken");
+  const parsedData = storedData ? JSON.parse(storedData) : null;
+  return parsedData?.accessToken;
+};
 
 export default function AddUser() {
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    role: '',
+    name: "",
+    workEmail: "",
+    password: "",
+    role: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate user add
-    navigate(-1); // Go back to previous page
+    setLoading(true);
+    setError("");
+
+    try {
+      const token = getToken();
+      if (!token) {
+        setError("No access token found. Please login again.");
+        return;
+      }
+
+      const res = await axios.post(
+        `${API_URL}/admin/create`,
+        {
+          name: form.name,
+          workEmail: form.workEmail, // ✅ backend ka field
+          password: form.password,
+          role: form.role,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.status === 201) {
+        alert("User created successfully!");
+        navigate(-1);
+      } else {
+        throw new Error(res.data?.message || "Failed to create user");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#e0e7ff 0%,#fff 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg,#e0e7ff 0%,#fff 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <form className="form" onSubmit={handleSubmit} autoComplete="off">
         <span className="title">Add New User</span>
         <span className="message">Fill user details below</span>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
         <label>
           <input
             type="text"
@@ -34,23 +89,23 @@ export default function AddUser() {
             onChange={handleChange}
             required
             placeholder=" "
-            autoComplete="off"
           />
           <span>Name</span>
         </label>
+
         <label>
           <input
             type="email"
-            name="email"
+            name="workEmail" // ✅ backend ka naam
             className="input"
-            value={form.email}
+            value={form.workEmail}
             onChange={handleChange}
             required
             placeholder=" "
-            autoComplete="off"
           />
-          <span>Email</span>
+          <span>Work Email</span>
         </label>
+
         <label>
           <input
             type="password"
@@ -60,10 +115,10 @@ export default function AddUser() {
             onChange={handleChange}
             required
             placeholder=" "
-            autoComplete="off"
           />
           <span>Password</span>
         </label>
+
         <label>
           <select
             name="role"
@@ -71,18 +126,25 @@ export default function AddUser() {
             value={form.role}
             onChange={handleChange}
             required
-            style={{ paddingRight: '30px' }}
+            style={{ paddingRight: "30px" }}
           >
-            <option value="" disabled>Select Role</option>
+            <option value="" disabled>
+              Select Role
+            </option>
             <option value="Moderator">Moderator</option>
             <option value="Admin">Admin</option>
             <option value="QA">QA</option>
           </select>
           <span>Role</span>
         </label>
-        <button type="submit" className="submit">Add User</button>
+
+        <button type="submit" className="submit" disabled={loading}>
+          {loading ? "Adding..." : "Add User"}
+        </button>
         <div className="signin">
-          <a href="#" onClick={() => navigate(-1)}>Cancel</a>
+          <a href="#" onClick={() => navigate(-1)}>
+            Cancel
+          </a>
         </div>
       </form>
     </div>

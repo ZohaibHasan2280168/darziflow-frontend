@@ -1,20 +1,16 @@
 // filepath: f:\programming\darzi_flow\darzi_flow_frontend\src\pages\Dashboard\Role.jsx
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
+import axios from 'axios';
 
-const roleUsers = {
-  admin: [
-    { name: 'Admin User 1', email: 'admin1@example.com', role: 'Admin' },
-    { name: 'Admin User 2', email: 'admin2@example.com', role: 'Admin' },
-  ],
-  supervisor: [
-    { name: 'Supervisor User 1', email: 'supervisor1@example.com', role: 'Supervisor' },
-    { name: 'Supervisor User 2', email: 'supervisor2@example.com', role: 'Supervisor' },
-  ],
-  qa: [
-    { name: 'QA User 1', email: 'qa1@example.com', role: 'QA' },
-    { name: 'QA User 2', email: 'qa2@example.com', role: 'QA' },
-  ],
+const API_URL = "https://darziflow-backend.onrender.com/api";
+
+// Get token from localStorage
+const getToken = () => {
+  const storedData = localStorage.getItem("useraccesstoken");
+  const parsedData = storedData ? JSON.parse(storedData) : null;
+  return parsedData?.accessToken;
 };
 
 const roleColors = {
@@ -26,7 +22,75 @@ const roleColors = {
 
 export default function Role() {
   const { role } = useParams();
-  const users = roleUsers[role] || [];
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Map frontend role names to backend role names
+  const roleMapping = {
+    'admin': 'ADMIN',
+    'supervisor': 'SUPERVISOR',
+    'qa': 'QA'
+  };
+
+  // Fetch users by role from backend
+  useEffect(() => {
+    const fetchUsersByRole = async () => {
+      try {
+        const token = getToken();
+        if (!token) {
+          setError("No access token found. Please login again.");
+          setLoading(false);
+          return;
+        }
+
+        // First, get all users
+        const res = await axios.get(
+          `${API_URL}/users`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.status === 200) {
+          const allUsers = res.data.users || [];
+          
+          // Filter users by the selected role
+          const backendRole = roleMapping[role];
+          const filteredUsers = allUsers.filter(user => 
+            user.role === backendRole
+          );
+
+          setUsers(filteredUsers);
+        } else {
+          throw new Error(res.data?.message || "Failed to fetch users");
+        }
+      } catch (err) {
+        setError(err.response?.data?.message || err.message || "Failed to fetch users");
+        console.error("Error fetching users:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsersByRole();
+  }, [role]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="py-8 px-4 mx-auto max-w-3xl">
+          <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-xl shadow-lg p-6 w-full border border-blue-100 mt-8 mb-8">
+            <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">
+              {role.charAt(0).toUpperCase() + role.slice(1)} Users
+            </h2>
+            <div className="text-center text-blue-600">Loading users...</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,6 +100,13 @@ export default function Role() {
           <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">
             {role.charAt(0).toUpperCase() + role.slice(1)} Users
           </h2>
+          
+          {error && (
+            <div className="text-red-500 mb-4 text-center">
+              {error}
+            </div>
+          )}
+
           <div className="overflow-x-auto w-full">
             <table className="w-full bg-white rounded-lg shadow user-card-table">
               <thead>
@@ -49,14 +120,14 @@ export default function Role() {
                 {users.length > 0 ? (
                   users.map((user, idx) => (
                     <tr
-                      key={user.email + idx}
+                      key={user._id || user.email + idx}
                       className={idx % 2 === 0 ? 'bg-white' : 'bg-blue-50 hover:bg-blue-100'}
                     >
                       <td className="p-4 border-r border-blue-200 border-b border-blue-200 font-medium text-gray-800">
                         {user.name}
                       </td>
                       <td className="p-4 border-r border-blue-200 border-b border-blue-200 text-gray-600">
-                        {user.email}
+                        {user.workEmail}
                       </td>
                       <td className="p-4 border-b border-blue-200">
                         <span className={`inline-block px-3 py-1 rounded-full font-semibold ${roleColors[user.role] || 'bg-blue-100 text-blue-700'}`}>
