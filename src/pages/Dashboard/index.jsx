@@ -96,6 +96,11 @@ export default function Dashboard() {
     }
   };
 
+  // Role option click handler
+  const handleRoleOptionClick = (roleName) => {
+    navigate(`/role/${roleName.toLowerCase()}`);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -200,7 +205,12 @@ export default function Dashboard() {
           style={{ width: 'max-content' }}
         >
           {stats.map((s, idx) => (
-            <div key={s.name} className="flex items-center gap-2 mx-4">
+            <div 
+              key={s.name} 
+              className="flex items-center gap-2 mx-4 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => handleRoleOptionClick(s.name)}
+              style={{ cursor: 'pointer' }}
+            >
               <span style={{
                 display: 'inline-block',
                 width: 18,

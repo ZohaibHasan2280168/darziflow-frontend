@@ -1,4 +1,5 @@
 // src/App.js
+import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RoleSelection from './pages/RoleSelection';
 import ModeratorLogin from './pages/Auth/ModeratorLogin';
