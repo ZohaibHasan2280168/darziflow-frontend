@@ -16,7 +16,7 @@ const handleLogin = async ({ workEmail, password }) => {
       return;
     }
 
-    // ✅ If login is successful, redirect
+    //If login is successful, redirect
     navigate("/dashboard");
   } catch (err) {
     setError(err.response?.data?.message || "Invalid credentials. Please try again.");

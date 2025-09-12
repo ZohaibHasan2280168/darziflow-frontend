@@ -3,16 +3,16 @@ import { useState, useEffect } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from "../../services/reqInterceptor";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
+
+//const API_URL = "https://darziflow-backend.onrender.com/api";
 
 // Get token from localStorage
 const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken");
-  const parsedData = storedData ? JSON.parse(storedData) : null;
-  return parsedData?.accessToken;
+  return localStorage.getItem("accessToken"); 
 };
+
 
 export default function Dashboard() {
   const [stats, setStats] = useState([
@@ -30,6 +30,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
+        //debugToken();
         const token = getToken();
         if (!token) {
           setError("No access token found. Please login again.");
@@ -37,12 +38,7 @@ export default function Dashboard() {
           return;
         }
 
-        const res = await axios.get(
-          `${API_URL}/users`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await api.get("/users");
 
         if (res.status === 200) {
           const { stats: userStats } = res.data;
@@ -227,4 +223,5 @@ export default function Dashboard() {
       </div>
     </div>
   );
+  
 }

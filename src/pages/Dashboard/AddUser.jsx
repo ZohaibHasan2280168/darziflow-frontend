@@ -1,14 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../services/reqInterceptor";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
 
-// Get token from localStorage
+//const API_URL = "https://darziflow-backend.onrender.com/api";
+
 const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken");
-  const parsedData = storedData ? JSON.parse(storedData) : null;
-  return parsedData?.accessToken;
+  return localStorage.getItem("accessToken"); 
 };
 
 export default function AddUser() {
@@ -21,6 +19,16 @@ export default function AddUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+    // 🔹 Run once when component mounts
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      //debugToken(token);
+    } else {
+      console.warn("[AddUser] No token found in localStorage");
+    }
+  }, []); // empty dependency → runs once
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -38,18 +46,13 @@ export default function AddUser() {
         return;
       }
 
-      const res = await axios.post(
-        `${API_URL}/admin/create`,
-        {
-          name: form.name,
-          workEmail: form.workEmail, // ✅ backend ka field
-          password: form.password,
-          role: form.role,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.post("/admin/create", {
+  name: form.name,
+  workEmail: form.workEmail, //backend ka field
+  password: form.password,
+  role: form.role,
+});
+
 
       if (res.status === 201) {
         alert("User created successfully!");

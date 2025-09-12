@@ -2,15 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../../services/authService";
 import { X } from "lucide-react";
-import axios from "axios";
+import api from "../../services/reqInterceptor";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
+
+//const API_URL = "https://darziflow-backend.onrender.com/api";
 
 const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken");
-  const parsedData = storedData ? JSON.parse(storedData) : null;
-  console.log(parsedData?.accessToken)
-  return parsedData?.accessToken;
+  return localStorage.getItem("accessToken"); 
 };
 
 const Navbar = () => {
@@ -64,9 +62,7 @@ const Navbar = () => {
         const token = getToken();
         if (!token) return;
 
-        const res = await axios.get(`${API_URL}/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/profile");
 
         setUser({
           name: res.data.name,
@@ -143,16 +139,10 @@ const Navbar = () => {
         return;
       }
 
-      await axios.put(
-        `${API_URL}/profile/password`,
-        {
-          oldPassword: editUser.currentPassword,
-          newPassword: editUser.newPassword,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await api.put("/profile/password", {
+        oldPassword: editUser.currentPassword,
+        newPassword: editUser.newPassword,
+      });
 
       alert("Password updated successfully!");
 

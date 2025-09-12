@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../services/reqInterceptor";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
+
+//const API_URL = "https://darziflow-backend.onrender.com/api";
 
 // Get token from localStorage
 const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken");
-  const parsedData = storedData ? JSON.parse(storedData) : null;
-  return parsedData?.accessToken;
+  return localStorage.getItem("accessToken"); 
 };
 
 export default function UpdateUser() {
@@ -34,12 +33,7 @@ export default function UpdateUser() {
           return;
         }
 
-        const res = await axios.get(
-          `${API_URL}/admin/user/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await api.get(`/admin/user/${id}`);
 
         if (res.status === 200) {
           setForm({
@@ -76,17 +70,11 @@ export default function UpdateUser() {
         return;
       }
 
-      const res = await axios.put(
-        `${API_URL}/admin/${id}`,
-        {
-          name: form.name,
-          workEmail: form.workEmail,
-          role: form.role,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.put(`/admin/${id}`, {
+        name: form.name,
+        workEmail: form.workEmail,
+        role: form.role,
+      });
 
       if (res.status === 200) {
         alert("User updated successfully!");

@@ -2,15 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
-import axios from 'axios';
+import api from "../../services/reqInterceptor";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
+//const API_URL = "https://darziflow-backend.onrender.com/api";
 
 // Get token from localStorage
 const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken");
-  const parsedData = storedData ? JSON.parse(storedData) : null;
-  return parsedData?.accessToken;
+  return localStorage.getItem("accessToken"); 
 };
 
 const roleColors = {
@@ -115,12 +113,8 @@ export default function Role() {
       }
 
       // First, get all users
-      const res = await axios.get(
-        `${API_URL}/users`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.get("/users");
+
 
       if (res.status === 200) {
         const allUsers = res.data.users || [];
@@ -165,12 +159,8 @@ export default function Role() {
         return;
       }
 
-      const res = await axios.delete(
-        `${API_URL}/admin/${deleteConfirm._id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.delete(`/admin/${deleteConfirm._id}`);
+
 
       if (res.status === 200) {
         showNotification('User deleted successfully', 'success');
@@ -215,13 +205,7 @@ export default function Role() {
         updateData.password = formData.password;
       }
 
-      const res = await axios.put(
-        `${API_URL}/admin/${editingUser._id}`,
-        updateData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.put(`/admin/${editingUser._id}`, updateData);
 
       if (res.status === 200) {
         showNotification('User updated successfully', 'success');

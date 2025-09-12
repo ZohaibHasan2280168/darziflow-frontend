@@ -2,15 +2,13 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/layout/Navbar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../services/reqInterceptor";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
+//const API_URL = "https://darziflow-backend.onrender.com/api";
 
 // Get token from localStorage
 const getToken = () => {
-  const stored = localStorage.getItem("useraccesstoken");
-  const parsed = stored ? JSON.parse(stored) : null;
-  return parsed?.accessToken;
+  return localStorage.getItem("accessToken"); 
 };
 
 const roleColors = {
@@ -37,9 +35,7 @@ export default function Users() {
           return;
         }
 
-        const res = await axios.get(`${API_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/users");
 
         setUsers(res.data.users || []);
       } catch (err) {
