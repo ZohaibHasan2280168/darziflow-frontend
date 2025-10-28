@@ -8,6 +8,7 @@ import Users from './pages/Dashboard/Users';
 import AddUser from './pages/Dashboard/AddUser';
 import UpdateUser from './pages/Dashboard/UpdateUser';
 import Role from './pages/Dashboard/Role';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 function App() {
   return (
