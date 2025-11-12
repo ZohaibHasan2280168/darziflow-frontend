@@ -1,36 +1,30 @@
-// src/pages/Dashboard/index.jsx
-import { useState, useEffect } from 'react';
-import Navbar from '../../components/layout/Navbar';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { useNavigate } from 'react-router-dom';
-import api from "../../services/reqInterceptor";
+"use client";
 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Navbar from "../../components/layout/Navbar";
+import RolePieChart from "../../components/charts/RolePieChart";
+import { useAuth } from "../../components/context/AuthContext";
 
-//const API_URL = "https://darziflow-backend.onrender.com/api";
-
-// Get token from localStorage
-const getToken = () => {
-  return localStorage.getItem("accessToken"); 
-};
-
+const API_URL = "http://localhost:5000/api";
 
 export default function Dashboard() {
-  const [stats, setStats] = useState([
-    { name: 'Admin', value: 0 },
-    { name: 'Supervisor', value: 0 },
-    { name: 'QA', value: 0 },
-  ]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  const COLORS = ['#2563eb', '#38bdf8', '#fbbf24'];
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [stats, setStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Fetch user statistics from backend
+  const getToken = () => {
+    const storedData = localStorage.getItem("useraccesstoken");
+    const parsedData = storedData ? JSON.parse(storedData) : null;
+    return parsedData?.accessToken;
+  };
+
   useEffect(() => {
     const fetchUserStats = async () => {
       try {
-        //debugToken();
         const token = getToken();
         if (!token) {
           setError("No access token found. Please login again.");
@@ -38,45 +32,32 @@ export default function Dashboard() {
           return;
         }
 
-        const res = await api.get("/users");
+        const res = await axios.get(`${API_URL}/users`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (res.status === 200) {
           const { stats: userStats } = res.data;
-          
-          // Only count these specific roles, ignore MODERATOR
-          const validRoles = ['ADMIN', 'SUPERVISOR', 'QA'];
-          
-          // Initialize counts
-          const roleCounts = {
-            'Admin': 0,
-            'Supervisor': 0,
-            'QA': 0
-          };
+          const dynamicStats = [];
 
-          // Count only valid roles from backend data
-          if (userStats && userStats.roles) {
+          // Count all roles dynamically
+          if (userStats?.roles) {
             Object.entries(userStats.roles).forEach(([role, count]) => {
-              if (validRoles.includes(role)) {
-                const mappedRole = role === 'ADMIN' ? 'Admin' : 
-                                 role === 'SUPERVISOR' ? 'Supervisor' : 'QA';
-                roleCounts[mappedRole] += count;
+              if (count > 0) {
+                let displayName = role
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (c) => c.toUpperCase()); // Format name
+                dynamicStats.push({ name: displayName, value: count });
               }
-              // MODERATOR role is intentionally ignored
             });
           }
 
-          // Update stats state
-          setStats([
-            { name: 'Admin', value: roleCounts.Admin },
-            { name: 'Supervisor', value: roleCounts.Supervisor },
-            { name: 'QA', value: roleCounts.QA },
-          ]);
+          setStats(dynamicStats);
         } else {
-          throw new Error(res.data?.message || "Failed to fetch user statistics");
+          throw new Error(res.data?.message || "Failed to fetch stats");
         }
       } catch (err) {
-        setError(err.response?.data?.message || err.message || "Failed to fetch user statistics");
-        console.error("Error fetching user stats:", err);
+        setError(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }
@@ -85,143 +66,104 @@ export default function Dashboard() {
     fetchUserStats();
   }, []);
 
-  // Pie section click handler
-  const handlePieClick = (data, index) => {
-    if (data && data.name) {
-      navigate(`/role/${data.name.toLowerCase()}`);
-    }
-  };
+  const totalUsers = stats.reduce((sum, s) => sum + s.value, 0);
 
-  // Role option click handler
   const handleRoleOptionClick = (roleName) => {
     navigate(`/role/${roleName.toLowerCase()}`);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div
-          className="rounded-2xl shadow-2xl border border-blue-100 w-full max-w-xl flex flex-col items-center mx-auto mt-16"
-          style={{
-            minHeight: '540px',
-            background: 'rgba(255,255,255,0.55)',
-            backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)',
-            boxShadow: '0 8px 32px 0 rgba(59,130,246,0.18), 0 1.5px 8px 0 rgba(59,130,246,0.10)',
-            padding: '2.5rem 1.5rem',
-            border: '1.5px solid rgba(59,130,246,0.18)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <div className="text-blue-600">Loading user statistics...</div>
-        </div>
-      </div>
-    );
-  }
+  if (!user) return <p>Loading...</p>;
+  if (loading) return <div className="dashboard-loading">Loading stats...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="dashboard-container">
       <Navbar />
-      <div
-        className="rounded-2xl shadow-2xl border border-blue-100 w-full max-w-xl flex flex-col items-center mx-auto mt-16"
-        style={{
-          minHeight: '540px',
-          background: 'rgba(255,255,255,0.55)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          boxShadow: '0 8px 32px 0 rgba(59,130,246,0.18), 0 1.5px 8px 0 rgba(59,130,246,0.10)',
-          padding: '2.5rem 1.5rem',
-          border: '1.5px solid rgba(59,130,246,0.18)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {/* Top Center Title */}
-        <h2 className="text-2xl font-extrabold mb-2 text-blue-700 text-center tracking-tight w-full">
-          User Statistics
-        </h2>
-        {/* Subtitle Center */}
-        <p className="text-gray-500 mb-8 text-center w-full">
-          See how your team is distributed by role
-        </p>
-
-        {error && (
-          <div className="text-red-500 mb-4 text-center">
-            {error}
+      <div className="dashboard-content">
+        <div className="stats-card">
+          <div className="stats-header">
+            <h1>Team Overview</h1>
+            <div>Total Users: {totalUsers}</div>
           </div>
-        )}
 
-        {/* Pie Chart Center */}
-        <div style={{ width: '220px', margin: '0 auto', marginBottom: '2rem' }}>
-          <ResponsiveContainer width={220} height={220}>
-            <PieChart>
-              <Pie
-                data={stats}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                innerRadius={45}
-                paddingAngle={5}
-                startAngle={30}
-                endAngle={390}
-                stroke="#fff"
-                strokeWidth={3}
-                style={{
-                  filter: 'drop-shadow(0 8px 16px rgba(59,130,246,0.18))',
-                  cursor: 'pointer'
-                }}
-                onClick={handlePieClick}
+          {error && <div className="error-message">{error}</div>}
+
+          <RolePieChart data={stats} />
+
+          <div className="legend-container">
+            {stats.map((stat, idx) => (
+              <div
+                key={stat.name}
+                className="legend-item"
+                onClick={() => handleRoleOptionClick(stat.name)}
               >
-                {stats.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                    style={{
-                      filter: 'drop-shadow(0 2px 8px rgba(59,130,246,0.18))',
-                      cursor: 'pointer'
-                    }}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        {/* Legend Center */}
-        <div
-          className="flex items-center justify-center mt-4 mx-auto"
-          style={{ width: 'max-content' }}
-        >
-          {stats.map((s, idx) => (
-            <div 
-              key={s.name} 
-              className="flex items-center gap-2 mx-4 cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => handleRoleOptionClick(s.name)}
-              style={{ cursor: 'pointer' }}
-            >
-              <span style={{
-                display: 'inline-block',
-                width: 18,
-                height: 18,
-                borderRadius: '50%',
-                background: COLORS[idx % COLORS.length],
-                border: '2px solid #fff',
-                boxShadow: '0 2px 6px rgba(59,130,246,0.12)'
-              }} />
-              <span className="text-gray-700 font-medium">{s.name}: <span className="font-bold">{s.value}</span></span>
+                <div
+                  className="legend-color"
+                  style={{ backgroundColor: RolePieChart.DEFAULT_COLORS?.[idx] || "#888" }}
+                ></div>
+                <div>
+                  {stat.name} - {stat.value} (
+                  {totalUsers > 0 ? Math.round((stat.value / totalUsers) * 100) : 0}%)
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {user.role === "ADMIN" && (
+            <div className="admin-actions" style={{ marginTop: "1.5rem" }}>
+              <button onClick={() => navigate("/add-user")}>Add User</button>
+              <button onClick={() => navigate("/users")}>All Users</button>
             </div>
-          ))}
+          )}
         </div>
       </div>
+
+      <style jsx>{`
+        .dashboard-container {
+          min-height: 100vh;
+          background: #0f172a;
+          color: #fff;
+        }
+        .dashboard-content {
+          max-width: 1200px;
+          margin: auto;
+          padding: 2rem;
+        }
+        .stats-card {
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2rem;
+          border-radius: 16px;
+          margin-bottom: 2rem;
+        }
+        .legend-container {
+          display: flex;
+          gap: 1rem;
+          margin-top: 1rem;
+          flex-wrap: wrap;
+        }
+        .legend-item {
+          cursor: pointer;
+          display: flex;
+          gap: 0.5rem;
+          align-items: center;
+        }
+        .legend-color {
+          width: 16px;
+          height: 16px;
+          border-radius: 4px;
+        }
+        .admin-actions button {
+          margin-right: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          border: none;
+          cursor: pointer;
+          background-color: #6366f1;
+          color: white;
+        }
+        .admin-actions button:hover {
+          background-color: #8b5cf6;
+        }
+      `}</style>
     </div>
   );
-  
 }

@@ -1,28 +1,25 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../services/reqInterceptor";
+import axios from "axios";
 
-
-//const API_URL = "https://darziflow-backend.onrender.com/api";
+const API_URL = "http://localhost:5000/api";
 
 // Get token from localStorage
 const getToken = () => {
-  return localStorage.getItem("accessToken"); 
+  const storedData = localStorage.getItem("useraccesstoken");
+  const parsedData = storedData ? JSON.parse(storedData) : null;
+  return parsedData?.accessToken;
 };
 
 export default function UpdateUser() {
-  const { id } = useParams(); // Get user ID from URL params
-  const [form, setForm] = useState({
-    name: "",
-    workEmail: "",
-    role: "",
-  });
+  const { id } = useParams();
+  const [form, setForm] = useState({ name: "", email: "", role: "" });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Fetch user data on component mount
+  // Fetch user details
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -33,19 +30,21 @@ export default function UpdateUser() {
           return;
         }
 
-        const res = await api.get(`/admin/user/${id}`);
+        const res = await axios.get(`${API_URL}/admin/user/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         if (res.status === 200) {
           setForm({
             name: res.data.name || "",
-            workEmail: res.data.workEmail || "",
+            email: res.data.email || "",
             role: res.data.role || "",
           });
         } else {
           throw new Error(res.data?.message || "Failed to fetch user data");
         }
       } catch (err) {
-        setError(err.response?.data?.message || err.message || "Failed to fetch user data");
+        setError(err.response?.data?.message || err.message);
       } finally {
         setFetching(false);
       }
@@ -70,11 +69,11 @@ export default function UpdateUser() {
         return;
       }
 
-      const res = await api.put(`/admin/${id}`, {
-        name: form.name,
-        workEmail: form.workEmail,
-        role: form.role,
-      });
+      const res = await axios.put(
+        `${API_URL}/admin/${id}`,
+        { name: form.name, email: form.email, role: form.role },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       if (res.status === 200) {
         alert("User updated successfully!");
@@ -83,7 +82,7 @@ export default function UpdateUser() {
         throw new Error(res.data?.message || "Failed to update user");
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to update user");
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -91,233 +90,211 @@ export default function UpdateUser() {
 
   if (fetching) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "linear-gradient(135deg,#e0e7ff 0%,#fff 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div>Loading user data...</div>
+      <div className="update-loading">
+        <p>Loading user data...</p>
+        <style jsx>{`
+          .update-loading {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1e1b4b, #312e81, #1e3a8a);
+            color: #fff;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg,#e0e7ff 0%,#fff 100%)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <form className="form" onSubmit={handleSubmit} autoComplete="off">
-        <span className="title">Update User</span>
-        <span className="message">Update user details below</span>
+    <div className="update-container">
+      <div className="update-card">
+        <h1 className="update-title">Update User</h1>
+        <p className="update-subtitle">Modify user details below</p>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error-text">{error}</p>}
 
-        <label>
-          <input
-            type="text"
-            name="name"
-            className="input"
-            value={form.name}
-            onChange={handleChange}
-            required
-            placeholder=" "
-          />
-          <span>Name</span>
-        </label>
+        <form onSubmit={handleSubmit} className="update-form">
+          <div className="input-group">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <label>
-          <input
-            type="email"
-            name="workEmail"
-            className="input"
-            value={form.workEmail}
-            onChange={handleChange}
-            required
-            placeholder=" "
-          />
-          <span>Work Email</span>
-        </label>
+          <div className="input-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <label>
-          <select
-            name="role"
-            className="input"
-            value={form.role}
-            onChange={handleChange}
-            required
-            style={{ paddingRight: "30px" }}
+          <div className="input-group">
+            <label>Role</label>
+            <select
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Role</option>
+              <option value="MODERATOR">Moderator</option>
+              <option value="ADMIN">Admin</option>
+              <option value="DEPARTMENT_HEAD">Department Head</option>
+              <option value="QC_MEMBER">QC Member</option>
+              <option value="CLIENT">Client</option>
+            </select>
+          </div>
+
+          <button type="submit" className="update-btn" disabled={loading}>
+            {loading ? "Updating..." : "Update User"}
+          </button>
+          <button
+            type="button"
+            className="cancel-btn"
+            onClick={() => navigate(-1)}
           >
-            <option value="" disabled>
-              Select Role
-            </option>
-            <option value="Moderator">Moderator</option>
-            <option value="Admin">Admin</option>
-            <option value="QA">QA</option>
-          </select>
-          <span>Role</span>
-        </label>
-
-        <button type="submit" className="submit" disabled={loading}>
-          {loading ? "Updating..." : "Update User"}
-        </button>
-        <div className="signin">
-          <a href="#" onClick={() => navigate(-1)}>
             Cancel
-          </a>
-        </div>
-      </form>
+          </button>
+        </form>
+      </div>
 
-      {/* CSS Styles */}
       <style jsx>{`
-        .form {
+        .update-container {
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: linear-gradient(135deg, #1e1b4b, #312e81, #1e3a8a);
+          background-size: 200% 200%;
+          animation: gradientMove 8s ease infinite;
+          padding: 1rem;
+        }
+
+        @keyframes gradientMove {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        .update-card {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(15px);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          padding: 2.5rem;
+          border-radius: 20px;
+          width: 100%;
+          max-width: 420px;
+          text-align: center;
+          color: #f8fafc;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .update-title {
+          font-size: 1.8rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          background: linear-gradient(90deg, #a78bfa, #60a5fa);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .update-subtitle {
+          color: #cbd5e1;
+          font-size: 0.95rem;
+          margin-bottom: 2rem;
+        }
+
+        .update-form {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          max-width: 450px;
-          background-color: #fff;
-          padding: 30px;
-          border-radius: 20px;
-          position: relative;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          gap: 1.2rem;
         }
 
-        .title {
-          font-size: 28px;
-          color: #6a11cb;
-          font-weight: 600;
-          letter-spacing: -1px;
-          position: relative;
+        .input-group {
           display: flex;
-          align-items: center;
-          padding-left: 30px;
+          flex-direction: column;
+          text-align: left;
         }
 
-        .title::before,
-        .title::after {
-          position: absolute;
-          content: "";
-          height: 16px;
-          width: 16px;
-          border-radius: 50%;
-          left: 0px;
-          background-color: #6a11cb;
+        .input-group label {
+          margin-bottom: 0.4rem;
+          color: #e2e8f0;
+          font-weight: 500;
+          font-size: 0.95rem;
         }
 
-        .title::before {
-          width: 18px;
-          height: 18px;
-          background-color: #6a11cb;
-        }
-
-        .title::after {
-          width: 18px;
-          height: 18px;
-          animation: pulse 1s linear infinite;
-        }
-
-        .message,
-        .signin {
-          color: rgba(88, 87, 87, 0.822);
-          font-size: 14px;
-        }
-
-        .signin {
-          text-align: center;
-        }
-
-        .signin a {
-          color: #6a11cb;
-          cursor: pointer;
-        }
-
-        .signin a:hover {
-          text-decoration: underline;
-        }
-
-        .flex {
-          display: flex;
-          width: 100%;
-          gap: 6px;
-        }
-
-        .form label {
-          position: relative;
-        }
-
-        .form label .input {
-          width: 100%;
-          padding: 10px 10px 20px 10px;
-          outline: 0;
-          border: 1px solid rgba(105, 105, 105, 0.397);
+        .input-group input,
+        .input-group select {
+          background: rgba(255, 255, 255, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          color: #f1f5f9;
           border-radius: 10px;
-        }
-
-        .form label .input + span {
-          position: absolute;
-          left: 10px;
-          top: 15px;
-          color: grey;
-          font-size: 0.9em;
-          cursor: text;
+          padding: 0.75rem;
+          font-size: 0.95rem;
+          outline: none;
           transition: 0.3s ease;
         }
 
-        .form label .input:placeholder-shown + span {
-          top: 15px;
-          font-size: 0.9em;
+        .input-group input:focus,
+        .input-group select:focus {
+          border-color: #818cf8;
+          box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
         }
 
-        .form label .input:focus + span,
-        .form label .input:valid + span {
-          top: 0px;
-          font-size: 0.7em;
-          font-weight: 600;
-        }
-
-        .form label .input:valid + span {
-          color: green;
-        }
-
-        .submit {
+        .update-btn {
+          background: linear-gradient(90deg, #6366f1, #8b5cf6);
           border: none;
-          outline: none;
-          background-color: #6a11cb;
-          padding: 10px;
-          border-radius: 10px;
+          padding: 0.8rem;
+          border-radius: 12px;
+          font-weight: 600;
           color: #fff;
-          font-size: 16px;
-          transform: .3s ease;
-        }
-
-        .submit:hover {
-          background-color: #5a0db5;
+          font-size: 1rem;
           cursor: pointer;
+          transition: all 0.3s ease;
         }
 
-        .submit:disabled {
-          background-color: #cccccc;
-          cursor: not-allowed;
+        .update-btn:hover {
+          background: linear-gradient(90deg, #4f46e5, #7c3aed);
+          transform: translateY(-2px);
         }
 
-        @keyframes pulse {
-          from {
-            transform: scale(0.9);
-            opacity: 1;
-          }
+        .cancel-btn {
+          margin-top: 0.5rem;
+          background: transparent;
+          color: #cbd5e1;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 12px;
+          padding: 0.8rem;
+          font-size: 0.95rem;
+          cursor: pointer;
+          transition: 0.3s ease;
+        }
 
-          to {
-            transform: scale(1.8);
-            opacity: 0;
-          }
+        .cancel-btn:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        .error-text {
+          color: #fca5a5;
+          margin-bottom: 1rem;
+          font-size: 0.9rem;
         }
       `}</style>
     </div>

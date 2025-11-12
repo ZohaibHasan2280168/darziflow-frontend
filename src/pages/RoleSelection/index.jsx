@@ -1,29 +1,45 @@
-import { useNavigate } from 'react-router-dom';
+"use client"
+
+import { useNavigate } from "react-router-dom"
 
 export default function RoleSelection() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen flex-center moderator-bg">
+    <div className="min-h-screen flex-center modern-bg">
       <div className="container">
-        <div className="text-center mb-8">
-          <h1 className="moderator-title mb-2">Welcome to DarziFlow</h1>
-          <p className="moderator-subtitle">Select your role to continue</p>
+        <div className="text-center mb-12">
+          <div className="logo-badge mb-6">DarziFlow</div>
+          <h1 className="main-title mb-3">Welcome to DarziFlow</h1>
+          <p className="subtitle">Choose your role to get started</p>
         </div>
+
         <div className="button-container">
-          <button
-            onClick={() => navigate('/moderator-login')}
-            className="button2"
-            style={{'--color': '#0077ff'}}
-          >
-            <span style={{ marginRight: '0.5rem' }}>👔</span> Moderator
+          <button onClick={() => navigate("/moderator-login")} className="role-button moderator-button">
+            <div className="button-icon moderator-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div className="button-content">
+              <h3 className="button-title">Moderator</h3>
+              {/* <p className="button-description">Manage content and users</p> */}
+            </div>
+            <div className="button-arrow">→</div>
           </button>
-          <button
-            onClick={() => navigate('/admin-login')}
-            className="button2"
-            style={{'--color': '#6a11cb'}}
-          >
-            <span style={{ marginRight: '0.5rem' }}>🛡️</span> Admin
+
+          <button onClick={() => navigate("/admin-signup")} className="role-button admin-button">
+            <div className="button-icon admin-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <div className="button-content">
+              <h3 className="button-title">Admin</h3>
+              {/* <p className="button-description">Full system control</p> */}
+            </div>
+            <div className="button-arrow">→</div>
           </button>
         </div>
       </div>
@@ -39,128 +55,252 @@ export default function RoleSelection() {
           align-items: center;
         }
         
-        .moderator-bg {
-          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        /* Modern gradient background */
+        .modern-bg {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .modern-bg::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+          background-size: 50px 50px;
+          animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(30px, 30px); }
         }
         
-        /* Outer container style */
+        /* Enhanced container with modern card design */
         .container {
-          max-width: 350px;
-          background: #F8F9FD;
-          background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
-          border-radius: 40px;
-          padding: 25px 35px;
-          border: 5px solid rgb(255, 255, 255);
-          box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+          max-width: 500px;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          border-radius: 24px;
+          padding: 48px 40px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
           margin: 20px;
           display: flex;
           flex-direction: column;
           align-items: center;
+          position: relative;
+          z-index: 1;
         }
         
-        .moderator-title {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #2d3748;
-          margin-bottom: 0.5rem;
+        .logo-badge {
+          display: inline-block;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 0.875rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
         }
         
-        .moderator-subtitle {
-          color: #718096;
+        .main-title {
+          font-size: 2.5rem;
+          font-weight: 800;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+          color: #6b7280;
           font-size: 1.1rem;
-        }
-        
-        .button-container {
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-          width: 100%;
-          margin-top: 1rem;
+          font-weight: 500;
         }
         
         .text-center {
           text-align: center;
         }
         
-        .mb-2 {
-          margin-bottom: 0.5rem;
+        .mb-3 {
+          margin-bottom: 0.75rem;
+        }
+
+        .mb-6 {
+          margin-bottom: 1.5rem;
         }
         
-        .mb-8 {
-          margin-bottom: 2rem;
+        .mb-12 {
+          margin-bottom: 3rem;
         }
         
-        /* New button styles */
-        .button2 {
-          display: inline-block;
-          transition: all 0.2s ease-in;
+        /* Modern button container with gap */
+        .button-container {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          width: 100%;
+          margin-top: 2rem;
+        }
+        
+        /* Enhanced role button styling */
+        .role-button {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 20px 24px;
+          border: 2px solid transparent;
+          border-radius: 16px;
+          background: #f8f9fa;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          font-size: 1rem;
+          font-weight: 600;
           position: relative;
           overflow: hidden;
-          z-index: 1;
-          color: #090909;
-          padding: 0.7em 1.7em;
-          cursor: pointer;
-          font-size: 18px;
-          border-radius: 0.5em;
-          background: #e8e8e8;
-          border: 1px solid #e8e8e8;
-          box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+        }
+
+        .role-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
           width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          transition: left 0.5s;
+        }
+
+        .role-button:hover::before {
+          left: 100%;
+        }
+
+        .role-button:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-button:active {
+          transform: translateY(-2px);
+        }
+
+        /* Moderator button styling */
+        .moderator-button {
+          border-color: #667eea;
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+        }
+
+        .moderator-button:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(102, 126, 234, 0.1) 100%);
+          border-color: #667eea;
+        }
+
+        /* Admin button styling */
+        .admin-button {
+          border-color: #764ba2;
+          background: linear-gradient(135deg, rgba(118, 75, 162, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+        }
+
+        .admin-button:hover {
+          background: linear-gradient(135deg, rgba(118, 75, 162, 0.2) 0%, rgba(118, 75, 162, 0.1) 100%);
+          border-color: #764ba2;
+        }
+
+        /* Button icon styling */
+        .button-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          flex-shrink: 0;
+          transition: all 0.3s ease;
+        }
+
+        .moderator-icon {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+        }
+
+        .admin-icon {
+          background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+          color: white;
+        }
+
+        .role-button:hover .button-icon {
+          transform: scale(1.1);
+        }
+
+        /* Button content styling */
+        .button-content {
+          flex: 1;
+          text-align: left;
+        }
+
+        .button-title {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #1f2937;
+          margin: 0;
+          margin-bottom: 4px;
+        }
+
+        .button-description {
+          font-size: 0.875rem;
+          color: #6b7280;
+          margin: 0;
           font-weight: 500;
         }
 
-        .button2:active {
-          color: #666;
-          box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+        /* Arrow indicator */
+        .button-arrow {
+          font-size: 1.5rem;
+          color: #d1d5db;
+          transition: all 0.3s ease;
+          flex-shrink: 0;
         }
 
-        .button2:before {
-          content: "";
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%) scaleY(1) scaleX(1.25);
-          top: 100%;
-          width: 140%;
-          height: 180%;
-          background-color: rgba(0, 0, 0, 0.05);
-          border-radius: 50%;
-          display: block;
-          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-          z-index: -1;
+        .role-button:hover .button-arrow {
+          color: #667eea;
+          transform: translateX(4px);
         }
 
-        .button2:after {
-          content: "";
-          position: absolute;
-          left: 55%;
-          transform: translateX(-50%) scaleY(1) scaleX(1.45);
-          top: 180%;
-          width: 160%;
-          height: 190%;
-          background-color: var(--color, #009087);
-          border-radius: 50%;
-          display: block;
-          transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-          z-index: -1;
+        .admin-button:hover .button-arrow {
+          color: #764ba2;
         }
 
-        .button2:hover {
-          color: #ffffff;
-          border: 1px solid var(--color, #009087);
-        }
+        @media (max-width: 640px) {
+          .container {
+            padding: 32px 24px;
+            max-width: 100%;
+          }
 
-        .button2:hover:before {
-          top: -35%;
-          background-color: var(--color, #009087);
-          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-        }
+          .main-title {
+            font-size: 2rem;
+          }
 
-        .button2:hover:after {
-          top: -45%;
-          background-color: var(--color, #009087);
-          transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+          .role-button {
+            padding: 16px 20px;
+            gap: 12px;
+          }
+
+          .button-icon {
+            width: 40px;
+            height: 40px;
+          }
+
+          .button-icon svg {
+            width: 24px;
+            height: 24px;
+          }
         }
       `}</style>
     </div>
-  );
+  )
 }

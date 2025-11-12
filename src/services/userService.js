@@ -1,11 +1,20 @@
-import api from "./reqInterceptor";
+import axios from "axios";
 
-const API_URL = "/users";
+const API_URL = "http://localhost:5000/api/users/";
 
-// Get all users(admin only)
+// Get token from localStorage
+const getToken = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.token;
+};
+
+// Get all users (admin only, for example)
 const getUsers = async () => {
-  const { data } = await api.get(API_URL);
-  return data;
+  const token = getToken();
+  const response = await axios.get(API_URL, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
 const userService = {
