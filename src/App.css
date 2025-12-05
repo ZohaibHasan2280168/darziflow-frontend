@@ -1,0 +1,260 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* role.css */
+/* Common Button */
+.btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Edit Button */
+.btn-edit {
+  background-color: #facc15; /* Yellow */
+  color: #000;
+}
+.btn-edit:hover {
+  background-color: #eab308;
+}
+
+/* Delete Button */
+.btn-delete {
+  background-color: #ef4444; /* Red */
+  color: #fff;
+}
+.btn-delete:hover {
+  background-color: #dc2626;
+}
+
+/* Cancel Button */
+.btn-cancel {
+  background-color: #6b7280; /* Gray */
+  color: #fff;
+}
+.btn-cancel:hover {
+  background-color: #4b5563;
+}
+
+/* Confirm Button */
+.btn-confirm {
+  background-color: #16a34a; /* Green */
+  color: #fff;
+}
+.btn-confirm:hover {
+  background-color: #15803d;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* dark background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+/* Modal Card */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* space between buttons */
+  margin-top: 16px;
+}
+
+.modal-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-out;
+}
+
+
+/* edit delete button css */
+/* Table action buttons */
+.action-buttons {
+  display: flex;
+  justify-content: center; /* center align */
+  gap: 12px; /* space between Edit & Delete */
+}
+
+.action-buttons .btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.action-buttons .btn-edit {
+  background: #3b82f6; /* blue */
+  color: #fff;
+}
+
+.action-buttons .btn-edit:hover {
+  background: #2563eb;
+}
+
+.action-buttons .btn-delete {
+  background: #ef4444; /* red */
+  color: #fff;
+}
+
+.action-buttons .btn-delete:hover {
+  background: #dc2626;
+}
+
+/* edit form css */
+/* Overlay background */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+/* Card container */
+.modal-card {
+  background: #fff;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Title */
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  color: #2563eb; /* blue */
+  margin-bottom: 20px;
+}
+
+/* Form fields */
+.modal-form .form-group {
+  margin-bottom: 18px;
+}
+
+.modal-form label {
+  text-align: left;
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.modal-form input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.modal-form input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+  outline: none;
+}
+
+/* Hint text */
+.hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Actions */
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-cancel:hover {
+  background: #d1d5db;
+}
+
+.btn-save {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #2563eb;
+}
+/* Placeholder ko light gray banane ke liye */
+.modal-form input::placeholder {
+  color: #9ca3af; /* light gray */
+  font-size: 14px;
+}
