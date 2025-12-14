@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import Navbar from "../../components/layout/Navbar"
 
-const API_URL = "http://localhost:5000/api"
+const API_URL = "https://darziflow-backend.onrender.com/api"
 
 const getToken = () => {
   const storedData = localStorage.getItem("useraccesstoken")

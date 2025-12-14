@@ -348,30 +348,31 @@ export default function Settings() {
 
         .select-input {
           padding: 0.75rem 1rem;
-          background: #1e293b;
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: transparent; /* flat */
+          border: 1px solid rgba(148, 163, 184, 0.08);
           border-radius: 10px;
-          color: #f1f5f9;
+          color: inherit;
           font-size: 0.9375rem;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.15s ease;
           min-width: 180px;
+          box-shadow: none; /* remove heavy shadow */
         }
 
         .select-input:hover {
-          border-color: rgba(106, 17, 203, 0.3);
-          background: #273548;
+          border-color: rgba(106, 17, 203, 0.12);
+          background: rgba(255,255,255,0.02);
         }
 
         .select-input:focus {
           outline: none;
-          border-color: #6a11cb;
-          box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+          border-color: rgba(106, 17, 203, 0.2);
+          box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.06);
         }
 
         .select-input option {
-          background: #1e293b;
-          color: #f1f5f9;
+          background: inherit;
+          color: inherit;
         }
 
         @media (max-width: 768px) {

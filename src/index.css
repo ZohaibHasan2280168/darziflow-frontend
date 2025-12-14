@@ -382,15 +382,18 @@ button[type="submit"]:hover {
   width: 100%;
   padding: 14px 12px; /* Slightly increased padding */
   outline: 0;
-  border: 1px solid rgba(105, 105, 105, 0.397);
+  border: 1px solid rgba(15, 23, 36, 0.06);
   border-radius: 8px;
   font-size: 16px;
-  transition: border-color 0.3s;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  background: transparent; /* default: let theme decide */
+  box-shadow: none; /* remove 3D/inset look */
 }
 
 .form label .input:focus {
-  border-color: royalblue;
-  box-shadow: 0 0 0 2px rgba(65, 105, 225, 0.2);
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.06); /* subtle focus ring */
+  outline: none;
 }
 
 .form label .input + span {
@@ -403,6 +406,39 @@ button[type="submit"]:hover {
   transition: 0.3s ease;
   background: #fff;
   padding: 0 5px;
+}
+
+/* Theme-aware adjustments for form inputs */
+:root.light .form label .input {
+  background: #ffffff;
+  color: #0f1724;
+  border-color: rgba(15, 23, 36, 0.06);
+}
+
+:root.dark .form label .input {
+  background: rgba(255,255,255,0.03);
+  color: #e6eef8;
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* Global flat input styles to remove any '3D' or heavy black borders */
+input, textarea, select {
+  border-radius: 8px;
+  border: 1px solid rgba(15,23,36,0.06);
+  background: transparent;
+  box-shadow: none;
+}
+
+:root.light input, :root.light textarea, :root.light select {
+  background: #ffffff;
+  color: #0f1724;
+  border-color: rgba(15,23,36,0.06);
+}
+
+:root.dark input, :root.dark textarea, :root.dark select {
+  background: rgba(255,255,255,0.03);
+  color: #e6eef8;
+  border-color: rgba(255,255,255,0.06);
 }
 
 .form label .input:placeholder-shown + span {

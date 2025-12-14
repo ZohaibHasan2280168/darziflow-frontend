@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://darziflow-backend.onrender.com/api";
 
 // Get token from localStorage
 const getToken = () => {

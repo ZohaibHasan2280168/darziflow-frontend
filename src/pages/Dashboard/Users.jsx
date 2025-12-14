@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../../components/layout/Navbar";
 import { Link, useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://darziflow-backend.onrender.com/api";
 
 const getToken = () => {
   const stored = localStorage.getItem("useraccesstoken");

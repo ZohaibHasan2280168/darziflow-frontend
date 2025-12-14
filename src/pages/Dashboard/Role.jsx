@@ -3,7 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import axios from 'axios';
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://darziflow-backend.onrender.com/api";
 
 // Get token from localStorage
 const getToken = () => {

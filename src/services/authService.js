@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/auth"; // adjust if deployed
-
+// const API_URL = "http://localhost:5000/api/auth"; // adjust if deployed
+const API_URL = "https://darziflow-backend.onrender.com/api/auth"; 
 // Register user
 const register = async (userData) => {
   const response = await axios.post(`${API_URL}/register`, userData);
