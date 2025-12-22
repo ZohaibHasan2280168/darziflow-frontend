@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useAlert } from '../../components/ui/AlertProvider';
 
 const API_URL = "https://darziflow-backend.onrender.com/api";
 
@@ -18,6 +19,7 @@ export default function UpdateUser() {
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   // Fetch user details
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function UpdateUser() {
       );
 
       if (res.status === 200) {
-        alert("User updated successfully!");
+        showAlert({ title: 'Success', message: 'User updated successfully!', type: 'success' });
         navigate(-1);
       } else {
         throw new Error(res.data?.message || "Failed to update user");

@@ -52,44 +52,9 @@ const Departments = () => {
     fetchDepartments();
   }, []);
 
-  // 2. --- API DELETE LOGIC (DELETE /api/departments/:id) ---
-  const handleDelete = async (deptId, e) => {
-    // Stop event propagation so the row click is not triggered
-    e.stopPropagation(); 
-    if (!window.confirm(`Are you sure you want to delete department with ID: ${deptId}? This action is permanent (soft delete).`)) {
-      return;
-    }
-    
-    const token = getToken();
-    if (!token) {
-        alert("Authentication failed. Please log in.");
-        return;
-    }
-    
-    // Optimistically update the UI before API call
-    setDepartments((prev) => prev.filter((dept) => dept._id !== deptId));
 
-    try {
-        await axios.delete(`${API_URL}/departments/${deptId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
 
-        alert(`Department ${deptId.substring(0, 10)}... deleted successfully.`);
 
-    } catch (err) {
-        // Revert UI change if API call fails
-        fetchDepartments(); 
-        const errorMessage = err.response?.data?.message || err.message || "Failed to delete department.";
-        alert(`Error deleting department: ${errorMessage}`);
-        setError(`Deletion failed: ${errorMessage}`);
-    }
-  };
-
-  const handleEdit = (deptId, e) => {
-    e.stopPropagation(); // Stop row click
-    // Navigate to the update page (Screen 2: Detail/Editor View)
-    navigate(`/update-department/${deptId}`);
-  };
   
   const handleDetailView = (deptId) => {
     // Navigate to the new read-only detail view
@@ -136,9 +101,9 @@ const Departments = () => {
                 <thead>
                   <tr>
                     <th>Department Name</th>
-                    <th>ID</th>
+                    <th>Department Head</th>
                     <th>Description</th>
-                    <th>Actions</th>
+                    <th style={{textAlign: 'center'}}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -150,27 +115,15 @@ const Departments = () => {
                             onClick={() => handleDetailView(dept._id)} // <-- NEW CLICK HANDLER
                           >
                         <td className="name-cell">{dept.name}</td>
-                        <td className="id-cell">{dept._id ? dept._id.substring(0, 10) + '...' : 'N/A'}</td>
+                        <td className="head-cell">{typeof dept.departmentHead === 'object' ? dept.departmentHead.name : (dept.departmentHead || 'Not Assigned')}</td>
                         <td className="desc-cell">
                           {dept.description 
                             ? (dept.description.length > 50 ? dept.description.substring(0, 50) + '...' : dept.description) 
                             : 'N/A'
                           }
                         </td>
-                        <td className="action-cell" onClick={(e) => e.stopPropagation()}> 
-                          {/* Stop propagation here to prevent row click when action buttons are pressed */}
-                          <button
-                            className="edit-btn"
-                            onClick={(e) => handleEdit(dept._id, e)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="delete-btn"
-                            onClick={(e) => handleDelete(dept._id, e)}
-                          >
-                            Delete
-                          </button>
+                        <td className="status-cell" style={{textAlign: 'center'}}>
+                          <span className={`status-badge ${(dept.status || 'INACTIVE').toUpperCase()}`}>{(dept.status || 'INACTIVE').toUpperCase()}</span>
                         </td>
                       </tr>
                     ))
@@ -180,7 +133,7 @@ const Departments = () => {
                         No departments found
                       </td>
                     </tr>
-                  )}
+                  )} 
                 </tbody>
               </table>
             </div>
@@ -333,9 +286,9 @@ const Departments = () => {
         }
         
         /* Specific Column Styling */
-        .id-cell {
-          font-family: monospace;
+        .head-cell {
           color: #94a3b8;
+          font-weight: 600;
         }
 
         .desc-cell {
@@ -345,43 +298,13 @@ const Departments = () => {
           text-overflow: ellipsis;
         }
 
-        /* --- Action Buttons --- */
-        .action-cell {
-          display: flex;
-          gap: 0.5rem; /* Reduced gap between buttons */
-          justify-content: center; /* Center buttons in the column */
-        }
+        /* Status column & badge */
+        .status-cell { width: 120px; text-align: center; }
+        .status-badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .status-badge.ACTIVE { background: rgba(16,185,129,0.12); color: #10b981; }
+        .status-badge.INACTIVE { background: rgba(245,158,11,0.12); color: #f59e0b; }
 
-        .edit-btn,
-        .delete-btn {
-          padding: 0.3rem 0.6rem; /* Much smaller buttons */
-          border-radius: 6px; 
-          border: none;
-          cursor: pointer;
-          font-weight: 500; /* Slightly lighter font */
-          font-size: 0.8rem; /* Smaller text inside button */
-          transition: 0.2s ease;
-        }
 
-        .edit-btn {
-          background: rgba(59, 130, 246, 0.15); /* Reduced opacity */
-          color: #60a5fa;
-          border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .edit-btn:hover {
-          background: rgba(59, 130, 246, 0.25);
-        }
-
-        .delete-btn {
-          background: rgba(239, 68, 68, 0.15); /* Reduced opacity */
-          color: #f87171;
-          border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .delete-btn:hover {
-          background: rgba(239, 68, 68, 0.25);
-        }
         
         /* --- State Styling (Loading/Error/Empty) --- */
         .loading-state, .error-state, .empty-state {

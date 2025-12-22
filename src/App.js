@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from "./components/context/AuthContext";
 import { ThemeProvider } from './components/context/ThemeContext';
-
+import AlertProvider from './components/ui/AlertProvider';
 
 import RoleUserList from './pages/RoleUserList'; 
 import RoleSelection from './pages/RoleSelection';
@@ -15,8 +15,16 @@ import ResetPassword from "./pages/Auth/ResetPassword";
 
 import Dashboard from './pages/Dashboard';
 import Departments from './pages/Dashboard/Departments';
+import DepartmentDetail from './pages/Dashboard/DepartmentDetail';
 import AddDepartment from './pages/Dashboard/AddDepartment';
 import UpdateDepartments from './pages/Dashboard/UpdateDepartments';
+
+// --- Nayi Files ke Imports ---
+import OperationAdd from './pages/Dashboard/OperationAdd';
+import OperationEdit from './pages/Dashboard/OperationEdit';
+import CheckpointAdd from './pages/Dashboard/CheckpointAdd';
+import CheckpointEdit from './pages/Dashboard/CheckpointEdit';
+
 import Users from './pages/Dashboard/Users';
 import AddUser from './pages/Dashboard/AddUser';
 import UpdateUser from './pages/Dashboard/UpdateUser';
@@ -30,22 +38,25 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <BrowserRouter>
-          <Routes>
+        <AlertProvider>
+          <BrowserRouter>
+            <Routes>
             {/* Public Routes */}
             <Route path="/" element={<RoleSelection />} />
             <Route path="/departments" element={<Departments />} />
             <Route path="/update-department/:id" element={<UpdateDepartments />} />
             <Route path="/add-department" element={<AddDepartment />} />
+            <Route path="/department-detail/:id" element={<DepartmentDetail />} />
             <Route path="/moderator-login" element={<ModeratorLogin />} />
             <Route path="/admin-login" element={<AdminLoginPage />} />
             <Route path="/admin-signup" element={<AdminSignUpPage />} />
             <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
             
-<Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-            {/* User Routes */}<Route
+            {/* User Routes */}
+            <Route
               path="/users/role/:roleName"
               element={
                 <ProtectedRoute allowedRoles={['ADMIN']}> 
@@ -54,7 +65,7 @@ function App() {
               }
             />
 
-            {/* Admin Routes */}
+            {/* Admin Routes Only */}
             <Route 
               path="/dashboard" 
               element={
@@ -96,7 +107,44 @@ function App() {
               }
             />
 
-            {/* Moderator & Admin accessible */}
+            {/* Moderator & Admin accessible Section */}
+            
+            {/* --- Naye Operation Routes --- */}
+            <Route
+              path="/departments/:deptId/add-operation"
+              element={
+                <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                  <OperationAdd />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/edit-operation/:opId"
+              element={
+                <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                  <OperationEdit />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* --- Naye Checkpoint Routes --- */}
+            <Route
+              path="/departments/:deptId/operations/:opId/add-checkpoint"
+              element={
+                <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                  <CheckpointAdd />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/departments/:deptId/operations/:opId/edit-checkpoint/:chkId"
+              element={
+                <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                  <CheckpointEdit />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/role/:role"
               element={
@@ -129,7 +177,8 @@ function App() {
             {/* Catch-all 404 redirect */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </BrowserRouter>
+          </BrowserRouter>
+        </AlertProvider>
       </ThemeProvider>
     </AuthProvider>
   );

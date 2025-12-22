@@ -5,8 +5,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../components/layout/Navbar";
 import { useAuth } from "../components/context/AuthContext";
-
-const API_URL = "http://localhost:5000/api";
+import { useAlert } from '../components/ui/AlertProvider';
+import { API_BASE } from '../utils/constants';
 
 // --- START: Copied from users.jsx ---
 const getToken = () => {
@@ -37,6 +37,7 @@ export default function RoleUserList() {
     const { roleName: roleSlug } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth(); // Used for Admin check
+    const { showAlert } = useAlert();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -63,7 +64,7 @@ export default function RoleUserList() {
             const apiRoleKey = roleSlug.toUpperCase().replace(/_/g, '_');
 
             // API call: GET /api/users?role=QC_MEMBER
-            const res = await axios.get(`${API_URL}/users?role=${apiRoleKey}`, {
+            const res = await axios.get(`${API_BASE}/users?role=${apiRoleKey}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -93,7 +94,7 @@ export default function RoleUserList() {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
         try {
             const token = getToken();
-            const res = await axios.delete(`${API_URL}/admin/${id}`, {
+            const res = await axios.delete(`${API_BASE}/admin/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -101,10 +102,10 @@ export default function RoleUserList() {
             // We use the same endpoint and remove the user from the list upon success.
             if (res.status !== 200 && res.status !== 204) throw new Error("Failed to delete user");
 
-            alert("User deleted successfully");
+            showAlert({ title: 'Success', message: 'User deleted successfully', type: 'success' });
             setUsers(users.filter((u) => u._id !== id));
         } catch (err) {
-            alert(err.response?.data?.message || err.message || "Failed to delete user");
+            showAlert({ title: 'Error', message: err.response?.data?.message || err.message || "Failed to delete user", type: 'error' });
         }
     };
 

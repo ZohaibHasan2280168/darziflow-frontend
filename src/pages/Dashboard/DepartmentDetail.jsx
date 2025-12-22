@@ -1,406 +1,322 @@
-// DepartmentDetail.jsx - Read-Only Detail View
-
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAlert } from '../../components/ui/AlertProvider';
+import ConfirmModal from '../../components/ui/ConfirmModal';
+import { 
+  FiEdit, FiTrash2, FiPlus, FiChevronDown, FiChevronUp, 
+  FiCheckCircle, FiInfo, FiUser, FiActivity, FiArrowLeft 
+} from "react-icons/fi";
 
-const API_URL = "https://darziflow-backend.onrender.com/api";
-
-const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken");
-  const parsedData = storedData ? JSON.parse(storedData) : null;
-  return parsedData?.accessToken;
-};
+import { API_BASE } from '../../utils/constants';
 
 export default function DepartmentDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
-  const [department, setDepartment] = useState(null);
-  const [fetching, setFetching] = useState(true);
+  // States
+  const [dept, setDept] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [expandedOps, setExpandedOps] = useState({});
 
-  // 1. --- API FETCH LOGIC (GET /api/departments/:id) ---
-  useEffect(() => {
-    const fetchDepartment = async () => {
-      setFetching(true);
-      setError("");
+  const getToken = () => {
+    const storedData = localStorage.getItem("useraccesstoken");
+    const parsedData = storedData ? JSON.parse(storedData) : null;
+    return parsedData?.accessToken;
+  };
+
+  // --- 1. Fetch Data ---
+  const fetchDeptDetails = useCallback(async () => {
+    try {
+      setLoading(true);
       const token = getToken();
-
-      if (!token) {
-        setError("No access token found. Please login again.");
-        setFetching(false);
-        return;
-      }
-
-      try {
-        const res = await axios.get(`${API_URL}/departments/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setDepartment(res.data);
-
-      } catch (err) {
-        const errorMessage = err.response?.data?.message || err.message || "Failed to fetch department data.";
-        setError(errorMessage);
-      } finally {
-        setFetching(false);
-      }
-    };
-
-    fetchDepartment();
+      const res = await axios.get(`${API_BASE}/departments/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Safety: Backend response structure handle karna
+      setDept(res.data.data || res.data);
+    } catch (err) {
+      setError("Failed to load department details.");
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
-  // --- Render Functions for Nested Structure ---
-  const renderCheckpointDetails = (chk, index) => (
-    <div key={chk._id || index} className="checkpoint-detail">
-        <p><strong>Name:</strong> {chk.name}</p>
-        <p><strong>Submission Types:</strong> {chk.allowedSubmissionTypes.join(', ') || 'N/A'}</p>
-        <p><strong>QC Required:</strong> {chk.qcRequired ? 'Yes' : 'No'}</p>
-        <p><strong>Min Uploads:</strong> {chk.minRequiredUploads || 1}</p>
-    </div>
-  );
+  useEffect(() => {
+    fetchDeptDetails();
+  }, [fetchDeptDetails]);
 
-  const renderOperationDetails = (op, index) => (
-    <div key={op._id || index} className="operation-block">
-        <h3>{op.name || `Operation ${index + 1}`}</h3>
-        <p className="description-text"><strong>Description:</strong> {op.description || 'No description provided.'}</p>
+  // --- Confirmation modal state & helpers ---
+  const [confirmState, setConfirmState] = useState({ open: false, title: '', message: '', onConfirm: null });
 
-        <div className="checkpoints-section">
-            <h4>Checkpoints ({op.checkpoints.length})</h4>
-            {op.checkpoints.map(renderCheckpointDetails)}
-        </div>
-    </div>
-  );
+  const _sanitizeMessage = (raw) => {
+    if (raw === undefined || raw === null) return '';
+    let s = raw;
+    if (typeof s === 'object') {
+      try { s = JSON.stringify(s); } catch(e) { s = String(s); }
+    }
+    s = String(s);
+    s = s.replace(/https?:\/\/[^\s)]+/g, '');
+    s = s.replace(/localhost(?::\d+)?/g, '');
+    s = s.replace(/http:\/\//g, '').replace(/https:\/\//g, '');
+    s = s.replace(/\s+/g, ' ').trim();
+    if (!s) return 'Are you sure?';
+    if (s.length > 300) s = s.slice(0, 300) + '...';
+    return s;
+  };  
 
-  // --- UI Loading/Error States ---
-  if (fetching) {
-    return (
-      <div className="detail-loading">
-        <div className="spinner"></div>
-        <p>Fetching department template data...</p>
-      </div>
-    );
-  }
+  const showConfirm = (title, message, onConfirm) => {
+    setConfirmState({ open: true, title, message: _sanitizeMessage(message), onConfirm });
+  };
 
-  if (error || !department) {
-    return (
-      <div className="detail-loading">
-        <p className="error-text">⚠️ Error: {error || 'Department data unavailable.'}</p>
-        <button className="back-btn-error" onClick={() => navigate("/departments")}>Go Back</button>
-      </div>
-    );
-  }
+  const closeConfirm = () => setConfirmState({ open: false, title: '', message: '', onConfirm: null });
 
-  // --- Main Render (Detail UI) ---
+  // --- 2. Handlers (Delete) ---
+  const handleDeleteDept = () => {
+    showConfirm('Delete Department', 'Are you sure? This will delete the entire department!', async () => {
+      try {
+        const url = `${API_BASE}/departments/${id}`;
+        console.debug('Delete Department -> DELETE', url);
+        await axios.delete(url, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        });
+        showAlert({ title: 'Deleted', message: 'Department deleted successfully', type: 'success' });
+        closeConfirm();
+        navigate("/departments");
+      } catch (err) {
+        closeConfirm();
+        showAlert({ title: 'Error', message: 'Error deleting department', type: 'error' });
+      }
+    });
+  };
+
+  const handleDeleteOperation = (opId) => {
+    showConfirm('Delete Operation', 'Are you sure you want to delete this operation?', async () => {
+      try {
+        const url = `${API_BASE}/departments/${id}/operations/${opId}`;
+        console.debug('Delete Operation -> DELETE', url);
+        await axios.delete(url, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        });
+        closeConfirm();
+        showAlert({ title: 'Deleted', message: 'Operation removed', type: 'success' });
+        fetchDeptDetails();
+      } catch (err) {
+        closeConfirm();
+        showAlert({ title: 'Error', message: 'Error deleting operation', type: 'error' });
+      }
+    });
+  };
+
+  const handleDeleteCheckpoint = (opId, chkId) => {
+    showConfirm('Delete Checkpoint', 'Are you sure you want to delete this checkpoint?', async () => {
+      try {
+        const url = `${API_BASE}/departments/${id}/operations/${opId}/checkpoints/${chkId}`;
+        console.debug('Delete Checkpoint -> DELETE', url);
+        await axios.delete(url, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        });
+        closeConfirm();
+        showAlert({ title: 'Deleted', message: 'Checkpoint removed', type: 'success' });
+        fetchDeptDetails();
+      } catch (err) {
+        closeConfirm();
+        showAlert({ title: 'Error', message: 'Error deleting checkpoint', type: 'error' });
+      }
+    });
+  };
+
+  // --- 3. UI Helpers ---
+  const saveContextInStorage = (deptId, opId) => {
+    try {
+      localStorage.setItem('currentDeptId', deptId);
+      localStorage.setItem('currentOpId', opId);
+    } catch (e) { /* ignore write errors */ }
+  };
+
+  const toggleExpand = (opId) => {
+    setExpandedOps(prev => {
+      const next = !prev[opId];
+      if (next) saveContextInStorage(id, opId);
+      return { ...prev, [opId]: next };
+    });
+  };
+
+  if (loading) return <div className="loader">Loading Department Detail...</div>;
+  if (error) return <div className="error-screen">{error}</div>;
+  if (!dept) return null;
+
   return (
     <div className="detail-container">
-      <div className="detail-card">
-        <h1 className="detail-title">👀 Department Template Detail</h1>
-        <p className="detail-subtitle">Viewing Template for: **{department.name}**</p>
-        
-        {/* --- 1. Root Department Metadata --- */}
-        <section className="metadata-section">
-            <h2>Template Metadata</h2>
-            <div className="data-row">
-                <div className="data-group">
-                    <strong>Department Name:</strong>
-                    <span>{department.name}</span>
-                </div>
-                <div className="data-group">
-                    <strong>Status:</strong>
-                    <span className={`status-${department.status.toLowerCase()}`}>{department.status}</span>
-                </div>
-            </div>
-            <div className="data-group full-width">
-                <strong>Department Head (ID):</strong>
-                <span>{department.departmentHead || 'N/A'}</span>
-            </div>
-            <div className="data-group full-width">
-                <strong>Description:</strong>
-                <p className="description-long">{department.description}</p>
-            </div>
-        </section>
-
-        {/* --- 2. Operations and Checkpoints (Nested Structure) --- */}
-        <section className="operations-section">
-            <h2>Workflow Operations ({department.operations.length})</h2>
-            <div className="operations-list">
-                {department.operations.length > 0 ? (
-                    department.operations.map(renderOperationDetails)
-                ) : (
-                    <p className="empty-state">No operations defined for this template.</p>
-                )}
-            </div>
-        </section>
-        
-        {/* --- 3. Action Button --- */}
-        <div className="form-actions">
-            <button
-                type="button"
-                className="back-btn"
-                onClick={() => navigate("/departments")}
-            >
-                ← Back to Departments List
+      {/* --- SEGMENT 1: DEPARTMENT --- */}
+      <section className="segment-card dept-main">
+        <button onClick={() => navigate(-1)} className="btn-back"><FiArrowLeft /> Back</button>
+        <div className="segment-header">
+          <div>
+            <h1 className="title">{dept.name}</h1>
+            <p className="description">{dept.description || "No description provided."}</p>
+          </div>
+          <div className="action-btns">
+            <button onClick={() => navigate(`/update-department/${id}`)} className="btn-edit">
+              <FiEdit /> Edit Dept
             </button>
-            <button
-                type="button"
-                className="edit-btn"
-                onClick={() => navigate(`/update-department/${id}`)}
-            >
-                Edit Template
+            <button onClick={handleDeleteDept} className="btn-delete">
+              <FiTrash2 /> Delete
             </button>
+          </div>
         </div>
-      </div>
+
+        <div className="meta-grid">
+          <div className="meta-item">
+            <FiUser className="icon" />
+            <div>
+              <label>Department Head</label>
+              {/* FIX: Object rendering error solution */}
+              <span>{typeof dept.departmentHead === 'object' ? dept.departmentHead.name : (dept.departmentHead || "Not Assigned")}</span>
+            </div>
+          </div>
+          <div className="meta-item">
+            <FiActivity className="icon" />
+            <div>
+              <label>Status</label>
+              <span className={`status-badge ${dept.status}`}>{dept.status}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- SEGMENT 2: OPERATIONS --- */}
+      <section className="segment-container">
+        <div className="section-title-bar">
+          <h2> Workflow Operations</h2>
+          <button className="btn-add-sm" onClick={() => navigate(`/departments/${id}/add-operation`)}>
+            <FiPlus /> Add Operation
+          </button>
+        </div>
+
+        <div className="ops-list">
+          {dept.operations?.length === 0 && <p className="empty-text">No operations found in this department.</p>}
+          
+          {dept.operations?.map((op) => (
+            <div key={op._id} className="op-card">
+              <div className="op-header">
+                <div className="op-info" onClick={() => toggleExpand(op._id)}>
+                  {expandedOps[op._id] ? <FiChevronUp /> : <FiChevronDown />}
+                  <h3>{op.name}</h3>
+                </div>
+                <div className="op-actions">
+                  <button className="btn-icon" title="Edit Operation" onClick={() => { saveContextInStorage(id, op._id); navigate(`/edit-operation/${op._id}`); }}><FiEdit /></button>
+                  <button className="btn-icon delete" title="Delete Operation" onClick={() => handleDeleteOperation(op._id)}><FiTrash2 /></button>
+                </div>
+              </div>
+
+              {/* --- SEGMENT 3: CHECKPOINTS (Nested) --- */}
+              {expandedOps[op._id] && (
+                <div className="checkpoint-segment">
+                  <div className="chk-header">
+                    <h4>Checkpoints</h4>
+                    <button className="btn-add-xs" onClick={() => { saveContextInStorage(id, op._id); navigate(`/departments/${id}/operations/${op._id}/add-checkpoint`); }}>
+                      <FiPlus /> New Checkpoint
+                    </button>
+                  </div>
+                  
+                  <div className="chk-grid">
+                    {op.checkpoints?.length === 0 ? (
+                      <p className="empty-text-sm">No checkpoints added yet.</p>
+                    ) : (
+                      op.checkpoints?.map((chk) => (
+                        <div key={chk._id} className="chk-item">
+                          <div className="chk-info">
+                            <FiCheckCircle className="chk-icon" />
+                            <div>
+                              <p className="chk-name">{chk.name}</p>
+                              <p className="chk-types">{chk.allowedSubmissionTypes?.join(", ")}</p>
+                            </div>
+                          </div>
+                          <div className="chk-actions">
+                            <button className="btn-icon-xs" onClick={() => { saveContextInStorage(id, op._id); navigate(`/departments/${id}/operations/${op._id}/edit-checkpoint/${chk._id}`); }}><FiEdit /></button>
+                            <button className="btn-icon-xs delete" onClick={() => handleDeleteCheckpoint(op._id, chk._id)}><FiTrash2 /></button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
       <style jsx>{`
-        /* --- General Container Styles --- */
-        .detail-container {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #1e1b4b, #312e81, #1e3a8a);
-            padding: 2rem 1rem;
-        }
-        .detail-loading {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #1e1b4b, #312e81, #1e3a8a);
-            color: #fff;
-            font-size: 1.2rem;
-        }
-        .detail-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 2.5rem;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 800px;
-            color: #f8fafc;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .detail-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa); 
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-        }
-
-        .detail-subtitle {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
+        .detail-container { padding: 30px; background: #0f172a; min-height: 100vh; color: #f8fafc; font-family: 'Inter', sans-serif; }
         
-        h2 {
-            font-size: 1.5rem;
-            color: #4ade80; /* Green for section headings */
-            border-bottom: 1px solid rgba(34, 197, 94, 0.3);
-            padding-bottom: 0.5rem;
-            margin-top: 2rem;
-            margin-bottom: 1.5rem;
-        }
-        h3 {
-            color: #a78bfa;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-        h4 {
-            color: #cbd5e1;
-            font-size: 1rem;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-            padding-left: 0.5rem;
-            border-left: 3px solid #60a5fa;
-        }
-
-        /* --- Metadata Section --- */
-        .metadata-section {
-            padding: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.1);
-        }
-        .data-row {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 1rem;
-        }
-        .data-group {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            margin-bottom: 1rem;
-            width: 50%;
-        }
-        .data-group.full-width {
-            width: 100%;
-        }
-        .data-group strong {
-            margin-bottom: 0.3rem;
-            color: #e2e8f0;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        .data-group span, .description-long {
-            color: #cbd5e1;
-            font-size: 1rem;
-            padding: 0.5rem 0;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-            padding: 0.5rem;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .description-long {
-            padding: 0.75rem;
-            line-height: 1.5;
-        }
+        /* Segment 1: Dept Card */
+        .segment-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .segment-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .title { font-size: 32px; font-weight: 700; color: #60a5fa; margin: 0; }
+        .description { color: #94a3b8; margin-top: 6px; margin-bottom: 12px; font-size: 16px; max-width: 800px; }
         
-        .status-active {
-            color: #4ade80; 
-            font-weight: 700;
-        }
-        .status-inactive {
-            color: #f87171; 
-            font-weight: 700;
-        }
+        .action-btns { display: flex; gap: 12px; }
+        .btn-edit, .btn-delete { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-edit { background: #3b82f6; color: white; }
+        .btn-edit:hover { background: #2563eb; }
+        .btn-delete { background: #ef44441a; color: #f87171; border: 1px solid #ef44444d; }
+        .btn-delete:hover { background: #ef4444; color: white; }
 
+        /* Back button (top-left) */
+        .btn-back { background: transparent; color: #60a5fa; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 12px; }
 
-        /* --- Operation Block Styling --- */
-        .operation-block {
-            border: 1px solid rgba(167, 139, 250, 0.2);
-            border-radius: 12px;
-            padding: 1.5rem;
-            background: rgba(167, 139, 250, 0.05);
-            margin-bottom: 1.5rem;
-        }
-        .description-text {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            margin-left: 1rem;
-        }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; border-top: 1px solid #334155; padding-top: 16px; margin-top: 16px; margin-bottom: 24px; }
+        .meta-item { display: flex; align-items: center; gap: 12px; }
+        .meta-item label { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .meta-item span { font-weight: 600; color: #cbd5e1; }
+        .icon { font-size: 20px; color: #60a5fa; }
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-badge.ACTIVE { background: #10b9811a; color: #34d399; }
+        .status-badge.INACTIVE { background: #f59e0b1a; color: #fbbf24; }
 
-        /* --- Checkpoint Styling --- */
-        .checkpoints-section {
-            border-top: 1px dashed rgba(255, 255, 255, 0.2);
-            padding-top: 1rem;
-            margin-top: 1rem;
-        }
+        /* Segment 2: Operations */
+        .section-title-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 20px; }
+        .btn-add-sm { background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 14px; }
         
-        .checkpoint-detail {
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background: rgba(96, 165, 250, 0.05);
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.5rem 1.5rem;
-        }
-        .checkpoint-detail p {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-        .checkpoint-detail strong {
-             color: #e2e8f0;
-             font-weight: 500;
-        }
-        .empty-state {
-            color: #94a3b8;
-            font-style: italic;
-            text-align: center;
-            padding: 1rem;
-        }
+        .op-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; margin-bottom: 15px; overflow: hidden; }
+        .op-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #243146; }
+        .op-info { display: flex; align-items: center; gap: 15px; cursor: pointer; flex: 1; }
+        .op-info h3 { margin: 0; font-size: 18px; color: #e2e8f0; }
+        .op-actions { display: flex; gap: 8px; }
 
+        /* Segment 3: Checkpoints */
+        .checkpoint-segment { background: #0f172a; padding: 20px; border-top: 1px solid #334155; }
+        .chk-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .chk-header h4 { margin: 0; font-size: 14px; color: #94a3b8; text-transform: uppercase; }
+        .btn-add-xs { background: transparent; color: #60a5fa; border: 1px dashed #60a5fa; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer; }
 
-        /* --- Action Buttons --- */
-        .form-actions {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            justify-content: flex-end;
-        }
+        .chk-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .chk-item { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 12px 16px; border-radius: 8px; border: 1px solid #334155; }
+        .chk-info { display: flex; align-items: center; gap: 12px; }
+        .chk-icon { color: #10b981; }
+        .chk-name { margin: 0; font-weight: 500; font-size: 14px; }
+        .chk-types { margin: 0; font-size: 11px; color: #64748b; }
+        .chk-actions { display: flex; gap: 8px; }
 
-        .back-btn {
-          background: transparent;
-          color: #cbd5e1;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 12px;
-          padding: 0.8rem;
-          font-size: 0.95rem;
-          cursor: pointer;
-          transition: 0.3s ease;
-          width: 250px;
-        }
-
-        .back-btn:hover {
-          background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .edit-btn {
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
-            border: none;
-            padding: 0.8rem;
-            border-radius: 12px;
-            font-weight: 600;
-            color: #fff;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 200px;
-        }
-        .edit-btn:hover {
-          background: linear-gradient(90deg, #4f46e5, #7c3aed);
-          transform: translateY(-2px);
-        }
-
-        .error-text {
-            color: #fca5a5;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-        .back-btn-error {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            border: 1px solid #fca5a5;
-            background: transparent;
-            color: #fca5a5;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-
-        /* Media Queries */
-        @media (max-width: 600px) {
-            .data-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            .data-group {
-                width: 100%;
-            }
-            .checkpoint-detail {
-                grid-template-columns: 1fr;
-            }
-            .form-actions {
-                flex-direction: column;
-            }
-            .back-btn, .edit-btn {
-                width: 100%;
-            }
-        }
+        /* Buttons & Extras */
+        .btn-icon, .btn-icon-xs { background: #334155; color: #cbd5e1; border: none; padding: 8px; border-radius: 6px; cursor: pointer; }
+        .btn-icon.delete:hover { background: #ef4444; color: white; }
+        .btn-icon-xs { padding: 4px; font-size: 14px; }
+        .empty-text { color: #64748b; text-align: center; padding: 40px; }
+        .empty-text-sm { color: #475569; font-size: 13px; font-style: italic; }
       `}</style>
+
+      <ConfirmModal
+        open={confirmState.open}
+        title={confirmState.title}
+        message={confirmState.message}
+        onCancel={closeConfirm}
+        onConfirm={() => { if (typeof confirmState.onConfirm === 'function') confirmState.onConfirm(); }}
+      />
     </div>
   );
 }

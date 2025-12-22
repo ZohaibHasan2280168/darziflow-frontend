@@ -1,34 +1,40 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE } from '../../utils/constants';
+import { useAlert } from '../../components/ui/AlertProvider';
 
 export default function VerifyEmailPage() {
   const { token } = useParams();
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const [status, setStatus] = useState("loading"); // loading | success | error
   const [message, setMessage] = useState("");
-//comment here
+
   useEffect(() => {
+
+
     const verifyEmail = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+        const res = await axios.get(`${API_BASE}/auth/verify/${token}`);
         setStatus("success");
         setMessage(res.data.message);
+        showAlert({ title: 'Verification', message: res.data.message, type: 'success' });
 
         // Optional: redirect to login after 3 seconds
         setTimeout(() => {
           navigate("/admin/login"); // or wherever login is
         }, 3000);
       } catch (err) {
+        const errMsg = err.response?.data?.message || "Verification failed. Invalid or expired token.";
         setStatus("error");
-        setMessage(
-          err.response?.data?.message || "Verification failed. Invalid or expired token."
-        );
+        setMessage(errMsg);
+        showAlert({ title: 'Verification Failed', message: errMsg, type: 'error' });
       }
     };
 
     verifyEmail();
-  }, [token, navigate]);
+  }, [token, navigate, showAlert]);
 
   return (
     <div className="verify-page">

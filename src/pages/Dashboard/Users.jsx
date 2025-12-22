@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../components/layout/Navbar";
 import { Link, useNavigate } from "react-router-dom";
+import { useAlert } from '../../components/ui/AlertProvider';
 
 const API_URL = "https://darziflow-backend.onrender.com/api";
 
@@ -25,6 +26,7 @@ export default function Users() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     fetchUsers();
@@ -63,10 +65,10 @@ export default function Users() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to delete user");
-      alert("User deleted successfully");
+      showAlert({ title: 'Success', message: 'User deleted successfully', type: 'success' });
       setUsers(users.filter((u) => u._id !== id));
     } catch (err) {
-      alert(err.message || "Failed to delete user");
+      showAlert({ title: 'Error', message: err.message || "Failed to delete user", type: 'error' });
     }
   };
 

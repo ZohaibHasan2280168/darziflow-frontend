@@ -4,11 +4,12 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { FaUser, FaEnvelope, FaLock, FaArrowLeft, FaCheck } from "react-icons/fa"
-
-const API_URL = "http://localhost:5000/api/profile"
+import { useAlert } from '../components/ui/AlertProvider'
+import { API_BASE } from '../utils/constants'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
+  const { showAlert } = useAlert()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -33,7 +34,7 @@ export default function ProfilePage() {
         const token = getToken()
         if (!token) throw new Error("No access token found")
 
-        const res = await axios.get(API_URL, {
+const res = await axios.get(`${API_BASE}/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -65,7 +66,7 @@ export default function ProfilePage() {
     try {
       const token = getToken()
       const res = await axios.put(
-        `${API_URL}/password`,
+        `${API_BASE}/profile/password`,
         {
           oldPassword: passwords.oldPassword,
           newPassword: passwords.newPassword,
@@ -73,11 +74,15 @@ export default function ProfilePage() {
         { headers: { Authorization: `Bearer ${token}` } },
       )
 
-      setPasswordMsg(res.data.msg)
-      setPasswordMsgType("success")
+      // show success alert
+      showAlert({ title: 'Success', message: res.data.msg || 'Password updated', type: 'success' })
+      setPasswordMsg("")
+      setPasswordMsgType("")
       setPasswords({ oldPassword: "", newPassword: "", confirmPassword: "" })
     } catch (err) {
-      setPasswordMsg(err.response?.data?.msg || "Failed to change password")
+      const msg = err.response?.data?.msg || "Failed to change password"
+      showAlert({ title: 'Error', message: msg, type: 'error' })
+      setPasswordMsg(msg)
       setPasswordMsgType("error")
     }
   }
