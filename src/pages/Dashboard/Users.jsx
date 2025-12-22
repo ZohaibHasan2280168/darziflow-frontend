@@ -81,9 +81,14 @@ export default function Users() {
             <h1 className="header-title">User Management</h1>
             <p className="header-subtitle">View, edit, or remove users</p>
           </div>
-          <Link to="/dashboard" className="back-button">
-            ← Back to Dashboard
-          </Link>
+          <div className="header-actions">
+            <Link to="/add-user" className="add-button">
+              + Add User
+            </Link>
+            <Link to="/dashboard" className="back-button">
+              ← Back to Dashboard
+            </Link>
+          </div>
         </div>
 
         <div className="users-card">
@@ -213,6 +218,20 @@ export default function Users() {
           background: rgba(99, 102, 241, 0.3);
           transform: translateY(-2px);
         }
+
+        .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+
+        .add-button {
+          padding: 0.75rem 1.25rem;
+          background: rgba(34, 197, 94, 0.15);
+          border: 1px solid rgba(34, 197, 94, 0.25);
+          border-radius: 12px;
+          color: #e2e8f0;
+          text-decoration: none;
+          font-weight: 600;
+          transition: 0.25s ease;
+        }
+        .add-button:hover { background: rgba(34,197,94,0.25); transform: translateY(-2px); }
 
         .users-card {
           background: rgba(255, 255, 255, 0.05);
