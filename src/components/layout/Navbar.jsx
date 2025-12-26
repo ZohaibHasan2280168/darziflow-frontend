@@ -180,7 +180,7 @@ const Navbar = () => {
                 <button className="side-item" onClick={() => handleNavigation("/departments")}>
                   <FiGrid />
                 </button>
-                <button className="side-item" onClick={() => handleNavigation("/orders")}>
+                <button className="side-item" onClick={() => handleNavigation("/orderlist")}>
                   <FiShoppingCart />
                 </button>
                 <button className="side-item exit-btn" onClick={() => setSideOpen(false)}>

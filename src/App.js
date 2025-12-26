@@ -4,6 +4,7 @@ import { AuthProvider } from "./components/context/AuthContext";
 import { ThemeProvider } from './components/context/ThemeContext';
 import AlertProvider from './components/ui/AlertProvider';
 
+// --- Page Imports ---
 import RoleUserList from './pages/RoleUserList'; 
 import RoleSelection from './pages/RoleSelection';
 import ModeratorLogin from './pages/Auth/Moderator/ModeratorLogin';
@@ -19,7 +20,9 @@ import DepartmentDetail from './pages/Dashboard/DepartmentDetail';
 import AddDepartment from './pages/Dashboard/AddDepartment';
 import UpdateDepartments from './pages/Dashboard/UpdateDepartments';
 
-// --- Nayi Files ke Imports ---
+import OrdersList from './pages/Dashboard/OrderList';
+import Order from "./pages/Dashboard/Order"; 
+
 import OperationAdd from './pages/Dashboard/OperationAdd';
 import OperationEdit from './pages/Dashboard/OperationEdit';
 import CheckpointAdd from './pages/Dashboard/CheckpointAdd';
@@ -41,142 +44,184 @@ function App() {
         <AlertProvider>
           <BrowserRouter>
             <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<RoleSelection />} />
-            <Route path="/departments" element={<Departments />} />
-            <Route path="/update-department/:id" element={<UpdateDepartments />} />
-            <Route path="/add-department" element={<AddDepartment />} />
-            <Route path="/department-detail/:id" element={<DepartmentDetail />} />
-            <Route path="/moderator-login" element={<ModeratorLogin />} />
-            <Route path="/admin-login" element={<AdminLoginPage />} />
-            <Route path="/admin-signup" element={<AdminSignUpPage />} />
-            <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
-            
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+              {/* ==========================================
+                  PUBLIC ROUTES (No Login Required)
+              ========================================== */}
+              <Route path="/" element={<RoleSelection />} />
+              <Route path="/moderator-login" element={<ModeratorLogin />} />
+              <Route path="/admin-login" element={<AdminLoginPage />} />
+              <Route path="/admin-signup" element={<AdminSignUpPage />} />
+              <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-            {/* User Routes */}
-            <Route
-              path="/users/role/:roleName"
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN']}> 
-                  <RoleUserList /> 
-                </ProtectedRoute>
-              }
-            />
+              {/* ==========================================
+                  ADMIN ONLY ROUTES
+              ========================================== */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route
+                path="/users"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <Users />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/users/role/:roleName"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}> 
+                    <RoleUserList /> 
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/add-user"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <AddUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/update-user/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <UpdateUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route 
+                path="/settings" 
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <Settings />
+                  </ProtectedRoute>
+                } 
+              />
 
-            {/* Admin Routes Only */}
-            <Route 
-              path="/dashboard" 
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <Dashboard />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/settings" 
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <Settings />
-                </ProtectedRoute>
-              } 
-            />
-            <Route
-              path="/users"
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <Users />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/add-user"
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <AddUser />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/update-user/:id"
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <UpdateUser />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Moderator & Admin accessible Section */}
-            
-            {/* --- Naye Operation Routes --- */}
-            <Route
-              path="/departments/:deptId/add-operation"
-              element={
+              {/* ==========================================
+                  ADMIN & MODERATOR SHARED ROUTES
+              ========================================== */}
+              
+              {/* Department Management */}
+              <Route path="/departments" element={
                 <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
-                  <OperationAdd />
+                  <Departments />
                 </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/edit-operation/:opId"
-              element={
+              } />
+              <Route path="/add-department" element={
                 <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
-                  <OperationEdit />
+                  <AddDepartment />
                 </ProtectedRoute>
-              }
-            />
-
-            {/* --- Naye Checkpoint Routes --- */}
-            <Route
-              path="/departments/:deptId/operations/:opId/add-checkpoint"
-              element={
+              } />
+              <Route path="/update-department/:id" element={
                 <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
-                  <CheckpointAdd />
+                  <UpdateDepartments />
                 </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/departments/:deptId/operations/:opId/edit-checkpoint/:chkId"
-              element={
+              } />
+              <Route path="/department-detail/:id" element={
                 <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
-                  <CheckpointEdit />
+                  <DepartmentDetail />
                 </ProtectedRoute>
-              }
-            />
+              } />
 
-            <Route
-              path="/role/:role"
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
-                  <Role />
-                </ProtectedRoute>
-              }
-            />
+              {/* Order Management */}
+              <Route
+                path="/orderlist"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <OrdersList />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Order Detail (New Route Added Here) */}
+              <Route
+                path="/orders/:orderId"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <Order />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Profile Page accessible to all logged-in users */}
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
+              {/* Operation Management */}
+              <Route
+                path="/departments/:deptId/add-operation"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <OperationAdd />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/edit-operation/:opId"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <OperationEdit />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Moderator Dashboard */}
-            <Route
-              path="/moderator-dashboard"
-              element={
-                <ProtectedRoute allowedRoles={['MODERATOR']}>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
+              {/* Checkpoint Management */}
+              <Route
+                path="/departments/:deptId/operations/:opId/add-checkpoint"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <CheckpointAdd />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/departments/:deptId/operations/:opId/edit-checkpoint/:chkId"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <CheckpointEdit />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Catch-all 404 redirect */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+              {/* Roles & Profile */}
+              <Route
+                path="/role/:role"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <Role />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MODERATOR']}>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* ==========================================
+                  MODERATOR ONLY ROUTES
+              ========================================== */}
+              <Route
+                path="/moderator-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={['MODERATOR']}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Catch-all 404 redirect */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
           </BrowserRouter>
         </AlertProvider>
       </ThemeProvider>
