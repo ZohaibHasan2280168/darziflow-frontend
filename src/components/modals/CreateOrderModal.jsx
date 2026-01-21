@@ -1,21 +1,26 @@
-import { useState, useEffect } from "react";
-import { FiPlus,
-  FiX, FiEdit2, FiInfo, FiUser, FiLayers, FiFileText,
+import { useState } from "react";
+import { 
+  FiX, FiPlus, FiInfo, FiUser, FiLayers, FiFileText,
   FiCheckCircle, FiAlertCircle, FiArrowLeft, FiChevronRight,
-  FiTag, FiMail, FiList, FiTrash2
+  FiTag, FiMail, FiList
 } from "react-icons/fi";
-import api from "../../services/reqInterceptor";
+import api from '../../services/reqInterceptor';
 import { useAlert } from "../../components/ui/AlertProvider";
 import './CreateOrderModal.css';
 
-const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departments }) => {
+const CreateOrderModal = ({ 
+  isOpen, 
+  onClose, 
+  departments, 
+  onOrderCreated 
+}) => {
   const [formStep, setFormStep] = useState(1);
   const [formErrors, setFormErrors] = useState({});
   const [docInput, setDocInput] = useState("");
   const [selectedDeptId, setSelectedDeptId] = useState("");
   const { showAlert } = useAlert();
 
-  const [editedOrder, setEditedOrder] = useState({
+  const [newOrder, setNewOrder] = useState({
     name: "",
     type: "PANT",
     description: "",
@@ -26,27 +31,6 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     requiredDocTypes: [],
     departmentSequenceIds: []
   });
-
-  useEffect(() => {
-    if (orderData && isOpen) {
-      // Transform the order data to match our form structure
-      setEditedOrder({
-        name: orderData.name || "",
-        type: orderData.type || "PANT",
-        description: orderData.description || "",
-        clientName: orderData.clientName || "",
-        clientEmail: orderData.clientEmail || "",
-        amount: orderData.amount || "",
-        currency: orderData.currency || "Rs.",
-        requiredDocTypes: orderData.requiredDocuments?.map(d => d.docType) || [],
-        departmentSequenceIds: orderData.departmentSequence?.map(d => d._id || d) || []
-      });
-      setFormStep(1);
-      setFormErrors({});
-      setDocInput("");
-      setSelectedDeptId("");
-    }
-  }, [orderData, isOpen]);
 
   const stepInfo = [
     { num: 1, title: 'Order Details', icon: FiInfo },
@@ -66,8 +50,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     if (e) e.preventDefault();
     if (docInput.trim()) {
       const formattedDoc = docInput.trim().toUpperCase().replace(/\s+/g, '_');
-      if (!editedOrder.requiredDocTypes.includes(formattedDoc)) {
-        setEditedOrder(prev => ({
+      if (!newOrder.requiredDocTypes.includes(formattedDoc)) {
+        setNewOrder(prev => ({
           ...prev,
           requiredDocTypes: [...prev.requiredDocTypes, formattedDoc]
         }));
@@ -77,7 +61,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   };
 
   const removeDocType = (doc) => {
-    setEditedOrder(prev => ({
+    setNewOrder(prev => ({
       ...prev,
       requiredDocTypes: prev.requiredDocTypes.filter(d => d !== doc)
     }));
@@ -86,7 +70,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   const addDeptToSequence = (e) => {
     if (e) e.preventDefault();
     if (selectedDeptId) {
-      setEditedOrder(prev => ({
+      setNewOrder(prev => ({
         ...prev,
         departmentSequenceIds: [...prev.departmentSequenceIds, selectedDeptId]
       }));
@@ -95,7 +79,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   };
 
   const removeDeptFromSequence = (index) => {
-    setEditedOrder(prev => {
+    setNewOrder(prev => {
       const updatedSeq = [...prev.departmentSequenceIds];
       updatedSeq.splice(index, 1);
       return { ...prev, departmentSequenceIds: updatedSeq };
@@ -106,21 +90,21 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     const errors = {};
     
     if (step === 1) {
-      if (!editedOrder.name.trim()) errors.name = "Order name is required";
-      if (!editedOrder.amount) errors.amount = "Quote amount is required";
+      if (!newOrder.name.trim()) errors.name = "Order name is required";
+      if (!newOrder.amount) errors.amount = "Quote amount is required";
     }
     
     if (step === 2) {
-      if (!editedOrder.clientName.trim()) errors.clientName = "Client name is required";
-      if (!editedOrder.clientEmail.trim()) {
+      if (!newOrder.clientName.trim()) errors.clientName = "Client name is required";
+      if (!newOrder.clientEmail.trim()) {
         errors.clientEmail = "Client email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedOrder.clientEmail)) {
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newOrder.clientEmail)) {
         errors.clientEmail = "Please enter a valid email";
       }
     }
     
     if (step === 3) {
-      if (editedOrder.departmentSequenceIds.length === 0) {
+      if (newOrder.departmentSequenceIds.length === 0) {
         errors.departments = "At least one department is required";
       }
     }
@@ -139,44 +123,26 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     setFormStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleUpdateOrder = async (e) => {
+  const handleCreateOrder = async (e) => {
     e.preventDefault();
     if (!validateStep(3)) return;
     
     try {
-      const payload = {
-        name: editedOrder.name,
-        type: editedOrder.type,
-        amount: Number(editedOrder.amount),
-        currency: editedOrder.currency,
-        description: editedOrder.description,
-        clientName: editedOrder.clientName,
-        clientEmail: editedOrder.clientEmail,
-        requiredDocTypes: editedOrder.requiredDocTypes,
-        departmentSequenceIds: editedOrder.departmentSequenceIds
-      };
-
-      await api.put(`/orders/${orderData.uniqueId}`, payload);
-      
-      showAlert({
-        title: "Success",
-        message: "Order updated successfully!",
-        type: "success"
-      });
-      
-      onUpdateSuccess();
+      await api.post(`/orders`, newOrder);
       onClose();
+      onOrderCreated();
     } catch (err) {
+      // Note: The AlertProvider will sanitize the message automatically
       showAlert({
         title: "Error",
-        message: err.response?.data?.message || "Failed to update order",
+        message: err.response?.data?.message || "Failed to create order",
         type: "error"
       });
     }
   };
 
   const resetForm = () => {
-    setEditedOrder({
+    setNewOrder({
       name: "",
       type: "PANT",
       description: "",
@@ -198,13 +164,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     onClose();
   };
 
-  if (!isOpen || !orderData) return null;
-
-  // Get department names for display
-  const getDeptName = (id) => {
-    const dept = departments.find(d => d._id === id);
-    return dept?.name || "Unknown Department";
-  };
+  if (!isOpen) return null;
 
   return (
     <div className="modal-backdrop" onClick={handleClose}>
@@ -213,11 +173,11 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
         <div className="modal-header">
           <div className="modal-title-group">
             <div className="modal-icon">
-              <FiEdit2 size={24} />
+              <FiPlus size={24} />
             </div>
             <div>
-              <h2 className="modal-title">Edit Order</h2>
-              <p className="modal-subtitle">Update order: {orderData.uniqueId || orderData._id?.slice(-8).toUpperCase()}</p>
+              <h2 className="modal-title">Create New Order</h2>
+              <p className="modal-subtitle">Configure order details, client info and workflow</p>
             </div>
           </div>
           <button className="modal-close" onClick={handleClose}>
@@ -242,7 +202,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
           ))}
         </div>
 
-        <form onSubmit={handleUpdateOrder} className="modal-form">
+        <form onSubmit={handleCreateOrder} className="modal-form">
           <div className="modal-body">
             {/* Step 1: Order Details */}
             {formStep === 1 && (
@@ -251,7 +211,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <FiInfo size={20} />
                   <div>
                     <h3>Order Details</h3>
-                    <p>Update the basic information for this order</p>
+                    <p>Enter the basic information for this order</p>
                   </div>
                 </div>
 
@@ -262,8 +222,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <input 
                     type="text" 
                     className={`form-input ${formErrors.name ? 'error' : ''}`}
-                    value={editedOrder.name} 
-                    onChange={(e) => setEditedOrder({...editedOrder, name: e.target.value})} 
+                    value={newOrder.name} 
+                    onChange={(e) => setNewOrder({...newOrder, name: e.target.value})} 
                     placeholder="e.g., Summer Collection Batch 01"
                   />
                   {formErrors.name && (
@@ -280,8 +240,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                       <button
                         key={type.value}
                         type="button"
-                        className={`garment-type-btn ${editedOrder.type === type.value ? 'selected' : ''}`}
-                        onClick={() => setEditedOrder({...editedOrder, type: type.value})}
+                        className={`garment-type-btn ${newOrder.type === type.value ? 'selected' : ''}`}
+                        onClick={() => setNewOrder({...newOrder, type: type.value})}
                       >
                         <FiTag size={18} />
                         <span className="garment-label">{type.label}</span>
@@ -297,8 +257,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <div className="input-combo">
                     <select 
                       className="combo-prefix"
-                      value={editedOrder.currency} 
-                      onChange={(e) => setEditedOrder({...editedOrder, currency: e.target.value})}
+                      value={newOrder.currency} 
+                      onChange={(e) => setNewOrder({...newOrder, currency: e.target.value})}
                     >
                       <option value="Rs.">Rs.</option>
                       <option value="$">USD</option>
@@ -308,8 +268,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                     <input 
                       type="number" 
                       className={`combo-input ${formErrors.amount ? 'error' : ''}`}
-                      value={editedOrder.amount} 
-                      onChange={(e) => setEditedOrder({...editedOrder, amount: e.target.value})} 
+                      value={newOrder.amount} 
+                      onChange={(e) => setNewOrder({...newOrder, amount: e.target.value})} 
                       placeholder="0.00"
                     />
                   </div>
@@ -324,8 +284,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <label className="form-label">Description (Optional)</label>
                   <textarea 
                     className="form-textarea"
-                    value={editedOrder.description} 
-                    onChange={(e) => setEditedOrder({...editedOrder, description: e.target.value})} 
+                    value={newOrder.description} 
+                    onChange={(e) => setNewOrder({...newOrder, description: e.target.value})} 
                     placeholder="Add notes or special instructions for this order..."
                     rows={3}
                   />
@@ -340,7 +300,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <FiUser size={20} />
                   <div>
                     <h3>Client Information</h3>
-                    <p>Update the client details for this order</p>
+                    <p>Enter the client details for this order</p>
                   </div>
                 </div>
 
@@ -353,8 +313,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                     <input 
                       type="text" 
                       className={`form-input with-icon ${formErrors.clientName ? 'error' : ''}`}
-                      value={editedOrder.clientName} 
-                      onChange={(e) => setEditedOrder({...editedOrder, clientName: e.target.value})} 
+                      value={newOrder.clientName} 
+                      onChange={(e) => setNewOrder({...newOrder, clientName: e.target.value})} 
                       placeholder="Enter client's full name"
                     />
                   </div>
@@ -374,8 +334,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                     <input 
                       type="email" 
                       className={`form-input with-icon ${formErrors.clientEmail ? 'error' : ''}`}
-                      value={editedOrder.clientEmail} 
-                      onChange={(e) => setEditedOrder({...editedOrder, clientEmail: e.target.value})} 
+                      value={newOrder.clientEmail} 
+                      onChange={(e) => setNewOrder({...newOrder, clientEmail: e.target.value})} 
                       placeholder="client@example.com"
                     />
                   </div>
@@ -388,11 +348,11 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
 
                 <div className="client-preview-card">
                   <div className="preview-avatar">
-                    {editedOrder.clientName ? editedOrder.clientName.charAt(0).toUpperCase() : '?'}
+                    {newOrder.clientName ? newOrder.clientName.charAt(0).toUpperCase() : '?'}
                   </div>
                   <div className="preview-info">
-                    <span className="preview-name">{editedOrder.clientName || 'Client Name'}</span>
-                    <span className="preview-email">{editedOrder.clientEmail || 'client@email.com'}</span>
+                    <span className="preview-name">{newOrder.clientName || 'Client Name'}</span>
+                    <span className="preview-email">{newOrder.clientEmail || 'client@email.com'}</span>
                   </div>
                 </div>
               </div>
@@ -405,7 +365,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <FiLayers size={20} />
                   <div>
                     <h3>Department Workflow</h3>
-                    <p>Update the production sequence for this order</p>
+                    <p>Define the production sequence for this order</p>
                   </div>
                 </div>
 
@@ -419,9 +379,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                     >
                       <option value="">Select Department...</option>
                       {departments.map(d => (
-                        <option key={d._id} value={d._id} disabled={editedOrder.departmentSequenceIds.includes(d._id)}>
-                          {d.name}
-                        </option>
+                        <option key={d._id} value={d._id}>{d.name}</option>
                       ))}
                     </select>
                     <button 
@@ -444,36 +402,36 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                 <div className="workflow-sequence">
                   <div className="sequence-label">
                     <FiList size={14} />
-                    <span>Production Sequence ({editedOrder.departmentSequenceIds.length} steps)</span>
+                    <span>Production Sequence ({newOrder.departmentSequenceIds.length} steps)</span>
                   </div>
                   <div className="sequence-list">
-                    {editedOrder.departmentSequenceIds.length === 0 ? (
+                    {newOrder.departmentSequenceIds.length === 0 ? (
                       <div className="sequence-empty">
                         <FiLayers size={32} />
                         <span>No departments added yet</span>
                         <p>Add departments above to define the workflow</p>
                       </div>
                     ) : (
-                      editedOrder.departmentSequenceIds.map((id, index) => {
-                        const deptName = getDeptName(id);
+                      newOrder.departmentSequenceIds.map((id, index) => {
+                        const dept = departments.find(d => d._id === id);
                         return (
                           <div key={index} className="sequence-item">
                             <div className="sequence-connector">
                               <span className="sequence-num">{index + 1}</span>
-                              {index < editedOrder.departmentSequenceIds.length - 1 && (
+                              {index < newOrder.departmentSequenceIds.length - 1 && (
                                 <div className="connector-line" />
                               )}
                             </div>
                             <div className="sequence-content">
-                              <span className="sequence-name">{deptName}</span>
-                              <span className="sequence-meta">Step {index + 1} of {editedOrder.departmentSequenceIds.length}</span>
+                              <span className="sequence-name">{dept?.name || 'Unknown'}</span>
+                              <span className="sequence-meta">Step {index + 1} of {newOrder.departmentSequenceIds.length}</span>
                             </div>
                             <button 
                               type="button"
                               className="sequence-remove"
                               onClick={() => removeDeptFromSequence(index)}
                             >
-                              <FiTrash2 size={14} />
+                              <FiX size={16} />
                             </button>
                           </div>
                         );
@@ -491,7 +449,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <FiFileText size={20} />
                   <div>
                     <h3>Required Documents</h3>
-                    <p>Update documents needed before production starts</p>
+                    <p>Specify documents needed before production starts</p>
                   </div>
                 </div>
 
@@ -521,10 +479,10 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                 <div className="documents-container">
                   <div className="docs-label">
                     <FiFileText size={14} />
-                    <span>Required Documents ({editedOrder.requiredDocTypes.length})</span>
+                    <span>Required Documents ({newOrder.requiredDocTypes.length})</span>
                   </div>
                   <div className="docs-list">
-                    {editedOrder.requiredDocTypes.length === 0 ? (
+                    {newOrder.requiredDocTypes.length === 0 ? (
                       <div className="docs-empty">
                         <FiFileText size={32} />
                         <span>No documents required</span>
@@ -532,7 +490,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                       </div>
                     ) : (
                       <div className="docs-tags">
-                        {editedOrder.requiredDocTypes.map((doc, idx) => (
+                        {newOrder.requiredDocTypes.map((doc, idx) => (
                           <span key={idx} className="doc-tag">
                             <FiFileText size={12} />
                             {doc}
@@ -559,27 +517,27 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   <div className="summary-grid">
                     <div className="summary-item">
                       <span className="summary-label">Order Name</span>
-                      <span className="summary-value">{editedOrder.name || '-'}</span>
+                      <span className="summary-value">{newOrder.name || '-'}</span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Type</span>
-                      <span className="summary-value">{editedOrder.type}</span>
+                      <span className="summary-value">{newOrder.type}</span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Quote</span>
-                      <span className="summary-value">{editedOrder.currency} {editedOrder.amount || '0'}</span>
+                      <span className="summary-value">{newOrder.currency} {newOrder.amount || '0'}</span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Client</span>
-                      <span className="summary-value">{editedOrder.clientName || '-'}</span>
+                      <span className="summary-value">{newOrder.clientName || '-'}</span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Workflow Steps</span>
-                      <span className="summary-value">{editedOrder.departmentSequenceIds.length}</span>
+                      <span className="summary-value">{newOrder.departmentSequenceIds.length}</span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Documents</span>
-                      <span className="summary-value">{editedOrder.requiredDocTypes.length}</span>
+                      <span className="summary-value">{newOrder.requiredDocTypes.length}</span>
                     </div>
                   </div>
                 </div>
@@ -620,9 +578,9 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                 </button>
               )}
               {formStep === 4 && (
-                <button type="submit" className="btn-primary btn-success btn-update">
+                <button type="submit" className="btn-primary btn-success btn-create">
                   <FiCheckCircle size={16} />
-                  Update Order
+                  Create Order
                 </button>
               )}
             </div>
@@ -633,4 +591,4 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   );
 };
 
-export default EditOrderModal;
+export default CreateOrderModal;
