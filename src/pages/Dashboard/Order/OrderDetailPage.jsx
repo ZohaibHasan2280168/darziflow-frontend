@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -59,8 +57,8 @@ const Order = () => {
     try {
       const res = await api.get(`/orders/${orderId}`);
       const orderData = res.data.order || res.data;
-      console.log('[v0] Fetched order:', orderData);
-      console.log('[v0] Required documents:', orderData?.requiredDocuments);
+      //console.log('Fetched order:', orderData);
+      //console.log('Required documents:', orderData?.requiredDocuments);
       setOrder(orderData);
       setLoading(false);
     } catch (err) {
@@ -98,19 +96,19 @@ const Order = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    console.log('[v0] Starting upload for:', docType);
+    //console.log('Starting upload:', docType);
     const formData = new FormData();
     formData.append('prerequisiteFile', file);
     setUploadingDoc(docType);
 
     try {
       const uploadRes = await api.post(`/orders/${orderId}/prerequisites/${docType}`, formData);
-      console.log('[v0] Upload response:', uploadRes.data);
+     // console.log('Upload response:', uploadRes.data);
       toast.success(`${docType.replace(/_/g, ' ')} uploaded successfully`);
-      console.log('[v0] Fetching updated order details...');
+      //console.log('Fetching updated order details...');
       await fetchOrderDetails();
     } catch (err) {
-      console.log('[v0] Upload error:', err);
+     // console.log('[v0] Upload error:', err);
       toast.error('Upload failed');
     } finally {
       setUploadingDoc(null);
@@ -187,12 +185,6 @@ const Order = () => {
     );
   };
 
-  const getDocumentIcon = (fileUrl) => {
-    if (!fileUrl) return <FiFile size={20} />;
-    if (fileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) return <FiImage size={20} />;
-    if (fileUrl.match(/\.(mp4|webm|mov)$/i)) return <FiVideo size={20} />;
-    return <FileText size={20} />;
-  };
 
   const getStatusStyle = (status) => {
     return statusColor[status] || 'status-pending';
@@ -339,8 +331,8 @@ const Order = () => {
               <FiClock size={20} />
             </div>
             <div className="stat-content">
-              <span className="stat-label">Last Updated</span>
-              <span className="stat-value stat-date">{formatDate(order?.updatedAt)}</span>
+              <span className="stat-label">Due Date</span>
+              <span className="stat-value stat-date">{formatDate(order?.dueDate)}</span>
             </div>
           </div>
         </div>

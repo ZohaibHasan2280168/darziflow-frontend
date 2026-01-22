@@ -301,7 +301,7 @@ const OrdersList = () => {
   onClose={() => setShowEditModal(false)} 
   orderData={orderToEdit} 
   onUpdateSuccess={fetchData}
-  departments={departments}  // Add this line
+  departments={departments}
 />
     </div>
   );

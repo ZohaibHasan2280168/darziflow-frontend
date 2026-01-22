@@ -430,8 +430,7 @@ input, textarea, select {
 }
 
 :root.light input, :root.light textarea, :root.light select {
-  background: #151515;
-  color: #f5f6f8;
+  color: #0b0b0b;
   border-color: rgba(15,23,36,0.06);
 }
 

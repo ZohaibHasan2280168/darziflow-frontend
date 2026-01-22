@@ -27,7 +27,7 @@ const Navbar = () => {
   const [sideOpen, setSideOpen] = useState(false)
   const dropdownRef = useRef(null)
 
-  // 📱 Handle responsive behavior
+  //Handle responsive behavior
   useEffect(() => {
     const checkScreenSize = () => setIsMobile(window.innerWidth <= 768)
     checkScreenSize()
@@ -35,7 +35,7 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", checkScreenSize)
   }, [])
 
-  // 👤 Fetch user profile
+  // Fetch user profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -59,7 +59,7 @@ const Navbar = () => {
     fetchProfile()
   }, [])
 
-  // 🧠 Close dropdown when clicking outside
+  //Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -106,7 +106,7 @@ const Navbar = () => {
           <button
             className="hamburger-btn"
             aria-label="Toggle navigation menu"
-            onClick={() => setSideOpen((prev) => !prev)} // ✅ FIX
+            onClick={() => setSideOpen((prev) => !prev)}
             title="Menu"
           >
             <span></span>
@@ -129,17 +129,11 @@ const Navbar = () => {
         <div className="navbar-right">
           {!isMobile && (
             <div className="action-buttons">
-              <button
-                className="nav-button"
-                onClick={handleAllDepartments}
-                aria-label="View all departments"
-              >
-                All Departments
-              </button>
+              
             </div>
           )}
 
-          {/* 👤 Profile Dropdown */}
+          {/*Profile Dropdown */}
           <div className="profile-container" ref={dropdownRef}>
             <div className="profile-icon" onClick={handleProfileClick}>
               {user.profilePic ? (
@@ -171,16 +165,16 @@ const Navbar = () => {
           <aside className={`side-drawer ${sideOpen ? "open" : ""}`}>
             <div className="side-inner">
               <div className="side-items">
-                <button className="side-item" onClick={() => handleNavigation("/dashboard")}>
+                <button className="side-item" title="Home" onClick={() => handleNavigation("/dashboard")}>
                   <FiHome />
                 </button>
-                <button className="side-item" onClick={() => handleNavigation("/users")}>
+                <button className="side-item" title="Users" onClick={() => handleNavigation("/users")}>
                   <FiUsers />
                 </button>
-                <button className="side-item" onClick={() => handleNavigation("/departments")}>
+                <button className="side-item" title="Departments" onClick={() => handleNavigation("/departments")}>
                   <FiGrid />
                 </button>
-                <button className="side-item" onClick={() => handleNavigation("/orderlist")}>
+                <button className="side-item" title="Orders" onClick={() => handleNavigation("/orderlist")}>
                   <FiShoppingCart />
                 </button>
                 <button className="side-item exit-btn" onClick={() => setSideOpen(false)}>

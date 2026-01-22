@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { 
-  FiX, FiPlus, FiInfo, FiUser, FiLayers, FiFileText,
+  FiX, FiPlus, FiInfo, FiUser, FiLayers, FiFileText, FiCalendar,
   FiCheckCircle, FiAlertCircle, FiArrowLeft, FiChevronRight,
   FiTag, FiMail, FiList
 } from "react-icons/fi";
@@ -20,6 +20,13 @@ const CreateOrderModal = ({
   const [selectedDeptId, setSelectedDeptId] = useState("");
   const { showAlert } = useAlert();
 
+  // Calculate tomorrow's date for the due date default
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
   const [newOrder, setNewOrder] = useState({
     name: "",
     type: "PANT",
@@ -29,7 +36,8 @@ const CreateOrderModal = ({
     amount: "",
     currency: "Rs.",
     requiredDocTypes: [],
-    departmentSequenceIds: []
+    departmentSequenceIds: [],
+    dueDate: getTomorrowDate() // Add due date with tomorrow as default
   });
 
   const stepInfo = [
@@ -92,6 +100,18 @@ const CreateOrderModal = ({
     if (step === 1) {
       if (!newOrder.name.trim()) errors.name = "Order name is required";
       if (!newOrder.amount) errors.amount = "Quote amount is required";
+      if (!newOrder.dueDate) errors.dueDate = "Due date is required";
+      
+      // Validate due date is not in the past
+      if (newOrder.dueDate) {
+        const selectedDate = new Date(newOrder.dueDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+        
+        if (selectedDate < today) {
+          errors.dueDate = "Due date cannot be in the past";
+        }
+      }
     }
     
     if (step === 2) {
@@ -128,11 +148,16 @@ const CreateOrderModal = ({
     if (!validateStep(3)) return;
     
     try {
-      await api.post(`/orders`, newOrder);
+      // Format the due date for the API
+      const orderData = {
+        ...newOrder,
+        dueDate: newOrder.dueDate ? new Date(newOrder.dueDate).toISOString() : null
+      };
+      
+      await api.post(`/orders`, orderData);
       onClose();
       onOrderCreated();
     } catch (err) {
-      // Note: The AlertProvider will sanitize the message automatically
       showAlert({
         title: "Error",
         message: err.response?.data?.message || "Failed to create order",
@@ -151,7 +176,8 @@ const CreateOrderModal = ({
       amount: "",
       currency: "Rs.",
       requiredDocTypes: [],
-      departmentSequenceIds: []
+      departmentSequenceIds: [],
+      dueDate: getTomorrowDate() // Reset to tomorrow
     });
     setFormStep(1);
     setFormErrors({});
@@ -271,6 +297,8 @@ const CreateOrderModal = ({
                       value={newOrder.amount} 
                       onChange={(e) => setNewOrder({...newOrder, amount: e.target.value})} 
                       placeholder="0.00"
+                      step="0.01"
+                      min="0"
                     />
                   </div>
                   {formErrors.amount && (
@@ -278,6 +306,31 @@ const CreateOrderModal = ({
                       <FiAlertCircle size={12} /> {formErrors.amount}
                     </span>
                   )}
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">
+                    Due Date <span className="required">*</span>
+                  </label>
+                  <div className="input-with-icon">
+                    <FiCalendar className="input-icon" size={18} />
+                    <input 
+                      type="date" 
+                      className={`form-input with-icon ${formErrors.dueDate ? 'error' : ''}`}
+                      value={newOrder.dueDate} 
+                      onChange={(e) => setNewOrder({...newOrder, dueDate: e.target.value})} 
+                      min={new Date().toISOString().split('T')[0]} // Prevent past dates
+                    />
+                  </div>
+                  {formErrors.dueDate && (
+                    <span className="error-message">
+                      <FiAlertCircle size={12} /> {formErrors.dueDate}
+                    </span>
+                  )}
+                  <div className="date-hint">
+                    <FiInfo size={12} />
+                    <span>Select the expected completion date for this order</span>
+                  </div>
                 </div>
 
                 <div className="form-group">
@@ -508,7 +561,7 @@ const CreateOrderModal = ({
                   </div>
                 </div>
 
-                {/* Order Summary */}
+                {/* Order Summary - Updated with Due Date */}
                 <div className="order-summary">
                   <div className="summary-title">
                     <FiCheckCircle size={16} />
@@ -526,6 +579,12 @@ const CreateOrderModal = ({
                     <div className="summary-item">
                       <span className="summary-label">Quote</span>
                       <span className="summary-value">{newOrder.currency} {newOrder.amount || '0'}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Due Date</span>
+                      <span className="summary-value">
+                        {newOrder.dueDate ? new Date(newOrder.dueDate).toLocaleDateString() : '-'}
+                      </span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Client</span>
