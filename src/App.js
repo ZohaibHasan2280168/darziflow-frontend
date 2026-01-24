@@ -37,6 +37,7 @@ import ProfilePage from './pages/Dashboard/Profile/ProfilePage';
 import MustChangePasswordModal from "./components/modals/MustChangePasswordModal";
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import AuditLogPage from './pages/Dashboard/Audit/AuditLogPage';
 
 function App() {
 
@@ -74,6 +75,14 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['ADMIN']}>
                     <Users />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/audit-logs"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <AuditLogPage />
                   </ProtectedRoute>
                 }
               />

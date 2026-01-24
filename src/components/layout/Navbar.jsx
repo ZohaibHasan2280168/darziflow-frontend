@@ -1,143 +1,130 @@
-"use client"
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/reqInterceptor";
+import authService from "../../services/authService";
 
-import { useState, useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import authService from "../../services/authService"
-import axios from "axios"
-import { FiUsers, FiGrid, FiShoppingCart, FiHome, FiLogOut } from "react-icons/fi"
-import "./Navbar.css"
+import {
+  FiClock,
+  FiUsers,
+  FiGrid,
+  FiShoppingCart,
+  FiHome,
+  FiLogOut
+} from "react-icons/fi";
 
-const API_URL = "https://darziflow-backend.onrender.com/api"
-
-const getToken = () => {
-  const storedData = localStorage.getItem("useraccesstoken")
-  const parsedData = storedData ? JSON.parse(storedData) : null
-  return parsedData?.accessToken
-}
+import "./Navbar.css";
 
 const Navbar = () => {
-  const navigate = useNavigate()
-  const [isMobile, setIsMobile] = useState(false)
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [sideOpen, setSideOpen] = useState(false);
+
   const [user, setUser] = useState({
     name: "",
-    profilePic: null,
     email: "",
-  })
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
-  const [sideOpen, setSideOpen] = useState(false)
-  const dropdownRef = useRef(null)
+    profilePic: null
+  });
 
-  //Handle responsive behavior
+  // Handle responsive behavior
   useEffect(() => {
-    const checkScreenSize = () => setIsMobile(window.innerWidth <= 768)
-    checkScreenSize()
-    window.addEventListener("resize", checkScreenSize)
-    return () => window.removeEventListener("resize", checkScreenSize)
-  }, [])
+    const checkScreenSize = () => setIsMobile(window.innerWidth <= 768);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
 
-  // Fetch user profile
+  // Fetch user profile (NEW AUTH SYSTEM)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = getToken()
-        if (!token) return
-
-        const res = await axios.get(`${API_URL}/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        const res = await api.get("/auth/profile");
 
         setUser({
           name: res.data.name,
           email: res.data.email,
-          profilePic: res.data.profilePic || null,
-        })
+          profilePic: res.data.profilePic || null
+        });
       } catch (err) {
-        console.error("Error fetching profile:", err)
+        console.error("Error fetching profile:", err);
+
+        if (err.response?.status === 401) {
+          authService.logout();
+          navigate("/login");
+        }
       }
-    }
+    };
 
-    fetchProfile()
-  }, [])
+    fetchProfile();
+  }, [navigate]);
 
-  //Close dropdown when clicking outside
+  // Close profile dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setProfileDropdownOpen(false)
+        setProfileDropdownOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    };
 
-  // Close side-drawer with Escape key when open
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Close side drawer with ESC
   useEffect(() => {
-    if (!sideOpen) return
-    const handleEsc = (e) => {
-      if (e.key === "Escape") setSideOpen(false)
-    }
-    document.addEventListener("keydown", handleEsc)
-    return () => document.removeEventListener("keydown", handleEsc)
-  }, [sideOpen])
+    if (!sideOpen) return;
 
-  const handleProfileClick = () => {
-    setProfileDropdownOpen((prev) => !prev)
-  }
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setSideOpen(false);
+    };
+
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [sideOpen]);
 
   const handleLogout = () => {
-    authService.logout()
-    navigate("/")
-  }
-
-  const handleAllDepartments = () => {
-    navigate("/departments")
-  }
+    authService.logout();
+    navigate("/login");
+  };
 
   const handleNavigation = (path) => {
-    navigate(path)
-    setSideOpen(false)
-  }
+    navigate(path);
+    setSideOpen(false);
+  };
 
   return (
     <>
       <nav className="navbar">
         <div className="navbar-left">
-          {/* Hamburger icon */}
           <button
             className="hamburger-btn"
-            aria-label="Toggle navigation menu"
+            aria-label="Toggle navigation"
             onClick={() => setSideOpen((prev) => !prev)}
-            title="Menu"
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span />
+            <span />
+            <span />
           </button>
 
-          <section
+          <div
             className="brand"
-            aria-hidden
             style={{ cursor: "pointer" }}
             onClick={() => navigate("/dashboard")}
           >
-            <div className="brand-content">
-              <h2>DarziFlow</h2>
-            </div>
-          </section>
+            <h2>DarziFlow</h2>
+          </div>
         </div>
 
         <div className="navbar-right">
-          {!isMobile && (
-            <div className="action-buttons">
-              
-            </div>
-          )}
-
-          {/*Profile Dropdown */}
           <div className="profile-container" ref={dropdownRef}>
-            <div className="profile-icon" onClick={handleProfileClick}>
+            <div
+              className="profile-icon"
+              onClick={() => setProfileDropdownOpen((prev) => !prev)}
+            >
               {user.profilePic ? (
-                <img src={user.profilePic || "/placeholder.svg"} alt="Profile" />
+                <img src={user.profilePic} alt="Profile" />
               ) : (
                 <span>{user.name ? user.name.charAt(0).toUpperCase() : "U"}</span>
               )}
@@ -159,25 +146,56 @@ const Navbar = () => {
           <div
             className="drawer-overlay"
             onClick={() => setSideOpen(false)}
-            aria-hidden="true"
           />
 
           <aside className={`side-drawer ${sideOpen ? "open" : ""}`}>
             <div className="side-inner">
               <div className="side-items">
-                <button className="side-item" title="Home" onClick={() => handleNavigation("/dashboard")}>
+                <button
+                  className="side-item"
+                  title="Dashboard"
+                  onClick={() => handleNavigation("/dashboard")}
+                >
                   <FiHome />
                 </button>
-                <button className="side-item" title="Users" onClick={() => handleNavigation("/users")}>
+
+                <button
+                  className="side-item"
+                  title="Users"
+                  onClick={() => handleNavigation("/users")}
+                >
                   <FiUsers />
                 </button>
-                <button className="side-item" title="Departments" onClick={() => handleNavigation("/departments")}>
+
+                <button
+                  className="side-item"
+                  title="Departments"
+                  onClick={() => handleNavigation("/departments")}
+                >
                   <FiGrid />
                 </button>
-                <button className="side-item" title="Orders" onClick={() => handleNavigation("/orderlist")}>
+
+                <button
+                  className="side-item"
+                  title="Orders"
+                  onClick={() => handleNavigation("/orderlist")}
+                >
                   <FiShoppingCart />
                 </button>
-                <button className="side-item exit-btn" onClick={() => setSideOpen(false)}>
+
+                <button
+                  className="side-item"
+                  title="Audit Logs"
+                  onClick={() => handleNavigation("/audit-logs")}
+                >
+                  <FiClock />
+                </button>
+
+                <button
+                  className="side-item exit-btn"
+                  title="Logout"
+                  onClick={handleLogout}
+                >
                   <FiLogOut />
                 </button>
               </div>
@@ -186,7 +204,7 @@ const Navbar = () => {
         </>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

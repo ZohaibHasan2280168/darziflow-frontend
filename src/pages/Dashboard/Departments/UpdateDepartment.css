@@ -1,0 +1,510 @@
+/* UpdateDepartments.css - Modern Dark Theme */
+
+/* Make the container wrapper very specific */
+.update-departments-container-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%);
+  padding: 2rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+}
+
+/* Override light theme specifically for this component */
+.update-departments-container-wrapper * {
+  color: #ffffff !important;
+}
+
+/* Make all form elements have white text specifically */
+.update-departments-card input,
+.update-departments-card textarea,
+.update-departments-card select,
+.update-departments-card option {
+  color: #ffffff !important;
+}
+
+/* Force input text color to white */
+.update-departments-input-group input,
+.update-departments-input-group textarea,
+.update-departments-input-group select {
+  color: #ffffff !important;
+}
+
+/* For text inputs specifically */
+.update-departments-input-group input[type="text"],
+.update-departments-input-group input[type="number"],
+.update-departments-input-group input[type="email"] {
+  color: #ffffff !important;
+}
+
+/* For textarea specifically */
+.update-departments-input-group textarea {
+  color: #ffffff !important;
+}
+
+/* For select specifically */
+.update-departments-input-group select {
+  color: #ffffff !important;
+}
+
+/* For options within select */
+.update-departments-input-group select option {
+  color: #ffffff !important;
+  background: #1e293b !important;
+}
+
+.update-departments-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2.5rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 700px;
+  color: #f8fafc;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+              0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.update-departments-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  letter-spacing: -0.5px;
+  position: relative;
+}
+
+.update-departments-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  margin: 0.75rem auto;
+  border-radius: 2px;
+}
+
+.update-departments-title-subtext {
+  text-align: center;
+  color: #94a3b8 !important;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.update-departments-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.update-departments-form-section {
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.update-departments-form-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #3b82f6, transparent);
+  border-radius: 4px 0 0 4px;
+}
+
+.update-departments-form-section h3 {
+  font-size: 1.125rem;
+  color: #e2e8f0 !important;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.update-departments-form-section h3::before {
+  font-size: 1rem;
+}
+
+/* Form Controls */
+.update-departments-input-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: 100%;
+}
+
+.update-departments-input-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.update-departments-input-group label {
+  margin-bottom: 0.5rem;
+  color: #cbd5e1 !important;
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.update-departments-input-group label::before {
+  content: '→';
+  color: #60a5fa;
+  font-size: 0.75rem;
+}
+
+.update-departments-input-group input,
+.update-departments-input-group textarea,
+.update-departments-input-group select {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1.5px solid rgba(100, 116, 139, 0.3);
+  border-radius: 10px;
+  padding: 0.875rem;
+  font-size: 0.95rem;
+  color: #ffffff !important; /* Force white text */
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+/* Remove placeholder color override */
+.update-departments-input-group input::placeholder,
+.update-departments-input-group textarea::placeholder,
+.update-departments-input-group select::placeholder {
+  color: #94a3b8 !important; /* Lighter color for placeholders */
+}
+
+.update-departments-input-group input:focus,
+.update-departments-input-group textarea:focus,
+.update-departments-input-group select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.update-departments-input-group select option {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  padding: 0.5rem;
+}
+
+.update-departments-input-group textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: 1.5;
+  color: #ffffff !important;
+}
+
+/* Status Indicator */
+.update-departments-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  color: inherit !important;
+}
+
+.update-departments-status-indicator.active {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80 !important;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.update-departments-status-indicator.inactive {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Back Button */
+.update-departments-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  border-radius: 10px;
+  color: #cbd5e1 !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1.5rem;
+  text-decoration: none;
+}
+
+.update-departments-back-btn:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #f1f5f9 !important;
+  transform: translateX(-4px);
+}
+
+.update-departments-back-btn svg {
+  transition: transform 0.2s ease;
+  color: inherit !important;
+}
+
+.update-departments-back-btn:hover svg {
+  transform: translateX(-2px);
+}
+
+/* Header Container */
+.update-departments-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Error Text */
+.update-departments-error-text {
+  color: #fca5a5 !important;
+  text-align: center;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.update-departments-error-text::before {
+  content: '⚠️';
+  font-size: 1rem;
+}
+
+/* Info Section */
+.update-departments-info-section {
+  background: rgba(96, 165, 250, 0.1);
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.update-departments-info-section::before {
+  content: 'ℹ️';
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.update-departments-info-section p {
+  margin: 0;
+  color: #cbd5e1 !important;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.update-departments-info-section strong {
+  color: #e2e8f0 !important;
+}
+
+/* Form Actions */
+.update-departments-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.update-departments-save-btn,
+.update-departments-cancel-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff !important;
+}
+
+.update-departments-save-btn::before,
+.update-departments-cancel-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.update-departments-save-btn:hover::before,
+.update-departments-cancel-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.update-departments-save-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff !important;
+}
+
+.update-departments-save-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.update-departments-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.update-departments-cancel-btn {
+  background: rgba(71, 85, 105, 0.3);
+  color: #cbd5e1 !important;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.update-departments-cancel-btn:hover {
+  background: rgba(71, 85, 105, 0.5);
+  border-color: rgba(100, 116, 139, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading Animation */
+@keyframes update-departments-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.update-departments-spinning {
+  display: inline-block;
+  animation: update-departments-spin 1s linear infinite;
+  margin-right: 0.5rem;
+  color: #ffffff !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .update-departments-container-wrapper {
+    padding: 1rem;
+    align-items: flex-start;
+  }
+  
+  .update-departments-card {
+    padding: 1.75rem;
+    margin: 1rem 0;
+  }
+  
+  .update-departments-title {
+    font-size: 1.75rem;
+  }
+  
+  .update-departments-input-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .update-departments-form-actions {
+    flex-direction: column;
+  }
+  
+  .update-departments-form-section::before {
+    width: 100%;
+    height: 3px;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, #3b82f6, transparent);
+  }
+}
+
+@media (max-width: 480px) {
+  .update-departments-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .update-departments-title {
+    font-size: 1.5rem;
+  }
+  
+  .update-departments-title-subtext {
+    font-size: 0.85rem;
+  }
+  
+  .update-departments-form-section h3 {
+    font-size: 1rem;
+  }
+  
+  .update-departments-input-group input,
+  .update-departments-input-group textarea,
+  .update-departments-input-group select {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Force all text within the component to be white */
+.update-departments-container-wrapper,
+.update-departments-container-wrapper * {
+  color: #ffffff !important;
+}
+
+/* Specific overrides for form text */
+.update-departments-card input::placeholder,
+.update-departments-card textarea::placeholder,
+.update-departments-card select::placeholder {
+  color: #94a3b8 !important;
+}
+
+.update-departments-card input,
+.update-departments-card textarea,
+.update-departments-card select {
+  color: #ffffff !important;
+}
+
+.update-departments-card select option {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* Focus visible styles with !important */
+.update-departments-input-group input:focus-visible,
+.update-departments-input-group textarea:focus-visible,
+.update-departments-input-group select:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}

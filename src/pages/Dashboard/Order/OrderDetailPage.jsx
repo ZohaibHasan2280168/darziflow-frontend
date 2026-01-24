@@ -28,14 +28,19 @@ import {
   FiLayers,
   FiGrid,
   FiCheckSquare,
-  FiActivity
+  FiActivity,
+  FiCheckCircle,
+  FiPlus,
+  FiSend
 } from 'react-icons/fi';
 import api from '../../../services/reqInterceptor';
 import Loader from '../../../components/ui/Loader';
 import { toast } from 'react-hot-toast';
 import './Order.css';
+import WorkflowSection from './components/WorkflowSection';
+import FilePreviewModal from './components/FilePreviewModal';
 
-const Order = () => {
+const OrderDetailPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
 
@@ -45,6 +50,9 @@ const Order = () => {
   const [uploadingDoc, setUploadingDoc] = useState(null);
   const [previewDoc, setPreviewDoc] = useState(null);
   const [documentLoading, setDocumentLoading] = useState(false);
+  const [activeDeptIndex, setActiveDeptIndex] = useState(0);
+  const [checkpointPreview, setCheckpointPreview] = useState(null);
+  const [adminSubmittingCheckpoint, setAdminSubmittingCheckpoint] = useState(null);
 
   const statusColor = {
     UPLOADED: 'status-uploaded',
@@ -57,8 +65,6 @@ const Order = () => {
     try {
       const res = await api.get(`/orders/${orderId}`);
       const orderData = res.data.order || res.data;
-      //console.log('Fetched order:', orderData);
-      //console.log('Required documents:', orderData?.requiredDocuments);
       setOrder(orderData);
       setLoading(false);
     } catch (err) {
@@ -70,6 +76,78 @@ const Order = () => {
   useEffect(() => {
     fetchOrderDetails();
   }, [orderId]);
+
+  // API Functions for Checkpoint Management
+  const handleApproveCheckpoint = async (checkpointId, operationId) => {
+    try {
+      await api.patch(
+        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/approve`
+      );
+      toast.success('Checkpoint QC approved successfully');
+      fetchOrderDetails();
+    } catch (err) {
+      toast.error('Failed to approve checkpoint');
+      throw err;
+    }
+  };
+
+  const handleRejectCheckpoint = async (checkpointId, operationId, comment) => {
+    try {
+      await api.patch(
+        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/reject`,
+        { comment }
+      );
+      toast.success('Checkpoint rejected');
+      fetchOrderDetails();
+    } catch (err) {
+      toast.error('Failed to reject checkpoint');
+      throw err;
+    }
+  };
+
+  const handleFinalApproveCheckpoint = async (checkpointId, operationId) => {
+    try {
+      await api.patch(
+        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/final-approve`
+      );
+      toast.success('Checkpoint marked as COMPLETED');
+      fetchOrderDetails();
+    } catch (err) {
+      toast.error('Failed to finalize checkpoint');
+      throw err;
+    }
+  };
+
+  const handleAdminSubmitCheckpoint = async (checkpointId, operationId, submissionText, files) => {
+    try {
+      const formData = new FormData();
+      
+      if (submissionText.trim()) {
+        formData.append('submissionText', submissionText);
+      }
+      console.log('text:',submissionText);
+      files.forEach(file => {
+        formData.append('submissionFiles', file);
+      });
+
+      await api.post(
+        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/submit`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      
+      toast.success('Admin submission successful');
+      setAdminSubmittingCheckpoint(null);
+      fetchOrderDetails();
+    } catch (err) {
+      toast.error('Failed to submit checkpoint');
+      throw err;
+    }
+  };
 
   const handleDownload = async (url, fileName) => {
     try {
@@ -96,19 +174,15 @@ const Order = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    //console.log('Starting upload:', docType);
     const formData = new FormData();
     formData.append('prerequisiteFile', file);
     setUploadingDoc(docType);
 
     try {
-      const uploadRes = await api.post(`/orders/${orderId}/prerequisites/${docType}`, formData);
-     // console.log('Upload response:', uploadRes.data);
+      await api.post(`/orders/${orderId}/prerequisites/${docType}`, formData);
       toast.success(`${docType.replace(/_/g, ' ')} uploaded successfully`);
-      //console.log('Fetching updated order details...');
       await fetchOrderDetails();
     } catch (err) {
-     // console.log('[v0] Upload error:', err);
       toast.error('Upload failed');
     } finally {
       setUploadingDoc(null);
@@ -137,55 +211,6 @@ const Order = () => {
     return <FileText size={20} />;
   };
 
-  const getDocumentPreview = () => {
-    if (!previewDoc) return null;
-
-    const { fileUrl, docType } = previewDoc;
-
-    if (!fileUrl) {
-      return (
-        <div className="preview-empty">
-          <FileText size={48} />
-          <p>No document uploaded</p>
-        </div>
-      );
-    }
-
-    if (fileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
-      return <img src={fileUrl || "/placeholder.svg"} alt="Document preview" className="preview-image" />;
-    }
-
-    if (fileUrl.match(/\.(mp4|webm|mov)$/i)) {
-      return (
-        <video controls className="preview-video">
-          <source src={fileUrl} />
-          Your browser does not support the video tag.
-        </video>
-      );
-    }
-
-    if (fileUrl.match(/\.pdf$/i)) {
-      return (
-        <iframe
-          src={`https://docs.google.com/gvjs?url=${encodeURIComponent(fileUrl)}`}
-          title="PDF preview"
-          className="preview-iframe"
-        />
-      );
-    }
-
-    return (
-      <div className="preview-empty">
-        <FiExternalLink size={48} />
-        <p>Preview not available</p>
-        <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="preview-link">
-          Open document in new tab
-        </a>
-      </div>
-    );
-  };
-
-
   const getStatusStyle = (status) => {
     return statusColor[status] || 'status-pending';
   };
@@ -212,44 +237,24 @@ const Order = () => {
 
   return (
     <div className="order-detail-wrapper">
-      {/* DOCUMENT PREVIEW MODAL */}
-      {previewDoc && (
-        <div className="preview-modal-overlay" onClick={() => setPreviewDoc(null)}>
-          <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div>
-                <h3 className="modal-title">{previewDoc.docType.replace(/_/g, ' ')}</h3>
-                <p className="modal-subtitle">Document Preview</p>
-              </div>
-              <div className="modal-controls">
-                <button
-                  onClick={() =>
-                    handleDownload(previewDoc.fileUrl, previewDoc.docType)
-                  }
-                  className="control-btn download-btn"
-                  title="Download"
-                >
-                  <Download size={18} />
-                </button>
-                <button
-                  onClick={() => setPreviewDoc(null)}
-                  className="control-btn close-btn"
-                  title="Close"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-            </div>
-            <div className="modal-body">{getDocumentPreview()}</div>
-          </div>
-        </div>
-      )}
+      {/* File Preview Modals */}
+      <FilePreviewModal
+        previewDoc={previewDoc}
+        onClose={() => setPreviewDoc(null)}
+        onDownload={handleDownload}
+      />
+      
+      <FilePreviewModal
+        previewDoc={checkpointPreview ? { fileUrl: checkpointPreview, docType: 'Checkpoint Submission' } : null}
+        onClose={() => setCheckpointPreview(null)}
+        onDownload={handleDownload}
+      />
 
       {/* HEADER SECTION */}
       <div className="detail-header">
-        <button className="back-btn" onClick={() => navigate(-1)} title="Go back">
-          <ChevronLeft size={24} />
-        </button>
+        <button className="back-button" onClick={() => navigate(-1)}>
+            <FiArrowLeft size={20} />
+          </button>
         <div className="header-content">
           <div className="order-id-section">
             <span className="id-badge" title={order?.uniqueId}>
@@ -380,226 +385,138 @@ const Order = () => {
       </div>
 
       {/* PREREQUISITE DOCUMENTS SECTION */}
-      <div className="prereq-section">
-        <div className="section-header">
-          <h2 className="section-title">
-            <FileText size={24} />
-            Required Documents
-          </h2>
-          <p className="section-subtitle">
-            {order?.requiredDocuments?.filter((d) => d.status === 'APPROVED').length || 0} of{' '}
-            {order?.requiredDocuments?.length || 0} documents approved
-          </p>
-        </div>
+      {/* PREREQUISITE DOCUMENTS SECTION */}
+<div className="prereq-section">
+  <div className="section-header">
+    <h2 className="section-title">
+      <FileText size={24} />
+      Required Documents
+    </h2>
+    <p className="section-subtitle">
+      {order?.requiredDocuments?.filter((d) => d.status === 'APPROVED').length || 0} of{' '}
+      {order?.requiredDocuments?.length || 0} documents approved
+    </p>
+  </div>
 
-        {order?.requiredDocuments && order?.requiredDocuments.length > 0 ? (
-          <div className="doc-grid">
-            {order?.requiredDocuments.map((doc) => (
-              <div key={doc.docType} className="document-card">
-                <div className="doc-header">
-                  <div className="doc-icon-wrapper">
-                    <div className="doc-icon">{getFileIcon(doc.fileUrl)}</div>
-                  </div>
-                  <div className="doc-info">
-                    <h3 className="doc-name">{doc.docType.replace(/_/g, ' ')}</h3>
-                    <span className={`doc-status ${getStatusStyle(doc.status)}`}>
-                      {doc.status}
-                    </span>
-                  </div>
-                </div>
+  {order?.requiredDocuments && order?.requiredDocuments.length > 0 ? (
+    <div className="doc-grid">
+      {order?.requiredDocuments.map((doc) => (
+        <div key={doc.docType} className="document-card">
+          <div className="doc-header">
+            <div className="doc-icon-wrapper">
+              <div className="doc-icon">{getFileIcon(doc.fileUrl)}</div>
+            </div>
+            <div className="doc-info">
+              <h3 className="doc-name">{doc.docType.replace(/_/g, ' ')}</h3>
+              <span className={`doc-status ${getStatusStyle(doc.status)}`}>
+                {doc.status}
+              </span>
+            </div>
+          </div>
 
-                <div className="doc-actions">
-                  {doc.fileUrl || (doc.status === 'UPLOADED' || doc.status === 'APPROVED' || doc.status === 'REJECTED') ? (
-                    doc.fileUrl ? (
-                      <>
-                        <button
-                          className="action-btn view-btn"
-                          onClick={() => setPreviewDoc(doc)}
-                        >
-                          <Eye size={16} />
-                          <span>View</span>
-                        </button>
-                        <button
-                          className="action-btn download-btn"
-                          onClick={() => handleDownload(doc.fileUrl, doc.docType)}
-                          disabled={documentLoading}
-                        >
-                          <Download size={16} />
-                          <span>{documentLoading ? 'Downloading...' : 'Download'}</span>
-                        </button>
-                      </>
-                    ) : doc.status === 'REJECTED' ? (
-                      <label className="action-btn upload-btn">
-                        <Upload size={16} />
-                        <span>{uploadingDoc === doc.docType ? 'Uploading...' : 'Re-upload'}</span>
-                        <input
-                          type="file"
-                          onChange={(e) => handleFileUpload(e, doc.docType)}
-                          disabled={uploadingDoc === doc.docType}
-                          style={{ display: 'none' }}
-                        />
-                      </label>
-                    ) : (
-                      <label className="action-btn upload-btn disabled-upload">
-                        <Upload size={16} />
-                        <span>No Document</span>
-                      </label>
-                    )
-                  ) : (
-                    <label className="action-btn upload-btn">
-                      <Upload size={16} />
-                      <span>{uploadingDoc === doc.docType ? 'Uploading...' : 'Upload'}</span>
-                      <input
-                        type="file"
-                        onChange={(e) => handleFileUpload(e, doc.docType)}
-                        disabled={uploadingDoc === doc.docType}
-                        style={{ display: 'none' }}
-                      />
-                    </label>
+          <div className="doc-actions">
+            {doc.fileUrl ? (
+              <>
+                {/* FIXED: Pass correct data structure to setPreviewDoc */}
+                <button
+                  className="action-btn view-btn"
+                  onClick={() => setPreviewDoc({
+                    fileUrl: doc.fileUrl,
+                    docType: doc.docType,
+                    fileName: doc.docType.replace(/_/g, ' ')
+                  })}
+                >
+                  <Eye size={16} />
+                  <span>View</span>
+                </button>
+                
+                {/* FIXED: Pass correct parameters to handleDownload */}
+                <button
+                  className="action-btn download-btn"
+                  onClick={() => handleDownload(
+                    doc.fileUrl, 
+                    `${doc.docType.replace(/_/g, '_')}_${new Date().getTime()}`
                   )}
-                </div>
-
-                {doc.status === 'UPLOADED' && (
-                  <div className="admin-actions">
-                    <button
-                      className="admin-btn approve-btn"
-                      onClick={() => handleDocAction(doc.docType, 'approve')}
-                      disabled={actionLoading}
-                    >
-                      <CheckCircle2 size={16} />
-                      <span>Approve</span>
-                    </button>
-                    <button
-                      className="admin-btn reject-btn"
-                      onClick={() => handleDocAction(doc.docType, 'reject')}
-                      disabled={actionLoading}
-                    >
-                      <X size={16} />
-                      <span>Reject</span>
-                    </button>
-                  </div>
-                )}
-
-                {doc.status === 'APPROVED' && (
-                  <div className="approval-badge">
-                    <FiCheck size={16} />
-                    <span>Approved</span>
-                  </div>
-                )}
-
-                {doc.status === 'REJECTED' && (
-                  <div className="rejection-badge">
-                    <X size={16} />
-                    <span>Rejected - Re-upload required</span>
-                  </div>
-                )}
-              </div>
-            ))}
+                  disabled={documentLoading}
+                >
+                  <Download size={16} />
+                  <span>{documentLoading ? 'Downloading...' : 'Download'}</span>
+                </button>
+              </>
+            ) : doc.status === 'REJECTED' ? (
+              <label className="action-btn upload-btn">
+                <Upload size={16} />
+                <span>{uploadingDoc === doc.docType ? 'Uploading...' : 'Re-upload'}</span>
+                <input
+                  type="file"
+                  onChange={(e) => handleFileUpload(e, doc.docType)}
+                  disabled={uploadingDoc === doc.docType}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            ) : (
+              <label className="action-btn upload-btn">
+                <Upload size={16} />
+                <span>{uploadingDoc === doc.docType ? 'Uploading...' : 'Upload'}</span>
+                <input
+                  type="file"
+                  onChange={(e) => handleFileUpload(e, doc.docType)}
+                  disabled={uploadingDoc === doc.docType}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            )}
           </div>
-        ) : (
-          <div className="no-documents">
-            <FileText size={40} />
-            <p>No documents required for this order</p>
-          </div>
-        )}
-      </div>
+
+          {doc.status === 'UPLOADED' && (
+            <div className="admin-actions">
+              <button
+                className="admin-btn approve-btn"
+                onClick={() => handleDocAction(doc.docType, 'approve')}
+                disabled={actionLoading}
+              >
+                <CheckCircle2 size={16} />
+                <span>Approve</span>
+              </button>
+              <button
+                className="admin-btn reject-btn"
+                onClick={() => handleDocAction(doc.docType, 'reject')}
+                disabled={actionLoading}
+              >
+                <X size={16} />
+                <span>Reject</span>
+              </button>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="no-documents">
+      <FileText size={40} />
+      <p>No documents required for this order</p>
+    </div>
+  )}
+</div>
 
       {/* WORKFLOW SECTION */}
       {order?.workflow && order.workflow.length > 0 && (
-        <div className="segment-section workflow-section">
-          <div className="segment-header">
-            <div className="segment-title-wrapper">
-              <FiLayers size={20} />
-              <h2 className="segment-title">Workflow</h2>
-            </div>
-            <p className="segment-subtitle">
-              {order.workflow.length} department{order.workflow.length > 1 ? 's' : ''} in pipeline
-            </p>
-          </div>
-
-          <div className="workflow-container">
-            {order.workflow.map((dept, deptIndex) => (
-              <div key={dept._id?.$oid || deptIndex} className="department-card">
-                {/* Department Header */}
-                <div className="department-header">
-                  <div className="department-info">
-                    <div className="department-icon-wrapper">
-                      <FiGrid size={20} />
-                    </div>
-                    <div className="department-details">
-                      <h3 className="department-name">{dept.departmentName}</h3>
-                      <span className="department-id" title={dept.departmentId?.$oid}>
-                        ID: {truncateId(dept.departmentId?.$oid)}
-                      </span>
-                    </div>
-                  </div>
-                  <span className={`department-status ${getStatusStyle(dept.status)}`}>
-                    {dept.status?.replace(/_/g, ' ')}
-                  </span>
-                </div>
-
-                {/* Operations */}
-                {dept.operations && dept.operations.length > 0 && (
-                  <div className="operations-container">
-                    {dept.operations.map((operation, opIndex) => (
-                      <div key={operation._id?.$oid || opIndex} className="operation-card">
-                        <div className="operation-header">
-                          <div className="operation-info">
-                            <FiActivity size={16} />
-                            <span className="operation-name">{operation.name}</span>
-                          </div>
-                          <span className={`operation-status ${getStatusStyle(operation.status)}`}>
-                            {operation.status?.replace(/_/g, ' ')}
-                          </span>
-                        </div>
-
-                        {/* Checkpoints */}
-                        {operation.checkpoints && operation.checkpoints.length > 0 && (
-                          <div className="checkpoints-container">
-                            <div className="checkpoints-label">
-                              <FiCheckSquare size={14} />
-                              <span>Checkpoints ({operation.checkpoints.length})</span>
-                            </div>
-                            <div className="checkpoints-list">
-                              {operation.checkpoints.map((checkpoint, cpIndex) => (
-                                <div key={checkpoint._id?.$oid || cpIndex} className="checkpoint-item">
-                                  <div className="checkpoint-info">
-                                    <div className={`checkpoint-indicator ${getStatusStyle(checkpoint.status)}`} />
-                                    <span className="checkpoint-name">{checkpoint.name}</span>
-                                  </div>
-                                  <div className="checkpoint-meta">
-                                    <span className={`checkpoint-status ${getStatusStyle(checkpoint.status)}`}>
-                                      {checkpoint.status}
-                                    </span>
-                                    {checkpoint.qcRequired && (
-                                      <span className="qc-badge">QC Required</span>
-                                    )}
-                                  </div>
-                                  {checkpoint.allowedSubmissionTypes && checkpoint.allowedSubmissionTypes.length > 0 && (
-                                    <div className="submission-types">
-                                      {checkpoint.allowedSubmissionTypes.map((type, typeIndex) => (
-                                        <span key={typeIndex} className="submission-type-badge">
-                                          {type}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <WorkflowSection
+          workflow={order.workflow}
+          activeDeptIndex={activeDeptIndex}
+          onDeptTabChange={setActiveDeptIndex}
+          orderId={orderId}
+          onApproveCheckpoint={handleApproveCheckpoint}
+          onRejectCheckpoint={handleRejectCheckpoint}
+          onFinalApproveCheckpoint={handleFinalApproveCheckpoint}
+          onAdminSubmitCheckpoint={handleAdminSubmitCheckpoint}
+          onPreviewFile={setCheckpointPreview}
+          adminSubmittingCheckpoint={adminSubmittingCheckpoint}
+          onAdminSubmittingChange={setAdminSubmittingCheckpoint}
+        />
       )}
     </div>
   );
 };
 
-export default Order;
+export default OrderDetailPage;

@@ -1,9 +1,39 @@
-/* Departments.css */
+/* Departments.css - Fixed with specific selectors */
 .departments-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%);
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* Force white text for ALL elements inside departments container */
+.departments-container,
+.departments-container * {
+  color: #ffffff !important;
+}
+
+/* But allow placeholders to be lighter */
+.departments-container ::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Specifically target filter select dropdown text */
+.departments-container .filter-select,
+.departments-container .filter-select option {
+  color: #ffffff !important;
+}
+
+/* Force dark background for dropdown options */
+.departments-container .filter-select option {
+  background: #1a202c !important;
+  color: #ffffff !important;
+}
+
+/* For all select elements within departments */
+.departments-container select,
+.departments-container select option {
+  background: transparent !important;
+  color: #ffffff !important;
 }
 
 .departments-content {
@@ -33,7 +63,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -42,6 +72,7 @@
 .back-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff !important;
 }
 
 .page-title {
@@ -56,7 +87,7 @@
 
 .page-subtitle {
   font-size: 0.95rem;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   margin: 0.5rem 0 0 0;
 }
 
@@ -68,7 +99,7 @@
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   border: none;
   border-radius: 10px;
-  color: white;
+  color: white !important;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -119,22 +150,22 @@
 
 .stat-icon.total {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
-  color: #60a5fa;
+  color: #60a5fa !important;
 }
 
 .stat-icon.active {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
-  color: #10b981;
+  color: #10b981 !important;
 }
 
 .stat-icon.with-heads {
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.08));
-  color: #a855f7;
+  color: #a855f7 !important;
 }
 
 .stat-icon.inactive {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.08));
-  color: #ef4444;
+  color: #ef4444 !important;
 }
 
 .stat-content {
@@ -144,7 +175,7 @@
 
 .stat-label {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -153,11 +184,11 @@
 .stat-number {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #fff;
+  color: #fff !important;
   margin-top: 0.25rem;
 }
 
-/* Filters Bar */
+/* Filters Bar - SPECIFIC FIXES HERE */
 .filters-bar {
   display: flex;
   gap: 1rem;
@@ -176,7 +207,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
+  color: #94a3b8 !important;
   pointer-events: none;
 }
 
@@ -186,7 +217,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  color: #fff;
+  color: #ffffff !important; /* Force white text */
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
@@ -199,7 +230,7 @@
 }
 
 .search-input::placeholder {
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .filter-select-wrapper {
@@ -210,26 +241,32 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .filter-select-wrapper svg {
   flex-shrink: 0;
+  color: #94a3b8 !important;
 }
 
+/* FIXED: Filter select text color */
 .filter-select {
   background: transparent;
   border: none;
-  color: #fff;
+  color: #ffffff !important; /* White text for the selected option */
   font-size: 0.95rem;
   cursor: pointer;
   outline: none;
   min-width: 120px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
+/* FIXED: Dropdown options styling */
 .filter-select option {
-  background: #1a202c;
-  color: #fff;
+  background: #1a202c !important; /* Dark background */
+  color: #ffffff !important; /* White text */
   padding: 0.5rem;
 }
 
@@ -251,12 +288,12 @@
 .table-title h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #fff;
+  color: #fff !important;
 }
 
 .table-subtitle {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   margin-top: 0.25rem;
   display: block;
 }
@@ -280,7 +317,7 @@
   text-align: left;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -320,7 +357,7 @@
   height: 44px;
   border-radius: 10px;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  color: white !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,13 +374,13 @@
 
 .dept-name {
   font-weight: 600;
-  color: #fff;
+  color: #fff !important;
   font-size: 0.95rem;
 }
 
 .dept-description {
   font-size: 0.85rem;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -364,16 +401,16 @@
 
 .head-name {
   font-weight: 500;
-  color: #fff;
+  color: #fff !important;
 }
 
 .head-email {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .no-head {
-  color: #94a3b8;
+  color: #94a3b8 !important;
   font-style: italic;
   font-size: 0.9rem;
 }
@@ -392,13 +429,13 @@
 
 .status-badge.ACTIVE {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: #10b981 !important;
   border-color: rgba(16, 185, 129, 0.3);
 }
 
 .status-badge.INACTIVE {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: #ef4444 !important;
   border-color: rgba(239, 68, 68, 0.3);
 }
 
@@ -411,11 +448,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .members-count svg {
-  color: #60a5fa;
+  color: #60a5fa !important;
 }
 
 /* Empty State */
@@ -432,19 +469,19 @@
 }
 
 .empty-icon {
-  color: #94a3b8;
+  color: #94a3b8 !important;
   opacity: 0.5;
 }
 
 .empty-state h4 {
   margin: 0;
-  color: #fff;
+  color: #fff !important;
   font-size: 1.1rem;
 }
 
 .empty-state p {
   margin: 0;
-  color: #94a3b8;
+  color: #94a3b8 !important;
   font-size: 0.9rem;
   max-width: 300px;
 }
@@ -457,7 +494,7 @@
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: white !important;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -494,7 +531,7 @@
 }
 
 .loading-state p {
-  color: #94a3b8;
+  color: #94a3b8 !important;
   margin: 0;
 }
 
@@ -511,11 +548,11 @@
 
 .error-icon {
   font-size: 3rem;
-  color: #f87171;
+  color: #f87171 !important;
 }
 
 .error-state p {
-  color: #f87171;
+  color: #f87171 !important;
   margin: 0;
   max-width: 400px;
 }
@@ -525,7 +562,7 @@
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 8px;
-  color: #60a5fa;
+  color: #60a5fa !important;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -625,7 +662,7 @@
   .departments-table td::before {
     content: attr(data-label);
     font-weight: 600;
-    color: #94a3b8;
+    color: #94a3b8 !important;
     margin-right: 1rem;
   }
   

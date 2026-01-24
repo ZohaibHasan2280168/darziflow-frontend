@@ -1,0 +1,744 @@
+/* AddDepartment.css - Scoped Styles */
+
+/* Container wrapper - scoped */
+.add-department-container-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%);
+  padding: 2rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
+}
+
+/* Card styles - scoped */
+.add-department-card {
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 2.5rem;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  color: #f8fafc;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+              0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Title */
+.add-department-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.add-department-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+  margin: 0.75rem auto;
+  border-radius: 2px;
+}
+
+/* Form styles */
+.add-department-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.add-department-form h2 {
+  font-size: 1.375rem;
+  color: #e2e8f0 !important; /* Force white color */
+  padding-bottom: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+  font-weight: 600;
+  position: relative;
+}
+
+.add-department-form h2::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, transparent);
+  border-radius: 1px;
+}
+
+.add-department-form h3 {
+  font-size: 1.125rem;
+  color: #94a3b8 !important; /* Force light gray color */
+  margin: 0;
+  font-weight: 500;
+}
+
+.add-department-form h4 {
+  font-size: 1rem;
+  color: #cbd5e1 !important; /* Force light gray color */
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-department-form h4::before {
+  font-size: 0.875rem;
+}
+
+/* Form Controls - Increased specificity */
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: 100%;
+}
+
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-row {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group label {
+  margin-bottom: 0.5rem;
+  color: #cbd5e1 !important; /* Force light gray color */
+  font-weight: 500;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group label::before {
+  content: '→';
+  color: #60a5fa;
+  font-size: 0.75rem;
+}
+
+/* Input fields - VERY SPECIFIC overrides */
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group input,
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group textarea,
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select {
+  background: rgba(30, 41, 59, 0.6) !important;
+  border: 1.5px solid rgba(100, 116, 139, 0.3) !important;
+  border-radius: 10px !important;
+  padding: 0.875rem !important;
+  font-size: 0.95rem !important;
+  color: #f1f5f9 !important; /* Force white text color */
+  outline: none !important;
+  transition: all 0.2s ease !important;
+  font-family: inherit !important;
+}
+
+/* Placeholder color - also override */
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group input::placeholder,
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group textarea::placeholder,
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select::placeholder {
+  color: #64748b !important; /* Force gray placeholder */
+}
+
+/* Focus states */
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group input:focus,
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group textarea:focus,
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+  background: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* Select dropdown options */
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select option {
+  background: #1e293b !important;
+  color: #f1f5f9 !important; /* Force white text for options */
+  padding: 0.5rem !important;
+}
+
+/* Textarea */
+.add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group textarea {
+  min-height: 80px !important;
+  resize: vertical !important;
+  line-height: 1.5 !important;
+}
+
+/* Operation Block */
+.add-department-operation-block {
+  border: 1.5px solid rgba(59, 130, 246, 0.15);
+  border-radius: 14px;
+  padding: 1.75rem;
+  background: rgba(30, 41, 59, 0.4);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-department-operation-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #3b82f6, transparent);
+  border-radius: 4px 0 0 4px;
+}
+
+.add-department-operation-block:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.add-department-operation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+/* Checkpoint Form */
+.add-department-checkpoint-form {
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: rgba(15, 23, 42, 0.4);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.add-department-checkpoint-form::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 80%;
+  background: linear-gradient(180deg, #10b981, transparent);
+  border-radius: 0 3px 3px 0;
+}
+
+.add-department-checkpoint-form:hover {
+  border-color: rgba(100, 116, 139, 0.4);
+  background: rgba(15, 23, 42, 0.6);
+}
+
+/* Checkbox Switch */
+.add-department-checkbox-group {
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.add-department-checkbox-group .add-department-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.add-department-checkbox-group .add-department-switch input {
+  display: none;
+}
+
+.add-department-checkbox-group .add-department-switch-slider {
+  width: 48px;
+  height: 26px;
+  background: #334155;
+  border-radius: 999px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.add-department-checkbox-group .add-department-switch-slider::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #f8fafc;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.add-department-checkbox-group .add-department-switch input:checked + .add-department-switch-slider {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.add-department-checkbox-group .add-department-switch input:checked + .add-department-switch-slider::after {
+  transform: translateX(22px);
+  background: white;
+}
+
+.add-department-checkbox-group .add-department-switch-label {
+  color: #e2e8f0 !important; /* Force light gray color */
+  font-weight: 500;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+/* Buttons - already scoped */
+.add-department-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(100, 116, 139, 0.2);
+  border-radius: 10px;
+  color: #cbd5e1 !important; /* Force light gray color */
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 1.5rem;
+}
+
+.add-department-back-btn:hover {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #f1f5f9 !important; /* Force white color on hover */
+  transform: translateX(-4px);
+}
+
+.add-department-back-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.add-department-back-btn:hover svg {
+  transform: translateX(-2px);
+}
+
+.add-department-remove-op-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171 !important; /* Force red color */
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.625rem 1.25rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.add-department-remove-op-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* Checkpoint Actions */
+.add-department-checkpoint-actions-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(100, 116, 139, 0.1);
+}
+
+.add-department-add-checkpoint-btn,
+.add-department-remove-checkpoint-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-department-add-checkpoint-btn {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80 !important; /* Force green color */
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.add-department-add-checkpoint-btn:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.5);
+  transform: translateY(-1px);
+}
+
+.add-department-remove-checkpoint-btn {
+  background: rgba(249, 115, 22, 0.1);
+  color: #fb923c !important; /* Force orange color */
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.add-department-remove-checkpoint-btn:hover {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: rgba(249, 115, 22, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Main Action Buttons */
+.add-department-add-operation-btn {
+  width: 100%;
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa !important; /* Force blue color */
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.add-department-add-operation-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.add-department-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.add-department-submit-btn,
+.add-department-cancel-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.add-department-submit-btn::before,
+.add-department-cancel-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.add-department-submit-btn:hover::before,
+.add-department-cancel-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.add-department-submit-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white !important; /* Force white text */
+}
+
+.add-department-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.add-department-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.add-department-cancel-btn {
+  background: rgba(71, 85, 105, 0.3);
+  color: #cbd5e1 !important; /* Force light gray color */
+  border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.add-department-cancel-btn:hover {
+  background: rgba(71, 85, 105, 0.5);
+  border-color: rgba(100, 116, 139, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Error Text */
+.add-department-error-text {
+  color: #fca5a5 !important; /* Force light red color */
+  text-align: center;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.add-department-error-text::before {
+  content: '⚠️';
+  font-size: 1rem;
+}
+
+/* Header Container */
+.add-department-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Operations List */
+.add-department-operations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Loading Animation */
+@keyframes add-department-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.add-department-spinning {
+  display: inline-block;
+  animation: add-department-spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+/* Count Badges */
+.add-department-count-badge {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa !important; /* Force blue color */
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+/* Icons in form sections */
+.add-department-form-section-icon {
+  margin-right: 0.5rem;
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .add-department-container-wrapper {
+    padding: 1rem;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  
+  .add-department-card {
+    padding: 1.75rem;
+    margin: 1rem 0;
+  }
+  
+  .add-department-title {
+    font-size: 1.75rem;
+  }
+  
+  .add-department-input-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .add-department-form-actions {
+    flex-direction: column;
+  }
+  
+  .add-department-operation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .add-department-checkpoint-actions-row {
+    flex-direction: column;
+  }
+  
+  .add-department-checkpoint-actions-row button {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .add-department-operation-block::before {
+    width: 100%;
+    height: 3px;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, #3b82f6, transparent);
+  }
+}
+
+@media (max-width: 480px) {
+  .add-department-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .add-department-title {
+    font-size: 1.5rem;
+  }
+  
+  .add-department-form h2 {
+    font-size: 1.25rem;
+  }
+  
+  .add-department-form h3 {
+    font-size: 1rem;
+  }
+  
+  .add-department-form h4 {
+    font-size: 0.95rem;
+  }
+  
+  .add-department-input-group input,
+  .add-department-input-group textarea,
+  .add-department-input-group select {
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Scrollbar Styling */
+.add-department-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.add-department-card::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: 4px;
+}
+
+.add-department-card::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.4);
+  border-radius: 4px;
+}
+
+.add-department-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.6);
+}
+
+/* Focus visible styles */
+.add-department-input-group input:focus-visible,
+.add-department-input-group textarea:focus-visible,
+.add-department-input-group select:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+/* Smooth transitions for form elements */
+.add-department-input-group,
+.add-department-operation-block,
+.add-department-checkpoint-form {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Operation Number Badge */
+.add-department-operation-number {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white !important; /* Force white text */
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* Small fields row */
+.add-department-input-row.add-department-input-row-small-fields {
+  align-items: center;
+}
+
+/* Checkpoints section */
+.add-department-checkpoints-section {
+  margin-top: 1.5rem;
+}
+
+/* Additional responsive styles */
+@media (max-width: 768px) {
+  .add-department-operation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .add-department-operation-header > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .add-department-count-badge {
+    margin-left: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-department-operation-number {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+  
+  .add-department-form-section-icon {
+    margin-right: 0.375rem;
+  }
+}
+
+/* Additional specificity for paragraph text */
+.add-department-container-wrapper .add-department-card p {
+  color: #94a3b8 !important;
+}
+
+/* Optional: Add a scoping wrapper class to your JSX component */
+.add-department-scoped * {
+  color: inherit !important; /* Force inheritance within the scoped container */
+}
