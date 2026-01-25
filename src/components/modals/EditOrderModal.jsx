@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FiPlus,
-  FiX, FiEdit2, FiInfo, FiUser, FiLayers, FiFileText,
+  FiX, FiEdit2, FiInfo, FiUser, FiLayers, FiFileText, FiCalendar,
   FiCheckCircle, FiAlertCircle, FiArrowLeft, FiChevronRight,
   FiTag, FiMail, FiList, FiTrash2
 } from "react-icons/fi";
@@ -15,6 +15,13 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   const [selectedDeptId, setSelectedDeptId] = useState("");
   const { showAlert } = useAlert();
 
+  // Format date for input field (YYYY-MM-DD)
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
   const [editedOrder, setEditedOrder] = useState({
     name: "",
     type: "PANT",
@@ -23,6 +30,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     clientEmail: "",
     amount: "",
     currency: "Rs.",
+    dueDate: "",
     requiredDocTypes: [],
     departmentSequenceIds: []
   });
@@ -38,6 +46,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
         clientEmail: orderData.clientEmail || "",
         amount: orderData.amount || "",
         currency: orderData.currency || "Rs.",
+        dueDate: orderData.dueDate ? formatDateForInput(orderData.dueDate) : "",
         requiredDocTypes: orderData.requiredDocuments?.map(d => d.docType) || [],
         departmentSequenceIds: orderData.departmentSequence?.map(d => d._id || d) || []
       });
@@ -108,6 +117,18 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     if (step === 1) {
       if (!editedOrder.name.trim()) errors.name = "Order name is required";
       if (!editedOrder.amount) errors.amount = "Quote amount is required";
+      if (!editedOrder.dueDate) errors.dueDate = "Due date is required";
+      
+      // Validate due date is not in the past
+      if (editedOrder.dueDate) {
+        const selectedDate = new Date(editedOrder.dueDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+        
+        if (selectedDate < today) {
+          errors.dueDate = "Due date cannot be in the past";
+        }
+      }
     }
     
     if (step === 2) {
@@ -149,6 +170,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
         type: editedOrder.type,
         amount: Number(editedOrder.amount),
         currency: editedOrder.currency,
+        dueDate: editedOrder.dueDate ? new Date(editedOrder.dueDate).toISOString() : null,
         description: editedOrder.description,
         clientName: editedOrder.clientName,
         clientEmail: editedOrder.clientEmail,
@@ -184,6 +206,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
       clientEmail: "",
       amount: "",
       currency: "Rs.",
+      dueDate: "",
       requiredDocTypes: [],
       departmentSequenceIds: []
     });
@@ -208,7 +231,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
 
   return (
     <div className="modal-backdrop" onClick={handleClose}>
-      <div className="modal-container modal-lg" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-container modal-lg edit-order-modal" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="modal-header">
           <div className="modal-title-group">
@@ -311,6 +334,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                       value={editedOrder.amount} 
                       onChange={(e) => setEditedOrder({...editedOrder, amount: e.target.value})} 
                       placeholder="0.00"
+                      step="0.01"
+                      min="0"
                     />
                   </div>
                   {formErrors.amount && (
@@ -318,6 +343,32 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                       <FiAlertCircle size={12} /> {formErrors.amount}
                     </span>
                   )}
+                </div>
+
+                {/* Due Date Field - Added */}
+                <div className="form-group">
+                  <label className="form-label">
+                    Due Date <span className="required">*</span>
+                  </label>
+                  <div className="input-with-icon">
+                    <FiCalendar className="input-icon" size={18} />
+                    <input 
+                      type="date" 
+                      className={`form-input with-icon ${formErrors.dueDate ? 'error' : ''}`}
+                      value={editedOrder.dueDate} 
+                      onChange={(e) => setEditedOrder({...editedOrder, dueDate: e.target.value})} 
+                      min={new Date().toISOString().split('T')[0]} // Prevent past dates
+                    />
+                  </div>
+                  {formErrors.dueDate && (
+                    <span className="error-message">
+                      <FiAlertCircle size={12} /> {formErrors.dueDate}
+                    </span>
+                  )}
+                  <div className="date-hint">
+                    <FiInfo size={12} />
+                    <span>Select the expected completion date for this order</span>
+                  </div>
                 </div>
 
                 <div className="form-group">
@@ -550,8 +601,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                   </div>
                 </div>
 
-                {/* Order Summary */}
-                <div className="order-summary">
+                {/* Order Summary - Updated with Due Date */}
+                <div className="order-summary edit-order-summary">
                   <div className="summary-title">
                     <FiCheckCircle size={16} />
                     <span>Order Summary</span>
@@ -568,6 +619,12 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
                     <div className="summary-item">
                       <span className="summary-label">Quote</span>
                       <span className="summary-value">{editedOrder.currency} {editedOrder.amount || '0'}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Due Date</span>
+                      <span className="summary-value">
+                        {editedOrder.dueDate ? new Date(editedOrder.dueDate).toLocaleDateString() : '-'}
+                      </span>
                     </div>
                     <div className="summary-item">
                       <span className="summary-label">Client</span>

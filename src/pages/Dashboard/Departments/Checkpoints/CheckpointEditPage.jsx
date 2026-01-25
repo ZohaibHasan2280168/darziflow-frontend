@@ -4,7 +4,6 @@ import { useAlert } from '../../../../components/ui/AlertProvider';
 import { FiEdit, FiArrowLeft, FiSave } from "react-icons/fi";
 import api from '../../../../services/reqInterceptor';
 
-
 export default function CheckpointEdit() {
   const params = useParams();
   const { chkId } = params;
@@ -25,11 +24,9 @@ export default function CheckpointEdit() {
   const subTypes = ["TEXT", "IMAGE", "VIDEO", "DOCUMENT"];
 
   useEffect(() => {
-    
     const loadCheckpoint = async () => {
       if (!deptId) return; 
       try {
-       
         const res = await api.get(`/departments/${deptId}`);
         const department = res.data.data || res.data;
         const operation = department.operations.find(op => op._id.toString() === opId);
@@ -94,7 +91,7 @@ export default function CheckpointEdit() {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container checkpoint-edit-page">
       <div className="form-card wide">
         <button onClick={() => navigate(-1)} className="btn-back"><FiArrowLeft /> Back</button>
         <div className="form-header">
@@ -102,15 +99,25 @@ export default function CheckpointEdit() {
           <h1>Edit Checkpoint</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="modern-form">
+        <form onSubmit={handleSubmit} className="modern-form checkpoint-edit-form">
           <div className="form-group full">
             <label>Checkpoint Name</label>
-            <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+            <input 
+              type="text" 
+              value={form.name} 
+              onChange={e => setForm({...form, name: e.target.value})} 
+              className="checkpoint-edit-input"
+            />
           </div>
 
           <div className="form-group full">
             <label>Description</label>
-            <textarea rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+            <textarea 
+              rows="2" 
+              value={form.description} 
+              onChange={e => setForm({...form, description: e.target.value})} 
+              className="checkpoint-edit-textarea"
+            />
           </div>
 
           <div className="form-group">
@@ -127,12 +134,25 @@ export default function CheckpointEdit() {
 
           <div className="form-group">
             <label>Min Uploads</label>
-            <input type="number" value={form.minRequiredUploads} onChange={e => setForm({...form, minRequiredUploads: parseInt(e.target.value)})} />
+            <input 
+              type="number" 
+              value={form.minRequiredUploads} 
+              onChange={e => setForm({...form, minRequiredUploads: parseInt(e.target.value)})} 
+              className="checkpoint-edit-number"
+            />
           </div>
 
           <div className="form-group checkbox-group full">
-            <label className="switch"><input type="checkbox" checked={form.isOptional} onChange={e => setForm({...form, isOptional: e.target.checked})} /><span className="switch-slider" aria-hidden></span><span className="switch-label">Is Optional</span></label>
-            <label className="switch"><input type="checkbox" checked={form.qcRequired} onChange={e => setForm({...form, qcRequired: e.target.checked})} /><span className="switch-slider" aria-hidden></span><span className="switch-label">QC Required</span></label>
+            <label className="switch checkpoint-edit-switch">
+              <input type="checkbox" checked={form.isOptional} onChange={e => setForm({...form, isOptional: e.target.checked})} />
+              <span className="switch-slider" aria-hidden></span>
+              <span className="switch-label">Is Optional</span>
+            </label>
+            <label className="switch checkpoint-edit-switch">
+              <input type="checkbox" checked={form.qcRequired} onChange={e => setForm({...form, qcRequired: e.target.checked})} />
+              <span className="switch-slider" aria-hidden></span>
+              <span className="switch-label">QC Required</span>
+            </label>
           </div>
 
           <button type="submit" className="btn-submit purple-btn full" disabled={loading}>
@@ -142,27 +162,143 @@ export default function CheckpointEdit() {
       </div>
       
       <style jsx>{`
-        /* Checkpoint edit form switch styles */
-        .modern-form { display: flex; flex-direction: column; gap: 12px; }
-        .modern-form .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .modern-form .form-group.full { width: 100%; }
+        /* Scoped styles for Checkpoint Edit page only */
+        .checkpoint-edit-page .checkpoint-edit-form { 
+          display: flex; 
+          flex-direction: column; 
+          gap: 12px; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .form-group { 
+          display: flex; 
+          flex-direction: column; 
+          gap: 8px; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .form-group.full { 
+          width: 100%; 
+        }
 
-        .modern-form input,
-        .modern-form textarea { padding: 10px 14px; border-radius: 10px; }
+        .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-input,
+        .checkpoint-edit-page .checkpoint-edit-form textarea.checkpoint-edit-textarea,
+        .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-number {
+          background: #0f172a !important;
+          border: 1px solid #334155 !important;
+          color: #f8fafc !important;
+          caret-color: #ffffff !important;
+          padding: 10px 14px;
+          border-radius: 10px;
+        }
 
-        /* place switches side-by-side and align them left with equal halves (use flex to enforce) */
-        .modern-form .checkbox-group.full { display:flex; flex-direction:row; gap:24px; align-items:center; justify-content:flex-start; flex-wrap:nowrap; width:100%; min-width:0; }
-        .modern-form .switch { flex: 0 0 50%; min-width:0; display:flex; align-items:center; gap:12px; justify-content:flex-start; cursor:pointer; padding:6px 8px; box-sizing:border-box; margin:0; }
-        .modern-form .switch input { display:none; }
-        .modern-form .switch .switch-slider { width:44px; height:24px; background:#334155; border-radius:999px; position:relative; transition:0.18s ease; flex-shrink:0; }
-        .modern-form .switch .switch-slider::after { content:''; position:absolute; width:18px; height:18px; background:#fff; border-radius:50%; top:3px; left:3px; transition:0.18s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
-        .modern-form .switch input:checked + .switch-slider { background:#a855f7; }
-        .modern-form .switch input:checked + .switch-slider::after { transform: translateX(20px); }
-        .modern-form .switch .switch-label { color:#cbd5e1; font-weight:600; margin-left:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-input::placeholder,
+        .checkpoint-edit-page .checkpoint-edit-form textarea.checkpoint-edit-textarea::placeholder { 
+          color: #94a3b8 !important; 
+        }
+
+        .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-input:focus,
+        .checkpoint-edit-page .checkpoint-edit-form textarea.checkpoint-edit-textarea:focus,
+        .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-number:focus {
+          background: #0f172a !important;
+          color: #f8fafc !important;
+          caret-color: #ffffff !important;
+          border-color: #3b82f6 !important;
+          outline: none !important;
+        }
+
+        /* Override global light theme specifically for this page */
+        :global(:root.light) .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-input,
+        :global(:root.light) .checkpoint-edit-page .checkpoint-edit-form textarea.checkpoint-edit-textarea,
+        :global(:root.light) .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-number {
+          color: #f8fafc !important;
+          background: #0f172a !important;
+        }
+
+        :global(:root.light) .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-input:focus,
+        :global(:root.light) .checkpoint-edit-page .checkpoint-edit-form textarea.checkpoint-edit-textarea:focus,
+        :global(:root.light) .checkpoint-edit-page .checkpoint-edit-form input.checkpoint-edit-number:focus {
+          color: #f8fafc !important;
+          background: #0f172a !important;
+        }
+
+        /* Checkpoint edit form switch styles - scoped to this page */
+        .checkpoint-edit-page .checkpoint-edit-form .checkbox-group.full { 
+          display:flex; 
+          flex-direction:row; 
+          gap:24px; 
+          align-items:center; 
+          justify-content:flex-start; 
+          flex-wrap:nowrap; 
+          width:100%; 
+          min-width:0; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch { 
+          flex: 0 0 50%; 
+          min-width:0; 
+          display:flex; 
+          align-items:center; 
+          gap:12px; 
+          justify-content:flex-start; 
+          cursor:pointer; 
+          padding:6px 8px; 
+          box-sizing:border-box; 
+          margin:0; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch input { 
+          display:none; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch .switch-slider { 
+          width:44px; 
+          height:24px; 
+          background:#334155; 
+          border-radius:999px; 
+          position:relative; 
+          transition:0.18s ease; 
+          flex-shrink:0; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch .switch-slider::after { 
+          content:''; 
+          position:absolute; 
+          width:18px; 
+          height:18px; 
+          background:#fff; 
+          border-radius:50%; 
+          top:3px; 
+          left:3px; 
+          transition:0.18s ease; 
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25); 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch input:checked + .switch-slider { 
+          background:#a855f7; 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch input:checked + .switch-slider::after { 
+          transform: translateX(20px); 
+        }
+        
+        .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch .switch-label { 
+          color:#cbd5e1; 
+          font-weight:600; 
+          margin-left:12px; 
+          white-space:nowrap; 
+          overflow:hidden; 
+          text-overflow:ellipsis; 
+        }
 
         @media (max-width: 640px) {
-          .modern-form .checkbox-group.full { flex-direction: column; gap:12px; }
-          .modern-form .switch { flex: 0 0 100%; justify-content:flex-start; }
+          .checkpoint-edit-page .checkpoint-edit-form .checkbox-group.full { 
+            flex-direction: column; 
+            gap:12px; 
+          }
+          
+          .checkpoint-edit-page .checkpoint-edit-form .checkpoint-edit-switch { 
+            flex: 0 0 100%; 
+            justify-content:flex-start; 
+          }
         }
       `}</style>
     </div>

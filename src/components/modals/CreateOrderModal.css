@@ -1733,5 +1733,370 @@
   }
 }
 
+/* ==================== */
+/* MODAL STYLES - UPDATED */
+/* ==================== */
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-container {
+  background: var(--ol-bg-card);
+  border: 1px solid var(--ol-border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease;
+  /* FIX: Make modal height dynamic */
+  max-height: 85vh; /* Reduced from 90vh for better breathing room */
+  min-height: 400px; /* Minimum height */
+}
+
+.modal-container.modal-lg {
+  max-width: 720px;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==================== */
+/* MODAL FORM STRUCTURE - CRITICAL FIXES */
+/* ==================== */
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* Crucial for flexbox scrolling */
+  overflow: hidden;
+}
+
+.modal-body {
+  padding: 24px;
+  /* FIX: Make body flexible with auto height */
+  flex: 1;
+  min-height: 0; /* Crucial for flexbox scrolling */
+  overflow-y: auto;
+  max-height: none !important; /* Remove fixed max-height */
+  display: flex;
+  flex-direction: column;
+}
+
+.form-step {
+  /* FIX: Make form step flexible */
+  flex: 1;
+  min-height: 0; /* Allow shrinking */
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==================== */
+/* FORM GROUP ADJUSTMENTS */
+/* ==================== */
+
+.form-group {
+  margin-bottom: 20px; /* Reduced from 24px for more compact layout */
+  flex-shrink: 0; /* Prevent form groups from shrinking */
+}
+
+/* Make sure all inputs are visible */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--ol-bg-elevated);
+  border: 1px solid var(--ol-border);
+  border-radius: 12px;
+  color: #f1f5f9;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  -webkit-text-fill-color: #f1f5f9;
+  box-sizing: border-box; /* Prevent overflow */
+}
+
+/* Reference Name Input Specific */
+.form-input[type="text"] {
+  min-width: 100%; /* Ensure full width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #64748b;
+  -webkit-text-fill-color: #64748b;
+}
+
+/* ==================== */
+/* GARMENT TYPE GRID - Fix for more compact layout */
+/* ==================== */
+
+.garment-type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px; /* Reduced from 12px */
+  margin-bottom: 8px; /* Add spacing below */
+}
+
+.garment-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px; /* Reduced from 8px */
+  padding: 12px 8px; /* Reduced from 16px 12px */
+  background: var(--ol-bg-elevated);
+  border: 2px solid var(--ol-border);
+  border-radius: 12px;
+  color: var(--ol-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px; /* Smaller font */
+}
+
+/* ==================== */
+/* DUE DATE FIELD SPECIFIC STYLES */
+/* ==================== */
+
+/* Date input styling */
+.input-with-icon input[type="date"] {
+  color: var(--ol-text-primary);
+  padding-right: 1rem;
+  min-height: 48px; /* Consistent height */
+}
+
+.input-with-icon input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+  padding: 0;
+  margin-right: 8px;
+}
+
+.input-with-icon input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  color: var(--ol-text-primary);
+  padding: 2px 0;
+}
+
+/* Date hint styling - make it more compact */
+.date-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ol-text-muted);
+  line-height: 1.3;
+}
+
+.date-hint svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ==================== */
+/* SUMMARY GRID FOR CREATE MODAL */
+/* ==================== */
+
+/* For Create Order Modal with 7 items (including Due Date) */
+.create-order-summary .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+/* For Edit Order Modal with 6 items (without Due Date) */
+.edit-order-summary .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* ==================== */
+/* SCROLLABLE SECTIONS */
+/* ==================== */
+
+/* Make sequence and documents sections scrollable if needed */
+.workflow-sequence .sequence-list,
+.documents-container .docs-list {
+  max-height: 200px; /* Limit height */
+  overflow-y: auto;
+}
+
+/* ==================== */
+/* MODAL SPECIFIC CLASSES */
+/* ==================== */
+
+/* Create Order Modal - taller due to extra field */
+.create-order-modal .modal-container {
+  max-height: 88vh; /* Slightly taller for create */
+}
+
+.create-order-modal .form-step {
+  gap: 16px; /* Slightly more spacing */
+}
+
+/* Edit Order Modal - can be slightly shorter */
+.edit-order-modal .modal-container {
+  max-height: 85vh;
+}
+
+.edit-order-modal .form-step {
+  gap: 14px; /* Slightly less spacing */
+}
+
+/* ==================== */
+/* RESPONSIVE FIXES */
+/* ==================== */
+
+@media (max-width: 768px) {
+  .modal-container {
+    max-height: 90vh; /* More height on mobile */
+  }
+  
+  .modal-body {
+    padding: 20px 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 16px;
+  }
+  
+  .garment-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  
+  .step-header {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+  }
+  
+  .create-order-summary .summary-grid,
+  .edit-order-summary .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    max-height: 92vh;
+    border-radius: 16px;
+  }
+  
+  .modal-body {
+    padding: 16px 12px;
+  }
+  
+  .form-group {
+    margin-bottom: 14px;
+  }
+  
+  .garment-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .create-order-summary .summary-grid,
+  .edit-order-summary .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Adjust date input for mobile */
+  .input-with-icon input[type="date"] {
+    font-size: 13px; /* Smaller font on mobile */
+  }
+}
+
+/* ==================== */
+/* HEIGHT ADJUSTMENTS FOR DIFFERENT SCREENS */
+/* ==================== */
+
+/* Short screens */
+@media (max-height: 700px) {
+  .modal-container {
+    max-height: 85vh;
+    min-height: 350px;
+  }
+  
+  .modal-body {
+    padding: 16px 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 14px;
+  }
+  
+  .step-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+  
+  .step-header h3 {
+    font-size: 16px;
+  }
+  
+  .step-header p {
+    font-size: 12px;
+  }
+}
+
+/* Very short screens */
+@media (max-height: 600px) {
+  .modal-container {
+    max-height: 82vh;
+    min-height: 300px;
+  }
+  
+  .modal-body {
+    padding: 12px 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+  
+  .garment-type-btn {
+    padding: 10px 6px;
+    font-size: 11px;
+  }
+  
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+}
 

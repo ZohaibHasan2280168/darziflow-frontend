@@ -41,7 +41,6 @@ export default function CheckpointAdd() {
     return;
   }
 
-
   try {
     const payload = { ...form, minRequiredUploads: Number(form.minRequiredUploads) };
 
@@ -82,7 +81,7 @@ export default function CheckpointAdd() {
 };
 
   return (
-    <div className="form-container">
+    <div className="form-container checkpoint-add-page">
       <div className="form-card wide">
         <button onClick={() => navigate(-1)} className="btn-back"><FiArrowLeft /> Back</button>
         <div className="form-header">
@@ -90,15 +89,26 @@ export default function CheckpointAdd() {
           <h1>New Checkpoint</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="modern-form">
+        <form onSubmit={handleSubmit} className="modern-form checkpoint-add-form">
           <div className="form-group full">
             <label>Checkpoint Name</label>
-            <input type="text" required value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+            <input 
+              type="text" 
+              required 
+              value={form.name} 
+              onChange={e => setForm({...form, name: e.target.value})} 
+              className="checkpoint-add-input"
+            />
           </div>
 
           <div className="form-group full">
             <label>Description</label>
-            <textarea rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+            <textarea 
+              rows="2" 
+              value={form.description} 
+              onChange={e => setForm({...form, description: e.target.value})} 
+              className="checkpoint-add-textarea"
+            />
           </div>
 
           <div className="form-group">
@@ -112,7 +122,12 @@ export default function CheckpointAdd() {
 
           <div className="form-group">
             <label>Min Uploads</label>
-            <input type="number" value={form.minRequiredUploads} onChange={e => setForm({...form, minRequiredUploads: parseInt(e.target.value)})} />
+            <input 
+              type="number" 
+              value={form.minRequiredUploads} 
+              onChange={e => setForm({...form, minRequiredUploads: parseInt(e.target.value)})} 
+              className="checkpoint-add-number"
+            />
           </div>
 
           <div className="form-group checkbox-group full">
@@ -135,52 +150,161 @@ export default function CheckpointAdd() {
       </div>
       
       <style jsx>{`
-        /* Checkpoint form visuals: keep dark bg + white text while typing */
-        .modern-form { display: flex; flex-direction: column; gap: 12px; }
-        .modern-form .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .modern-form .form-group.full { width: 100%; }
+        /* Scoped styles for Checkpoint Add page only */
+        .checkpoint-add-page .checkpoint-add-form { 
+          display: flex; 
+          flex-direction: column; 
+          gap: 12px; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .form-group { 
+          display: flex; 
+          flex-direction: column; 
+          gap: 8px; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .form-group.full { 
+          width: 100%; 
+        }
 
-        .modern-form input,
-        .modern-form textarea {
-          background: #0f172a;
-          border: 1px solid #334155;
-          color: #f8fafc;
-          caret-color: #ffffff;
+        .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-input,
+        .checkpoint-add-page .checkpoint-add-form textarea.checkpoint-add-textarea,
+        .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-number {
+          background: #0f172a !important;
+          border: 1px solid #334155 !important;
+          color: #f8fafc !important;
+          caret-color: #ffffff !important;
           padding: 10px 14px;
           border-radius: 10px;
         }
 
-        .modern-form input::placeholder,
-        .modern-form textarea::placeholder { color: #94a3b8; }
-
-        .modern-form input:focus,
-        .modern-form textarea:focus {
-          background: #0f172a;
-          color: #f8fafc;
-          caret-color: #ffffff;
-          border-color: #3b82f6;
-          outline: none;
+        .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-input::placeholder,
+        .checkpoint-add-page .checkpoint-add-form textarea.checkpoint-add-textarea::placeholder { 
+          color: #94a3b8 !important; 
         }
 
-        .modern-form .chip { min-width: 54px; text-align: center; }
+        .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-input:focus,
+        .checkpoint-add-page .checkpoint-add-form textarea.checkpoint-add-textarea:focus,
+        .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-number:focus {
+          background: #0f172a !important;
+          color: #f8fafc !important;
+          caret-color: #ffffff !important;
+          border-color: #3b82f6 !important;
+          outline: none !important;
+        }
 
-        /* checkbox alignment: keep switches in a single row with equal halves (use flex-basis to prevent wrapping) */
-        .modern-form .checkbox-group { display:flex; flex-direction:row; gap:24px; align-items:center; justify-content:flex-start; flex-wrap:nowrap; width:100%; min-width:0; }
-        .modern-form .checkbox-group.full { display:flex; flex-direction:row; gap:24px; align-items:center; justify-content:flex-start; flex-wrap:nowrap; width:100%; min-width:0; }
+        .checkpoint-add-page .checkpoint-add-form .chip { 
+          min-width: 54px; 
+          text-align: center; 
+        }
 
-        /* Styled toggle switch - use flex to force exact halves and prevent wrapping */
-        .modern-form .switch { flex: 0 0 50%; min-width:0; display:flex; align-items:center; gap:12px; justify-content:flex-start; cursor:pointer; padding:6px 8px; box-sizing:border-box; margin:0; }
-        .modern-form .switch input { display:none; }
-        .modern-form .switch .switch-slider { width:44px; height:24px; background:#334155; border-radius:999px; position:relative; transition:0.18s ease; flex-shrink:0; }
-        .modern-form .switch .switch-slider::after { content:''; position:absolute; width:18px; height:18px; background:#fff; border-radius:50%; top:3px; left:3px; transition:0.18s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
-        .modern-form .switch input:checked + .switch-slider { background:#10b981; }
-        .modern-form .switch input:checked + .switch-slider::after { transform: translateX(20px); }
-        .modern-form .switch .switch-label { color:#cbd5e1; font-weight:600; margin-left:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        /* checkbox alignment */
+        .checkpoint-add-page .checkpoint-add-form .checkbox-group { 
+          display:flex; 
+          flex-direction:row; 
+          gap:24px; 
+          align-items:center; 
+          justify-content:flex-start; 
+          flex-wrap:nowrap; 
+          width:100%; 
+          min-width:0; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .checkbox-group.full { 
+          display:flex; 
+          flex-direction:row; 
+          gap:24px; 
+          align-items:center; 
+          justify-content:flex-start; 
+          flex-wrap:nowrap; 
+          width:100%; 
+          min-width:0; 
+        }
+
+        /* Styled toggle switch */
+        .checkpoint-add-page .checkpoint-add-form .switch { 
+          flex: 0 0 50%; 
+          min-width:0; 
+          display:flex; 
+          align-items:center; 
+          gap:12px; 
+          justify-content:flex-start; 
+          cursor:pointer; 
+          padding:6px 8px; 
+          box-sizing:border-box; 
+          margin:0; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .switch input { 
+          display:none; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .switch .switch-slider { 
+          width:44px; 
+          height:24px; 
+          background:#334155; 
+          border-radius:999px; 
+          position:relative; 
+          transition:0.18s ease; 
+          flex-shrink:0; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .switch .switch-slider::after { 
+          content:''; 
+          position:absolute; 
+          width:18px; 
+          height:18px; 
+          background:#fff; 
+          border-radius:50%; 
+          top:3px; 
+          left:3px; 
+          transition:0.18s ease; 
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25); 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .switch input:checked + .switch-slider { 
+          background:#10b981; 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .switch input:checked + .switch-slider::after { 
+          transform: translateX(20px); 
+        }
+        
+        .checkpoint-add-page .checkpoint-add-form .switch .switch-label { 
+          color:#cbd5e1; 
+          font-weight:600; 
+          margin-left:12px; 
+          white-space:nowrap; 
+          overflow:hidden; 
+          text-overflow:ellipsis; 
+        }
+
+        /* Override global light theme specifically for this page */
+        :global(:root.light) .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-input,
+        :global(:root.light) .checkpoint-add-page .checkpoint-add-form textarea.checkpoint-add-textarea,
+        :global(:root.light) .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-number {
+          color: #f8fafc !important;
+          background: #0f172a !important;
+        }
+
+        :global(:root.light) .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-input:focus,
+        :global(:root.light) .checkpoint-add-page .checkpoint-add-form textarea.checkpoint-add-textarea:focus,
+        :global(:root.light) .checkpoint-add-page .checkpoint-add-form input.checkpoint-add-number:focus {
+          color: #f8fafc !important;
+          background: #0f172a !important;
+        }
 
         /* Responsive: stack on small screens */
         @media (max-width: 640px) {
-          .modern-form .checkbox-group.full { flex-direction: column; gap:12px; }
-          .modern-form .switch { flex: 0 0 100%; justify-content:flex-start; }
+          .checkpoint-add-page .checkpoint-add-form .checkbox-group.full { 
+            flex-direction: column; 
+            gap:12px; 
+          }
+          
+          .checkpoint-add-page .checkpoint-add-form .switch { 
+            flex: 0 0 100%; 
+            justify-content:flex-start; 
+          }
         }
       `}</style>
     </div>

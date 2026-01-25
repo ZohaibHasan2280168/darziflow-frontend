@@ -4,7 +4,6 @@ import { useAlert } from '../../../../components/ui/AlertProvider';
 import { FiEdit3, FiArrowLeft, FiSave } from "react-icons/fi";
 import api from '../../../../services/reqInterceptor';
 
-
 export default function OperationEdit() {
   const params = useParams();
   const { opId } = params;
@@ -15,7 +14,6 @@ export default function OperationEdit() {
   const [form, setForm] = useState({ name: "", description: "" });
 
   useEffect(() => {
-    
     const loadOperation = async () => {
       const dept = deptId || localStorage.getItem('currentDeptId');
       if (!dept) return; // rely on localStorage fallback
@@ -62,7 +60,7 @@ export default function OperationEdit() {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container operation-edit-page">
       <div className="form-card">
         <button onClick={() => navigate(-1)} className="btn-back"><FiArrowLeft /> Back</button>
         <div className="form-header">
@@ -71,7 +69,7 @@ export default function OperationEdit() {
           <p>Modify operation details and workflow name</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="modern-form">
+        <form onSubmit={handleSubmit} className="modern-form operation-edit-form">
           <div className="form-group">
             <label>Operation Name</label>
             <input 
@@ -79,6 +77,7 @@ export default function OperationEdit() {
               value={form.name}
               onChange={(e) => setForm({...form, name: e.target.value})}
               required
+              className="operation-edit-input"
             />
           </div>
 
@@ -88,6 +87,7 @@ export default function OperationEdit() {
               rows="4"
               value={form.description}
               onChange={(e) => setForm({...form, description: e.target.value})}
+              className="operation-edit-textarea"
             />
           </div>
 
@@ -98,27 +98,40 @@ export default function OperationEdit() {
       </div>
 
       <style jsx>{`
-        /* Make sure operation edit inputs keep dark bg and white text while typing */
-        .modern-form input,
-        .modern-form textarea {
+        /* Scoped styles for Operation Edit page only */
+        .operation-edit-page .operation-edit-form input.operation-edit-input,
+        .operation-edit-page .operation-edit-form textarea.operation-edit-textarea {
           background: #0f172a;
           border: 1px solid #334155;
           color: #f8fafc;
           caret-color: #ffffff;
         }
 
-        .modern-form input::placeholder,
-        .modern-form textarea::placeholder {
+        .operation-edit-page .operation-edit-form input.operation-edit-input::placeholder,
+        .operation-edit-page .operation-edit-form textarea.operation-edit-textarea::placeholder {
           color: #94a3b8;
         }
 
-        .modern-form input:focus,
-        .modern-form textarea:focus {
+        .operation-edit-page .operation-edit-form input.operation-edit-input:focus,
+        .operation-edit-page .operation-edit-form textarea.operation-edit-textarea:focus {
           background: #0f172a;
           color: #f8fafc;
           caret-color: #ffffff;
           border-color: #3b82f6;
           outline: none;
+        }
+
+        /* Override global light theme specifically for this page */
+        :global(:root.light) .operation-edit-page .operation-edit-form input.operation-edit-input,
+        :global(:root.light) .operation-edit-page .operation-edit-form textarea.operation-edit-textarea {
+          color: #f8fafc !important;
+          background: #0f172a !important;
+        }
+
+        :global(:root.light) .operation-edit-page .operation-edit-form input.operation-edit-input:focus,
+        :global(:root.light) .operation-edit-page .operation-edit-form textarea.operation-edit-textarea:focus {
+          color: #f8fafc !important;
+          background: #0f172a !important;
         }
       `}</style>
     </div>

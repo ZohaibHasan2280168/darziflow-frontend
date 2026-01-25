@@ -35,7 +35,7 @@ export default function OperationAdd() {
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container operation-add-page">
       <div className="form-card">
         <button onClick={() => navigate(-1)} className="btn-back"><FiArrowLeft /> Back</button>
         <div className="form-header">
@@ -53,6 +53,7 @@ export default function OperationAdd() {
               value={form.name}
               onChange={(e) => setForm({...form, name: e.target.value})}
               required
+              className="operation-add-input"
             />
           </div>
 
@@ -63,6 +64,7 @@ export default function OperationAdd() {
               rows="4"
               value={form.description}
               onChange={(e) => setForm({...form, description: e.target.value})}
+              className="operation-add-textarea"
             />
           </div>
 
@@ -73,27 +75,38 @@ export default function OperationAdd() {
       </div>
       
       <style jsx>{`
-        /* Ensure inputs remain readable while typing */
-        .modern-form input,
-        .modern-form textarea {
-          background: #0f172a;
-          border: 1px solid #334155;
-          color: #f8fafc;
-          caret-color: #ffffff;
+        /* Add a unique class to the page container for scoping */
+        .operation-add-page .modern-form input.operation-add-input,
+        .operation-add-page .modern-form textarea.operation-add-textarea {
+          background: #0f172a !important;
+          border: 1px solid #334155 !important;
+          color: #f8fafc !important;
+          caret-color: #ffffff !important;
         }
 
-        .modern-form input::placeholder,
-        .modern-form textarea::placeholder {
-          color: #94a3b8;
+        .operation-add-page .modern-form input.operation-add-input::placeholder,
+        .operation-add-page .modern-form textarea.operation-add-textarea::placeholder {
+          color: #94a3b8 !important;
         }
 
-        .modern-form input:focus,
-        .modern-form textarea:focus {
-          background: #0f172a; /* keep dark */
-          color: #f8fafc;      /* keep text white */
-          caret-color: #ffffff;
-          border-color: #3b82f6;
-          outline: none;
+        .operation-add-page .modern-form input.operation-add-input:focus,
+        .operation-add-page .modern-form textarea.operation-add-textarea:focus {
+          background: #0f172a !important;
+          color: #f8fafc !important;
+          caret-color: #ffffff !important;
+          border-color: #3b82f6 !important;
+          outline: none !important;
+        }
+
+        /* More specific selector that will override :root.light */
+        :global(:root.light) .operation-add-page .modern-form input.operation-add-input,
+        :global(:root.light) .operation-add-page .modern-form textarea.operation-add-textarea {
+          color: #f8fafc !important;
+        }
+
+        :global(:root.light) .operation-add-page .modern-form input.operation-add-input:focus,
+        :global(:root.light) .operation-add-page .modern-form textarea.operation-add-textarea:focus {
+          color: #f8fafc !important;
         }
       `}</style>
     </div>
