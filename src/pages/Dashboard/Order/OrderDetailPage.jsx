@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  FiArrowLeft as ChevronLeft,
   FiDownload as Download,
   FiEye as Eye,
   FiUpload as Upload,
   FiCheck as CheckCircle2,
-  FiAlertCircle as AlertCircle,
   FiFileText as FileText,
   FiX as X,
   FiPlay as Zap,
@@ -15,23 +13,14 @@ import {
   FiInfo,
   FiImage,
   FiVideo,
-  FiExternalLink,
   FiFile,
   FiArrowLeft,
-  FiPlay as FiCheck,
   FiUser,
   FiMail,
-  FiHash,
   FiCalendar,
   FiClock,
   FiAlignLeft,
-  FiLayers,
-  FiGrid,
-  FiCheckSquare,
   FiActivity,
-  FiCheckCircle,
-  FiPlus,
-  FiSend
 } from 'react-icons/fi';
 import api from '../../../services/reqInterceptor';
 import Loader from '../../../components/ui/Loader';
@@ -39,6 +28,9 @@ import { toast } from 'react-hot-toast';
 import './Order.css';
 import WorkflowSection from './components/WorkflowSection';
 import FilePreviewModal from './components/FilePreviewModal';
+import uploadToCloudinary from '../../../utils/uploadToCloudinary';
+import {getFileIcon} from '../../../utils/fileUtils';
+
 
 const OrderDetailPage = () => {
   const { orderId } = useParams();
@@ -77,7 +69,7 @@ const OrderDetailPage = () => {
     fetchOrderDetails();
   }, [orderId]);
 
-  // API Functions for Checkpoint Management
+  // API Functions for Checkpoint Management (from admin later for qc)
   const handleApproveCheckpoint = async (checkpointId, operationId) => {
     try {
       await api.patch(
@@ -91,6 +83,7 @@ const OrderDetailPage = () => {
     }
   };
 
+  //admin reject checkpoint later for qc
   const handleRejectCheckpoint = async (checkpointId, operationId, comment) => {
     try {
       await api.patch(
@@ -105,6 +98,7 @@ const OrderDetailPage = () => {
     }
   };
 
+  //final approve checkpoint by admin
   const handleFinalApproveCheckpoint = async (checkpointId, operationId) => {
     try {
       await api.patch(
@@ -118,36 +112,76 @@ const OrderDetailPage = () => {
     }
   };
 
-  const handleAdminSubmitCheckpoint = async (checkpointId, operationId, submissionText, files) => {
-    try {
-      const formData = new FormData();
-      
-      if (submissionText.trim()) {
-        formData.append('submissionText', submissionText);
-      }
-      console.log('text:',submissionText);
-      files.forEach(file => {
-        formData.append('submissionFiles', file);
-      });
+const handleAdminSubmitCheckpoint = async (
+  checkpointId,
+  operationId,
+  submissionText,
+  files
+) => {
 
-      await api.post(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/submit`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }
+  try {
+
+    const uploadedFiles = [];
+
+    for (const file of files) {
+      const result = await uploadToCloudinary(
+        file,
+        orderId,
+        "checkpoint"
       );
-      
-      toast.success('Admin submission successful');
-      setAdminSubmittingCheckpoint(null);
-      fetchOrderDetails();
-    } catch (err) {
-      toast.error('Failed to submit checkpoint');
-      throw err;
+
+      uploadedFiles.push(result);
     }
-  };
+
+    await api.post(
+      `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/submit`,
+      {
+        submissionText,
+        files: uploadedFiles
+      }
+    );
+
+    toast.success("Admin submission successful");
+    setAdminSubmittingCheckpoint(null);
+    fetchOrderDetails();
+
+  } catch (err) {
+    toast.error("Failed to submit checkpoint");
+    throw err;
+  }
+
+};
+
+const handleFileUpload = async (e, docType) => {
+
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setUploadingDoc(docType);
+
+  try {
+
+    const uploaded = await uploadToCloudinary(
+      file,
+      orderId,
+      "prerequisite"
+    );
+
+    await api.post(
+      `/orders/${orderId}/prerequisites/${docType}`,
+      uploaded
+    );
+
+    toast.success(`${docType.replace(/_/g, " ")} uploaded successfully`);
+    await fetchOrderDetails();
+
+  } catch (err) {
+    toast.error("Upload failed");
+  } finally {
+    setUploadingDoc(null);
+  }
+
+};
 
   const handleDownload = async (url, fileName) => {
     try {
@@ -170,25 +204,6 @@ const OrderDetailPage = () => {
     }
   };
 
-  const handleFileUpload = async (e, docType) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('prerequisiteFile', file);
-    setUploadingDoc(docType);
-
-    try {
-      await api.post(`/orders/${orderId}/prerequisites/${docType}`, formData);
-      toast.success(`${docType.replace(/_/g, ' ')} uploaded successfully`);
-      await fetchOrderDetails();
-    } catch (err) {
-      toast.error('Upload failed');
-    } finally {
-      setUploadingDoc(null);
-    }
-  };
-
   const handleDocAction = async (docType, action) => {
     setActionLoading(true);
     try {
@@ -204,12 +219,6 @@ const OrderDetailPage = () => {
     }
   };
 
-  const getFileIcon = (fileUrl) => {
-    if (!fileUrl) return <FiFile size={20} />;
-    if (fileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) return <FiImage size={20} />;
-    if (fileUrl.match(/\.(mp4|webm|mov)$/i)) return <FiVideo size={20} />;
-    return <FileText size={20} />;
-  };
 
   const getStatusStyle = (status) => {
     return statusColor[status] || 'status-pending';
@@ -238,17 +247,17 @@ const OrderDetailPage = () => {
   return (
     <div className="order-detail-wrapper">
       {/* File Preview Modals */}
-      <FilePreviewModal
-        previewDoc={previewDoc}
-        onClose={() => setPreviewDoc(null)}
-        onDownload={handleDownload}
-      />
+<FilePreviewModal
+  previewDoc={previewDoc} // same logic, previewDoc can be { fileUrl: string, docType: string }
+  onClose={() => setPreviewDoc(null)}
+  onDownload={handleDownload}
+/>
       
-      <FilePreviewModal
-        previewDoc={checkpointPreview ? { fileUrl: checkpointPreview, docType: 'Checkpoint Submission' } : null}
-        onClose={() => setCheckpointPreview(null)}
-        onDownload={handleDownload}
-      />
+<FilePreviewModal
+  previewDoc={checkpointPreview} // already a file object from Cloudinary
+  onClose={() => setCheckpointPreview(null)}
+  onDownload={handleDownload}
+/>
 
       {/* HEADER SECTION */}
       <div className="detail-header">
@@ -385,7 +394,6 @@ const OrderDetailPage = () => {
       </div>
 
       {/* PREREQUISITE DOCUMENTS SECTION */}
-      {/* PREREQUISITE DOCUMENTS SECTION */}
 <div className="prereq-section">
   <div className="section-header">
     <h2 className="section-title">
@@ -417,7 +425,6 @@ const OrderDetailPage = () => {
           <div className="doc-actions">
             {doc.fileUrl ? (
               <>
-                {/* FIXED: Pass correct data structure to setPreviewDoc */}
                 <button
                   className="action-btn view-btn"
                   onClick={() => setPreviewDoc({
@@ -429,8 +436,7 @@ const OrderDetailPage = () => {
                   <Eye size={16} />
                   <span>View</span>
                 </button>
-                
-                {/* FIXED: Pass correct parameters to handleDownload */}
+              
                 <button
                   className="action-btn download-btn"
                   onClick={() => handleDownload(

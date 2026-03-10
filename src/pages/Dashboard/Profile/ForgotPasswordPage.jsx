@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
       if (!res.ok) return setError(data.message || "Failed to send reset link.");
 
-      setSuccess("✅ Password reset link has been sent to your email.");
+      setSuccess("Password reset link has been sent to your email.");
       setEmail("");
     } catch (err) {
       console.error(err);

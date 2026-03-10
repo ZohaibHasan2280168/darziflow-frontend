@@ -5,49 +5,50 @@ import authService from "../../services/authService";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+   const storedUser = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
+
+  const [user, setUser] = useState(storedUser);
+  const [loading, setLoading] = useState(false); // no need to block UI
   const [mustChangePassword, setMustChangePassword] = useState(false);
-  
-  
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem("accessToken");
 
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        // This request uses interceptor
-        const res = await authService.getMe();
-        setUser(res.user);
-      } catch (err) {
-        localStorage.removeItem("accessToken");
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initAuth();
+ useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token && !user) {
+      setUser({}); 
+    }
   }, []);
 
   const login = async (credentials) => {
     const data = await authService.login(credentials);
     setUser(data.user);
+
+    if (data.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
+    }
+
     return data;
   };
 
   const logout = async () => {
     await authService.logout();
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, mustChangePassword, setMustChangePassword }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        mustChangePassword,
+        setMustChangePassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

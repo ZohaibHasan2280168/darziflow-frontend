@@ -36,11 +36,10 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  // Fetch user profile (NEW AUTH SYSTEM)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await api.get("/auth/profile");
+        const res = await api.get("/profile");
 
         setUser({
           name: res.data.name,

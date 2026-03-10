@@ -1,4 +1,4 @@
-import { FiDownload, FiX, FiFileText, FiImage, FiVideo, FiExternalLink } from 'react-icons/fi';
+import { FiDownload, FiX, FiFileText,FiExternalLink } from 'react-icons/fi';
 
 const FilePreviewModal = ({ previewDoc, onClose, onDownload }) => {
   if (!previewDoc) return null;

@@ -1,6 +1,6 @@
 // CheckpointItem.jsx
 import { useState } from 'react';
-import { FiCheckCircle, FiPlus, FiEye, FiDownload, FiImage, FiVideo, FiFileText, FiUpload, FiSend, FiClock, FiChevronDown, FiChevronUp, FiUser, FiMessageSquare } from 'react-icons/fi';
+import { FiCheckCircle, FiPlus, FiEye, FiDownload, FiImage, FiVideo, FiFileText, FiUpload, FiSend, FiClock, FiChevronDown, FiChevronUp, FiUser, FiMessageSquare, FiFile } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import CheckpointReview from './CheckpointReview';
 
@@ -106,11 +106,47 @@ const AdminSubmissionForm = ({
   );
 };
 
-// Helper function for file icons
-const getFileIcon = (fileUrl) => {
-  if (!fileUrl) return <FiFileText size={20} />;
-  if (fileUrl.match(/\.(jpeg|jpg|gif|png|webp)$/i)) return <FiImage size={20} />;
-  if (fileUrl.match(/\.(mp4|webm|mov)$/i)) return <FiVideo size={20} />;
+// FIXED: Updated getFileIcon function to handle file objects
+const getFileIcon = (file) => {
+  // Handle null/undefined
+  if (!file) {
+    return <FiFile size={20} />;
+  }
+
+  let fileUrl = null;
+
+  // If it's a string, use it directly
+  if (typeof file === "string") {
+    fileUrl = file;
+  } 
+  // If it's an object with url property (like from Cloudinary)
+  else if (file?.url && typeof file.url === "string") {
+    fileUrl = file.url;
+  }
+  // If it's an object with fileUrl property
+  else if (file?.fileUrl && typeof file.fileUrl === "string") {
+    fileUrl = file.fileUrl;
+  }
+  else {
+    // If we can't extract a URL, return default icon
+    return <FiFile size={20} />;
+  }
+
+  // Check by file extension
+  if (/\.(jpeg|jpg|gif|png|webp|bmp|svg)$/i.test(fileUrl)) {
+    return <FiImage size={20} />;
+  }
+  if (/\.(mp4|webm|mov|avi|mkv)$/i.test(fileUrl)) {
+    return <FiVideo size={20} />;
+  }
+  // Check by resource type for Cloudinary URLs
+  if (fileUrl.includes('/image/upload/')) {
+    return <FiImage size={20} />;
+  }
+  if (fileUrl.includes('/video/upload/')) {
+    return <FiVideo size={20} />;
+  }
+  
   return <FiFileText size={20} />;
 };
 
@@ -250,6 +286,16 @@ const CheckpointItem = ({
     return variants[status] || 'badge-gray';
   };
 
+  // Helper function to get file name from URL or object
+  const getFileName = (file) => {
+    if (typeof file === 'string') {
+      return file.split('/').pop();
+    } else if (file?.url) {
+      return file.url.split('/').pop();
+    }
+    return 'File';
+  };
+
   return (
     <div className="checkpoint-item">
       <div className="checkpoint-main">
@@ -292,18 +338,25 @@ const CheckpointItem = ({
                       {getFileIcon(file)}
                     </div>
                     <div className="file-info">
-                      <p className="file-name">{file.split('/').pop()}</p>
+                      <p className="file-name">{getFileName(file)}</p>
                       <div className="file-actions">
                         <button
                           className="file-action-btn view-btn"
-                          onClick={() => onPreviewFile(file)}
+                          onClick={() => {
+                            // Pass the file object or URL to preview
+                            const previewFile = typeof file === 'string' ? file : file.url;
+                            onPreviewFile(previewFile);
+                          }}
                         >
                           <FiEye size={14} />
                           <span>View</span>
                         </button>
                         <button
                           className="file-action-btn download-btn"
-                          onClick={() => handleDownload(file, `checkpoint-${checkpoint.name}-${index}`)}
+                          onClick={() => {
+                            const fileUrl = typeof file === 'string' ? file : file.url;
+                            handleDownload(fileUrl, `checkpoint-${checkpoint.name}-${index}`);
+                          }}
                         >
                           <FiDownload size={14} />
                           <span>Download</span>

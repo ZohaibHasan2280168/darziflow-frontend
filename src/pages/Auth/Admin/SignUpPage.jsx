@@ -8,16 +8,14 @@ export default function AdminSignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth(); // optional: login after signup
+  const { login } = useAuth(); 
 
   const handleSubmit = async (formData) => {
     setIsLoading(true);
     setError("");
     try {
-      // register new admin
       await authService.register({ ...formData, role: "ADMIN" });
 
-      // optionally login automatically after signup
       await login({ email: formData.email, password: formData.password });
 
       navigate("/dashboard");

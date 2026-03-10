@@ -1,7 +1,8 @@
-// WorkflowSection.jsx
 import { useState, useEffect } from 'react';
 import { FiLayers, FiGrid, FiActivity, FiCheckSquare, FiChevronDown, FiChevronUp, FiClock } from 'react-icons/fi';
 import CheckpointItem from './CheckpointItem';
+import {getFileIcon} from '../../../../utils/fileUtils';
+
 
 const WorkflowSection = ({
   workflow,
@@ -207,6 +208,7 @@ const WorkflowSection = ({
                                     ? null 
                                     : `${operation._id}-${checkpoint._id}`
                                 )}
+                                getFileIcon={getFileIcon} // Add this line to pass the function
                               />
                             ))}
                           </div>

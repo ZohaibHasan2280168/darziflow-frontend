@@ -197,7 +197,7 @@ export default function AddDepartment() {
             />
             <span className="add-department-switch-slider" aria-hidden="true"></span>
             <span className="add-department-switch-label">
-              {chk.qcRequired ? '✅ QC Required' : 'QC Required'}
+              {chk.qcRequired ? 'QC Required' : 'QC Required'}
             </span>
           </label>
         </div>

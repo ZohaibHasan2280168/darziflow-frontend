@@ -38,7 +38,6 @@ const handleSubmit = async (e) => {
       setSuccess(true);
       setForm({ name: "", email: "", role: "" });
 
-      // Optional: alert temporary password if returned
       if (res.data.tempPassword) {
         alert(`Temporary password for user: ${res.data.tempPassword}`);
       }

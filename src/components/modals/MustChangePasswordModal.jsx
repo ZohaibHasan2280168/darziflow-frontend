@@ -8,8 +8,8 @@ const MustChangePasswordModal = () => {
   if (!mustChangePassword) return null;
 
   const handleContinue = () => {
-    setMustChangePassword(false); // hide modal
-    navigate("/profile"); // where change password exists
+    setMustChangePassword(false);
+    navigate("/profile"); 
   };
 
   return (

@@ -1,7 +1,7 @@
 import axios from "axios";
 import api from "../services/reqInterceptor.js";
 
- const API_URL = "http://localhost:5000/api/auth"; // adjust if deployed
+ const API_URL = "http://localhost:5000/api/auth";
 //const API_URL = "https://darziflow-backend.onrender.com/api/auth"; 
 
 // Register user

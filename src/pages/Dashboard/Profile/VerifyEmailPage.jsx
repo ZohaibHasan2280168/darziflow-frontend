@@ -13,7 +13,6 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
 
-
     const verifyEmail = async () => {
       try {
         const res = await axios.get(`${API_BASE}/auth/verify/${token}`);
@@ -21,9 +20,8 @@ export default function VerifyEmailPage() {
         setMessage(res.data.message);
         showAlert({ title: 'Verification', message: res.data.message, type: 'success' });
 
-        // Optional: redirect to login after 3 seconds
         setTimeout(() => {
-          navigate("/admin/login"); // or wherever login is
+          navigate("/admin-login");
         }, 3000);
       } catch (err) {
         const errMsg = err.response?.data?.message || "Verification failed. Invalid or expired token.";

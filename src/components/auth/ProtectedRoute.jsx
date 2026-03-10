@@ -5,7 +5,7 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
   const { user, loading, mustChangePassword } = useAuth();
   const location = useLocation();
 
-  if (loading) return <p>Loading...</p>; // or a spinner
+  if (loading) return <p>Loading...</p>; 
 
   if (!user) return <Navigate to="/" replace />;
 

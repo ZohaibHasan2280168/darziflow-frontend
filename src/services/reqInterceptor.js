@@ -24,9 +24,7 @@ api.interceptors.response.use(
     if (status === 401) {
       
       localStorage.removeItem("accessToken");
-
       delete api.defaults.headers.common["Authorization"];
-
       window.location.href = "/login";
     }
 
