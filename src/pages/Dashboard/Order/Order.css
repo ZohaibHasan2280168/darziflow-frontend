@@ -1,26 +1,5 @@
 /* OrderDetailPage.css */
 
-/* Color Palette */
-:root {
-  --bg-dark: #080a12;
-  --bg-darker: #0f1119;
-  --bg-card: #111827;
-  --bg-card-hover: #1a1f35;
-  --border-subtle: #1f2937;
-  --border-light: #374151;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --accent-blue: #3b82f6;
-  --accent-blue-light: #60a5fa;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-red: #ef4444;
-  --accent-purple: #8b5cf6;
-  --accent-cyan: #06b6d4;
-  --accent-pink: #ec4899;
-}
-
 /* Reset & Base Styles */
 * {
   margin: 0;
@@ -35,7 +14,7 @@ body {
 /* Main Container */
 .order-detail-wrapper {
   min-height: 100vh;
-  background: var(--bg-dark);
+  background: var(--main-bg);
   color: var(--text-primary);
   padding: 40px;
   position: relative;
@@ -169,8 +148,8 @@ body {
 }
 
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -180,8 +159,8 @@ body {
 }
 
 .stat-card:hover {
-  border-color: var(--accent-blue);
-  background: var(--bg-card-hover);
+  border-color: rgb(var(--color-primary));
+  background: var(--card-hover-bg);
   transform: translateY(-4px);
 }
 
@@ -196,8 +175,8 @@ body {
 }
 
 .stat-icon.category-icon {
-  background: rgba(59, 130, 246, 0.15);
-  color: var(--accent-blue);
+  background: rgba(var(--color-primary), 0.15);
+  color: rgb(var(--color-primary));
 }
 
 .stat-icon.price-icon {

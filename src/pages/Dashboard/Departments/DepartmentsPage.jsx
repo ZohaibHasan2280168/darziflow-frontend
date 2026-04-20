@@ -1,7 +1,7 @@
-"use client";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../services/reqInterceptor";
+import BackButton from "../../../components/ui/BackButton";
 import './Departments.css';
 
 // Icons
@@ -123,9 +123,7 @@ const Departments = () => {
         {/* Header */}
         <header className="departments-header">
           <div className="header-left">
-            <button className="back-btn" onClick={() => navigate(-1)}>
-              ← Back
-            </button>
+            <BackButton />
             <div className="header-text">
               <h1 className="page-title">Departments</h1>
               <p className="page-subtitle">Manage production departments and their teams</p>

@@ -9,6 +9,7 @@ import {
 import api from '../../../services/reqInterceptor';
 import EditOrderModal from "../../../components/modals/EditOrderModal";
 import CreateOrderModal from "../../../components/modals/CreateOrderModal";
+import BackButton from "../../../components/ui/BackButton";
 import { useAlert } from "../../../components/ui/AlertProvider";
 import './OrderList.css';
 
@@ -96,15 +97,13 @@ const OrdersList = () => {
       {/* Header */}
       <header className="page-header">
         <div className="header-content">
-          <button className="back-button" onClick={() => navigate(-1)}>
-            <FiArrowLeft size={20} />
-          </button>
+          <BackButton />
           <div className="header-text">
             <h1 className="page-title">Order Workflows</h1>
             <p className="page-subtitle">Initialize and manage production cycles</p>
           </div>
         </div>
-        <button className="create-btn" onClick={() => setShowAddModal(true)}>
+        <button type="button" className="create-btn" onClick={() => setShowAddModal(true)}>
           <FiPlus size={18} />
           <span>New Order</span>
         </button>
