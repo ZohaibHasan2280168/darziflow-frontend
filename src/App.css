@@ -458,3 +458,99 @@ input:focus, textarea:focus {
 .orange-btn { background: #f59e0b; }
 .green-btn { background: #10b981; }
 .purple-btn { background: #a855f7; }
+
+/* ==================== DARK MODE SUPPORT ==================== */
+
+/* Dark mode text colors */
+:root.dark .moderator-card {
+  background: rgb(var(--color-white));
+  color: rgb(var(--color-text));
+}
+
+:root.dark .moderator-error {
+  background: #7f1d1d;
+  border-left-color: #ef4444;
+  color: #fecaca;
+}
+
+:root.dark .input {
+  background: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+:root.dark .input:focus {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+:root.dark .modal-card {
+  background: rgb(var(--color-white));
+  color: rgb(var(--color-text));
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+:root.dark .modal-title {
+  color: #3b82f6;
+}
+
+:root.dark .modal-form label {
+  color: rgb(var(--color-text));
+}
+
+:root.dark .modal-form input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(99, 102, 241, 0.2);
+  color: rgb(var(--color-text));
+}
+
+:root.dark .modal-form input::placeholder {
+  color: #94a3b8;
+}
+
+:root.dark .modal-form input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+:root.dark .form-container {
+  background: rgb(var(--color-bg));
+}
+
+:root.dark .form-card {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+:root.dark .form-header h1 {
+  color: rgb(var(--color-text));
+}
+
+:root.dark .form-header p {
+  color: #94a3b8;
+}
+
+:root.dark label {
+  color: rgb(var(--color-text-light));
+}
+
+:root.dark input, :root.dark textarea {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(99, 102, 241, 0.2);
+  color: rgb(var(--color-text));
+}
+
+:root.dark .chip {
+  background: rgba(99, 102, 241, 0.2);
+  color: rgb(var(--color-text-light));
+}
+
+:root.dark .chip.active {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Modal overlay background for dark mode */
+:root.dark .modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}

@@ -2,15 +2,46 @@
 
 /* Tailwind-like utility classes for flexibility */
 
-  :root {
-    --color-primary: 59 130 246; /* blue-500 */
-    --color-primary-hover: 37 99 235; /* blue-600 */
-    --color-disabled: 209 213 219; /* gray-300 */
-    --color-text: 31 41 55; /* gray-800 */
-    --color-text-light: 75 85 99; /* gray-600 */
-    --color-bg: 243 244 246; /* gray-100 */
-    --color-white: 255 255 255;
-  }
+/* Light Mode (Default) */
+:root.light {
+  --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --text-color: #ffffff;
+  --color-primary: 59 130 246; /* blue-500 */
+  --color-primary-hover: 37 99 235; /* blue-600 */
+  --color-disabled: 209 213 219; /* gray-300 */
+  --color-text: 31 41 55; /* gray-800 */
+  --color-text-light: 75 85 99; /* gray-600 */
+  --color-bg: 243 244 246; /* gray-100 */
+  --color-white: 255 255 255;
+  --dropdown-bg: rgba(255, 255, 255, 0.95);
+}
+
+/* Dark Mode */
+:root.dark {
+  --main-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --text-color: #e2e8f0;
+  --color-primary: 59 130 246; /* blue-500 */
+  --color-primary-hover: 37 99 235; /* blue-600 */
+  --color-disabled: 71 85 105; /* slate-600 */
+  --color-text: 226 232 240; /* slate-200 */
+  --color-text-light: 148 163 184; /* slate-400 */
+  --color-bg: 15 23 42; /* slate-950 */
+  --color-white: 30 41 59; /* slate-800 */
+  --dropdown-bg: rgba(15, 23, 42, 0.95);
+}
+
+/* Default to light mode */
+:root {
+  --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --text-color: #ffffff;
+  --color-primary: 59 130 246; /* blue-500 */
+  --color-primary-hover: 37 99 235; /* blue-600 */
+  --color-disabled: 209 213 219; /* gray-300 */
+  --color-text: 31 41 55; /* gray-800 */
+  --color-text-light: 75 85 99; /* gray-600 */
+  --color-bg: 243 244 246; /* gray-100 */
+  --color-white: 255 255 255;
+}
 
   * {
     margin: 0;
@@ -18,12 +49,27 @@
     box-sizing: border-box;
   }
 
+  html {
+    scroll-behavior: smooth;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  html.light {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: rgb(var(--color-text));
+  }
+
+  html.dark {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: rgb(var(--color-text));
+  }
+
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     background-color: rgb(var(--color-bg));
     color: rgb(var(--color-text));
     min-height: 100vh;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* Reusable button styles */

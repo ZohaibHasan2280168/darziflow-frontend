@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/reqInterceptor";
 import authService from "../../services/authService";
 import { useAuth } from "../../components/context/AuthContext";
+import { useTheme } from "../../components/context/ThemeContext";
 import NotificationBell from '../ui/NotificationBell';
 
 import {
@@ -11,7 +12,9 @@ import {
   FiGrid,
   FiShoppingCart,
   FiHome,
-  FiLogOut
+  FiLogOut,
+  FiSun,
+  FiMoon
 } from "react-icons/fi";
 
 import "./Navbar.css";
@@ -25,6 +28,7 @@ const Navbar = () => {
   const [sideOpen, setSideOpen] = useState(false);
 
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -131,6 +135,14 @@ const Navbar = () => {
           <div className="notification-wrapper" style={{ marginRight: "15px", display: "flex", alignItems: "center" }}>
             <NotificationBell />
           </div>
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? <FiMoon size={20} /> : <FiSun size={20} />}
+          </button>
           <div className="profile-container" ref={dropdownRef}>
             <div
               className="profile-icon"
