@@ -459,12 +459,112 @@ input:focus, textarea:focus {
 .green-btn { background: #10b981; }
 .purple-btn { background: #a855f7; }
 
+/* ==================== GLOBAL THEME SUPPORT ==================== */
+
+/* ==================== LIGHT MODE ==================== */
+
+/* Light Mode - Main containers */
+:root.light {
+  --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --body-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f9fafb;
+  --input-bg: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-light: #e5e7eb;
+}
+
+:root.light .departments-container,
+:root.light .users-container,
+:root.light .order-detail-wrapper,
+:root.light .form-container {
+  background: var(--body-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+:root.light .departments-table td,
+:root.light .users-table td,
+:root.light .departments-table th,
+:root.light .users-table th {
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+}
+
+:root.light .user-name,
+:root.light .dept-name,
+:root.light .page-title {
+  color: var(--text-primary) !important;
+}
+
+:root.light .input,
+:root.light input,
+:root.light textarea {
+  background: var(--input-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+}
+
+:root.light .modal-card,
+:root.light .form-card,
+:root.light .stat-card,
+:root.light .main-card {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+}
+
+:root.light label,
+:root.light .modal-title,
+:root.light .form-header h1,
+:root.light .table-title h3 {
+  color: var(--text-primary) !important;
+}
+
+:root.light .user-email,
+:root.light .dept-description,
+:root.light .page-subtitle,
+:root.light .stat-label,
+:root.light .text-muted {
+  color: var(--text-secondary) !important;
+}
+
 /* ==================== DARK MODE SUPPORT ==================== */
 
 /* Dark mode text colors */
 :root.dark .moderator-card {
-  background: rgb(var(--color-white));
-  color: rgb(var(--color-text));
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode - All containers */
+:root.dark {
+  --main-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --body-bg: #0f1419;
+  --card-bg: #1a1f35;
+  --card-hover-bg: #242d45;
+  --input-bg: #111827;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-light: #334155;
+}
+
+:root.dark .departments-container,
+:root.dark .users-container,
+:root.dark .order-detail-wrapper,
+:root.dark .form-container,
+:root.dark .moderator-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  color: var(--text-primary) !important;
+}
+
+:root.dark .departments-content,
+:root.dark .users-content,
+:root.dark .form-card,
+:root.dark .moderator-card {
+  background: transparent !important;
 }
 
 :root.dark .moderator-error {
@@ -473,84 +573,129 @@ input:focus, textarea:focus {
   color: #fecaca;
 }
 
-:root.dark .input {
-  background: rgb(var(--color-bg));
-  color: rgb(var(--color-text));
-  border-color: rgba(99, 102, 241, 0.2);
+:root.dark .input,
+:root.dark input,
+:root.dark textarea,
+:root.dark select {
+  background: var(--input-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
 }
 
-:root.dark .input:focus {
-  border-color: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+:root.dark .input:focus,
+:root.dark input:focus,
+:root.dark textarea:focus {
+  border-color: rgba(59, 130, 246, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+:root.dark .input::placeholder,
+:root.dark input::placeholder,
+:root.dark textarea::placeholder {
+  color: var(--text-muted) !important;
 }
 
 :root.dark .modal-card {
-  background: rgb(var(--color-white));
-  color: rgb(var(--color-text));
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
-:root.dark .modal-title {
-  color: #3b82f6;
+:root.dark .modal-title,
+:root.dark .form-header h1,
+:root.dark .table-title h3,
+:root.dark .page-title,
+:root.dark .section-title {
+  color: var(--text-primary) !important;
 }
 
-:root.dark .modal-form label {
-  color: rgb(var(--color-text));
+:root.dark .modal-form label,
+:root.dark label {
+  color: var(--text-secondary) !important;
 }
 
 :root.dark .modal-form input {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(99, 102, 241, 0.2);
-  color: rgb(var(--color-text));
+  background: var(--input-bg) !important;
+  border-color: var(--border-light) !important;
+  color: var(--text-primary) !important;
 }
 
 :root.dark .modal-form input::placeholder {
-  color: #94a3b8;
+  color: var(--text-muted) !important;
 }
 
-:root.dark .modal-form input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+:root.dark .form-header p,
+:root.dark .page-subtitle,
+:root.dark .stat-label,
+:root.dark .text-muted {
+  color: var(--text-muted) !important;
 }
 
-:root.dark .form-container {
-  background: rgb(var(--color-bg));
-}
-
+:root.dark .main-card,
+:root.dark .stat-card,
 :root.dark .form-card {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: rgba(99, 102, 241, 0.2);
+  background: var(--card-bg) !important;
+  border-color: var(--border-light) !important;
 }
 
-:root.dark .form-header h1 {
-  color: rgb(var(--color-text));
+:root.dark .user-name,
+:root.dark .dept-name,
+:root.dark .modal-title {
+  color: var(--text-primary) !important;
 }
 
-:root.dark .form-header p {
-  color: #94a3b8;
-}
-
-:root.dark label {
-  color: rgb(var(--color-text-light));
-}
-
-:root.dark input, :root.dark textarea {
-  background: rgba(255, 255, 255, 0.03);
-  border-color: rgba(99, 102, 241, 0.2);
-  color: rgb(var(--color-text));
+:root.dark .user-email,
+:root.dark .dept-description {
+  color: var(--text-secondary) !important;
 }
 
 :root.dark .chip {
-  background: rgba(99, 102, 241, 0.2);
-  color: rgb(var(--color-text-light));
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: var(--text-muted) !important;
 }
 
 :root.dark .chip.active {
-  background: #3b82f6;
-  color: white;
+  background: #3b82f6 !important;
+  color: white !important;
 }
 
-/* Modal overlay background for dark mode */
 :root.dark .modal-overlay {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Dark mode - Tables */
+:root.dark .departments-table,
+:root.dark .users-table {
+  color: var(--text-primary) !important;
+}
+
+:root.dark .departments-table td,
+:root.dark .users-table td,
+:root.dark .departments-table th,
+:root.dark .users-table th {
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+  background-color: transparent !important;
+}
+
+:root.dark .departments-table th,
+:root.dark .users-table th {
+  color: var(--text-muted) !important;
+}
+
+:root.dark .departments-table thead,
+:root.dark .users-table thead {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Dark mode - Dropdowns and Selects */
+:root.dark .filter-select,
+:root.dark .filter-select option {
+  color: var(--text-primary) !important;
+  background: var(--input-bg) !important;
+}
+
+:root.dark select option {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
 }

@@ -2,44 +2,93 @@
 
 /* Tailwind-like utility classes for flexibility */
 
-/* Light Mode (Default) */
+/* ============ LIGHT MODE (Default) ============ */
 :root.light {
+  /* Backgrounds */
   --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --text-color: #ffffff;
-  --color-primary: 59 130 246; /* blue-500 */
-  --color-primary-hover: 37 99 235; /* blue-600 */
-  --color-disabled: 209 213 219; /* gray-300 */
-  --color-text: 31 41 55; /* gray-800 */
-  --color-text-light: 75 85 99; /* gray-600 */
-  --color-bg: 243 244 246; /* gray-100 */
+  --body-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f9fafb;
+  --input-bg: #ffffff;
+  --dropdown-bg: rgba(255, 255, 255, 0.98);
+  
+  /* Text Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+  
+  /* Borders */
+  --border-light: #e5e7eb;
+  --border-default: #d1d5db;
+  
+  /* Colors */
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-disabled: 209 213 219;
+  --color-text: 31 41 55;
+  --color-text-light: 75 85 99;
+  --color-bg: 243 244 246;
   --color-white: 255 255 255;
-  --dropdown-bg: rgba(255, 255, 255, 0.95);
 }
 
-/* Dark Mode */
+/* ============ DARK MODE ============ */
 :root.dark {
+  /* Backgrounds */
   --main-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  --text-color: #e2e8f0;
-  --color-primary: 59 130 246; /* blue-500 */
-  --color-primary-hover: 37 99 235; /* blue-600 */
-  --color-disabled: 71 85 105; /* slate-600 */
-  --color-text: 226 232 240; /* slate-200 */
-  --color-text-light: 148 163 184; /* slate-400 */
-  --color-bg: 15 23 42; /* slate-950 */
-  --color-white: 30 41 59; /* slate-800 */
-  --dropdown-bg: rgba(15, 23, 42, 0.95);
+  --body-bg: #0f1419;
+  --card-bg: #1a1f35;
+  --card-hover-bg: #242d45;
+  --input-bg: #111827;
+  --dropdown-bg: rgba(15, 23, 42, 0.98);
+  
+  /* Text Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f1419;
+  
+  /* Borders */
+  --border-light: #334155;
+  --border-default: #475569;
+  
+  /* Colors */
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-disabled: 71 85 105;
+  --color-text: 226 232 240;
+  --color-text-light: 148 163 184;
+  --color-bg: 15 23 42;
+  --color-white: 30 41 59;
 }
 
-/* Default to light mode */
+/* ============ DEFAULT (Light Mode) ============ */
 :root {
+  /* Backgrounds */
   --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --text-color: #ffffff;
-  --color-primary: 59 130 246; /* blue-500 */
-  --color-primary-hover: 37 99 235; /* blue-600 */
-  --color-disabled: 209 213 219; /* gray-300 */
-  --color-text: 31 41 55; /* gray-800 */
-  --color-text-light: 75 85 99; /* gray-600 */
-  --color-bg: 243 244 246; /* gray-100 */
+  --body-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f9fafb;
+  --input-bg: #ffffff;
+  --dropdown-bg: rgba(255, 255, 255, 0.98);
+  
+  /* Text Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+  
+  /* Borders */
+  --border-light: #e5e7eb;
+  --border-default: #d1d5db;
+  
+  /* Colors */
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-disabled: 209 213 219;
+  --color-text: 31 41 55;
+  --color-text-light: 75 85 99;
+  --color-bg: 243 244 246;
   --color-white: 255 255 255;
 }
 
@@ -66,8 +115,8 @@
 
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background-color: rgb(var(--color-bg));
-    color: rgb(var(--color-text));
+    background-color: var(--body-bg);
+    color: var(--text-primary);
     min-height: 100vh;
     transition: background-color 0.3s ease, color 0.3s ease;
   }

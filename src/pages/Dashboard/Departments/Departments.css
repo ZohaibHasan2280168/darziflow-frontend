@@ -1,39 +1,33 @@
-/* Departments.css - Fixed with specific selectors */
+/* Departments.css - Theme Support */
 .departments-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%);
-  color: #fff;
+  background: var(--main-bg);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-/* Force white text for ALL elements inside departments container */
-.departments-container,
 .departments-container * {
-  color: #ffffff !important;
+  color: inherit;
 }
 
-/* But allow placeholders to be lighter */
 .departments-container ::placeholder {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
-/* Specifically target filter select dropdown text */
 .departments-container .filter-select,
 .departments-container .filter-select option {
-  color: #ffffff !important;
+  color: var(--text-primary);
 }
 
-/* Force dark background for dropdown options */
 .departments-container .filter-select option {
-  background: #1a202c !important;
-  color: #ffffff !important;
+  background: var(--card-bg);
+  color: var(--text-primary);
 }
 
-/* For all select elements within departments */
 .departments-container select,
 .departments-container select option {
-  background: transparent !important;
-  color: #ffffff !important;
+  background: transparent;
+  color: var(--text-primary);
 }
 
 .departments-content {
@@ -79,15 +73,13 @@
   font-size: 2.25rem;
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
 }
 
 .page-subtitle {
   font-size: 0.95rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   margin: 0.5rem 0 0 0;
 }
 
