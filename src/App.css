@@ -499,7 +499,7 @@ input:focus, textarea:focus {
 /* ==================== LIGHT MODE ==================== */
 
 /* Light Mode - Main containers */
-:root.light {
+/* :root.light {
   --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --body-bg: #f5f7fa;
   --card-bg: #ffffff;
@@ -509,7 +509,31 @@ input:focus, textarea:focus {
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
   --border-light: #e5e7eb;
+} */
+
+
+/* ==================== LIGHT MODE ==================== */
+:root.light {
+  /* Clean, professional soft slate background instead of heavy gradient */
+  --main-bg: #f1f5f9; 
+  --body-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f8fafc;
+  --input-bg: #ffffff;
+  
+  /* Text colors for better contrast and readability */
+  --text-primary: #0f172a; /* Deep Slate for headings */
+  --text-secondary: #475569; /* Medium Slate for subtitles */
+  --text-muted: #94a3b8;
+  
+  /* Borders and Shadows */
+  --border-light: #e2e8f0;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
 }
+
+
+
 
 :root.light .departments-container,
 :root.light .users-container,
@@ -723,72 +747,190 @@ input:focus, textarea:focus {
   background: rgba(255, 255, 255, 0.02) !important;
 }
 
-/* Dark mode - Dropdowns and Selects */
-/* :root.dark .filter-select,
-:root.dark .filter-select option {
-  color: var(--text-primary) !important;
-  background: var(--input-bg) !important;
-} */
 
-/* Select Dropdown Box (Main Box) */
+/* ==================== GLOBAL PREMIUM FILTER & DROPDOWN UI ==================== */
+
+/* 1. Wrapper (Jisme Icon aur Select dono hain) */
+.filter-select-wrapper,
+.filter-select-wrap {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 8px !important; /* Soft curve instead of oval pill */
+  padding-left: 12px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  height: 40px !important;
+  overflow: hidden !important;
+}
+
+/* Hover aur Focus effect Wrapper par */
+.filter-select-wrapper:hover,
+.filter-select-wrap:hover,
+.filter-select-wrapper:focus-within,
+.filter-select-wrap:focus-within {
+  border-color: #3b82f6 !important;
+  background-color: var(--card-hover-bg) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* 2. SVG Icon jo select ke sath hai */
+.filter-select-wrapper svg,
+.filter-select-wrap svg {
+  color: var(--text-muted) !important;
+  flex-shrink: 0 !important;
+  z-index: 1 !important;
+}
+
+/* 3. Asal Select Dropdown */
 .filter-select {
-  appearance: none;
-  -webkit-appearance: none;
-  box-sizing: border-box;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: transparent !important; /* Wrapper ka background use hoga */
+  border: none !important; /* Border wrapper pe lagayi hai */
+  color: var(--text-primary) !important;
+  padding: 0 36px 0 10px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: pointer !important;
+  outline: none !important;
+  box-shadow: none !important;
 
-  /* Alignment Fix */
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
-
-  /* Spacing & Size */
-  padding: 10px 40px 10px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  min-width: 140px;
-
-  /* UI Styling */
-  border-radius: 999px;
-  border: 1.5px solid var(--border-light);
-  background-color: var(--input-bg);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  /* Stylish Arrow */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 14px;
+  /* Custom Arrow (Dono modes mein fit aayega) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 16px !important;
 }
 
-/* Dropdown Options (The List) */
+/* 4. Dropdown Options List */
 .filter-select option {
-  text-align: left; /* List ke andar text left hi acha lagta hai */
-  padding: 10px;
-  background-color: var(--card-bg);
-  color: var(--text-primary);
-}
-/* 
-.filter-select:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-  border-color: #3b82f6;
-} */
-
-/* Specifically for Light Mode to ensure visibility */
-:root.light .filter-select option {
-  background-color: #ffffff !important;
-  color: #1f2937 !important;
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  padding: 10px !important;
 }
 
-/* Specifically for Dark Mode */
+/* ==================== DARK MODE SPECIFIC FIXES ==================== */
+:root.dark .filter-select-wrapper,
+:root.dark .filter-select-wrap {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: #334155 !important;
+}
+
+/* Ye trick browser ko batati hai ke native dropdown menu ko dark theme mein render kare */
+:root.dark .filter-select {
+  color-scheme: dark !important; 
+}
+
 :root.dark .filter-select option {
-  background-color: #1a1f35 !important; /* Jo aapka card-bg hai */
+  background-color: #1e293b !important;
   color: #f1f5f9 !important;
 }
 
-:root.dark select option {
-  background: var(--card-bg) !important;
-  color: var(--text-primary) !important;
+
+
+/* --- Professional Audit Log Global Styles --- */
+:root {
+  --priority-info: #3b82f6;
+  --priority-success: #10b981;
+  --priority-warning: #f59e0b;
+  --priority-error: #ef4444;
 }
+
+/* Container & Header */
+.audit-log-container-wrapper {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.audit-header-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Professional Table */
+.audit-table-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.audit-table th {
+  background: var(--body-bg);
+  padding: 1rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.audit-table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.audit-row:hover {
+  background: var(--card-hover-bg);
+}
+
+/* Priority Badges */
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-info { background: rgba(59, 130, 246, 0.1); color: var(--priority-info); }
+.badge-success { background: rgba(16, 185, 129, 0.1); color: var(--priority-success); }
+.badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--priority-warning); }
+.badge-error { background: rgba(239, 68, 68, 0.1); color: var(--priority-error); }
+
+/* Search & Filters */
+.search-input-group {
+  position: relative;
+  width: 300px;
+}
+
+.search-input-group input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border-radius: 10px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
