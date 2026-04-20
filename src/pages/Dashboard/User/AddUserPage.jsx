@@ -225,10 +225,13 @@ const handleSubmit = async (e) => {
         .header-text h1 {
           font-size: 2rem;
           font-weight: 700;
-          background: linear-gradient(90deg, #a5f3fc 0%, #c4b5fd 50%, #7dd3fc 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: var(--text-primary);
+          -webkit-text-stroke: 1px var(--text-primary);
+          text-shadow: 
+            -1px -1px 0 var(--body-bg),  
+             1px -1px 0 var(--body-bg),
+            -1px  1px 0 var(--body-bg),
+             1px  1px 0 var(--body-bg);
           margin: 0 0 0.5rem 0;
         }
 

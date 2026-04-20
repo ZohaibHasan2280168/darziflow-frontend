@@ -189,9 +189,13 @@ export default function UpdateUser() {
           font-size: 1.8rem;
           font-weight: 700;
           margin-bottom: 0.5rem;
-          background: linear-gradient(90deg, #a78bfa, #60a5fa);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
+          color: var(--text-primary);
+          -webkit-text-stroke: 1px var(--text-primary);
+          text-shadow: 
+            -1px -1px 0 var(--body-bg),  
+             1px -1px 0 var(--body-bg),
+            -1px  1px 0 var(--body-bg),
+             1px  1px 0 var(--body-bg);
         }
 
         .update-subtitle {

@@ -2,33 +2,13 @@
 /* ORDERS LIST PAGE     */
 /* ==================== */
 
-/* CSS Variables */
-:root {
-  --ol-bg-primary: #0a0c14;
-  --ol-bg-card: #111827;
-  --ol-bg-elevated: #1a1f2e;
-  --ol-bg-hover: #1e2536;
-  --ol-border: rgba(255, 255, 255, 0.06);
-  --ol-border-hover: rgba(255, 255, 255, 0.12);
-  --ol-text-primary: #f8fafc;
-  --ol-text-secondary: #cbd5e1;
-  --ol-text-muted: #64748b;
-  --ol-accent-blue: #3b82f6;
-  --ol-accent-blue-light: #60a5fa;
-  --ol-accent-emerald: #10b981;
-  --ol-accent-amber: #f59e0b;
-  --ol-accent-purple: #8b5cf6;
-  --ol-accent-red: #ef4444;
-  --ol-accent-cyan: #06b6d4;
-}
-
 /* Page Container */
 .orders-page {
   min-height: 100vh;
-  background: var(--ol-bg-primary);
+  background: var(--body-bg);
   padding: 32px 40px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--ol-text-primary);
+  color: var(--text-primary);
 }
 
 /* Header */
@@ -49,9 +29,9 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--ol-bg-card);
-  border: 1px solid var(--ol-border);
-  color: var(--ol-text-secondary);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,9 +40,9 @@
 }
 
 .back-button:hover {
-  background: var(--ol-bg-elevated);
-  border-color: var(--ol-border-hover);
-  color: var(--ol-text-primary);
+  background: var(--card-hover-bg);
+  border-color: var(--border-default);
+  color: var(--text-primary);
 }
 
 .page-title {
@@ -70,7 +50,7 @@
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--ol-text-primary), var(--ol-text-secondary));
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -78,7 +58,7 @@
 
 .page-subtitle {
   font-size: 14px;
-  color: var(--ol-text-muted);
+  color: var(--text-muted);
   margin: 4px 0 0 0;
 }
 
@@ -87,7 +67,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, var(--ol-accent-blue), #2563eb);
+  background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-primary-hover)));
   border: none;
   border-radius: 12px;
   color: white;
@@ -95,7 +75,7 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 14px rgba(var(--color-primary), 0.3);
 }
 
 .create-btn:hover {

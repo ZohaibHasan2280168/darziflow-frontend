@@ -53,20 +53,23 @@
 }
 
 .back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 10px;
-  color: #94a3b8 !important;
+  color: var(--text-secondary);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff !important;
+  background: var(--card-hover-bg);
+  border-color: var(--border-default);
+  color: var(--text-primary);
 }
 
 .page-title {
@@ -176,21 +179,27 @@
 .stat-number {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #fff !important;
+  color: var(--text-primary);
   margin-top: 0.25rem;
 }
 
 /* Filters Bar - SPECIFIC FIXES HERE */
 .filters-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1.5rem;
   align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 22px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
 .search-wrapper {
   flex: 1;
-  max-width: 400px;
+  min-width: 260px;
   position: relative;
 }
 
@@ -199,67 +208,93 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8 !important;
+  color: var(--text-secondary);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  color: #ffffff !important; /* Force white text */
+  padding: 0.95rem 1rem 0.95rem 3rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-primary);
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
 
+.search-input:hover,
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-light);
+  box-shadow: 0 0 0 1px rgba(147, 197, 253, 0.3);
+  background: var(--card-hover-bg);
 }
 
 .search-input::placeholder {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
+.filter-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Make the filters-bar the single pill container and keep inner elements transparent
+   to avoid the double-pill appearance in dark mode. */
 .filter-select-wrapper {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  color: #94a3b8 !important;
+  padding: 0.6rem 0.9rem; /* slightly tighter padding when inside outer pill */
+  background: transparent; /* inner wrapper transparent so only outer pill shows */
+  border: none; /* rely on outer .filters-bar border */
+  border-radius: 12px;
+  color: var(--text-primary);
+  position: relative;
+  min-width: 220px;
+  transition: all 0.18s ease;
 }
 
+.filter-select-wrapper:hover {
+  /* subtle lift inside the outer pill */
+  background: rgba(255,255,255,0.01);
+}
+
+/* Funnel icon color: use text-secondary so it's visible in light and dark */
 .filter-select-wrapper svg {
   flex-shrink: 0;
-  color: #94a3b8 !important;
+  color: var(--text-secondary) !important;
 }
 
-/* FIXED: Filter select text color */
 .filter-select {
-  background: transparent;
-  border: none;
-  color: #ffffff !important; /* White text for the selected option */
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
   font-size: 0.95rem;
   cursor: pointer;
   outline: none;
-  min-width: 120px;
+  min-width: 130px;
+  width: 100%;
+  padding-right: 0.5rem;
+  line-height: 1.4;
+  text-align: left !important;
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
+  background-image: none !important; /* remove global arrow inside page-specific select */
+  box-shadow: none !important;
 }
 
-/* FIXED: Dropdown options styling */
 .filter-select option {
-  background: #1a202c !important; /* Dark background */
-  color: #ffffff !important; /* White text */
+  background: var(--card-bg);
+  color: var(--text-primary);
   padding: 0.5rem;
+}
+
+.filter-select::-ms-expand {
+  display: none;
 }
 
 /* Main Card */
@@ -280,12 +315,12 @@
 .table-title h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #fff !important;
+  color: var(--text-primary);
 }
 
 .table-subtitle {
   font-size: 0.875rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   margin-top: 0.25rem;
   display: block;
 }
@@ -366,13 +401,13 @@
 
 .dept-name {
   font-weight: 600;
-  color: #fff !important;
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .dept-description {
   font-size: 0.85rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -398,11 +433,11 @@
 
 .head-email {
   font-size: 0.8rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
 .no-head {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   font-style: italic;
   font-size: 0.9rem;
 }
@@ -421,13 +456,13 @@
 
 .status-badge.ACTIVE {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981 !important;
+  color: rgb(var(--color-accent-emerald));
   border-color: rgba(16, 185, 129, 0.3);
 }
 
 .status-badge.INACTIVE {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444 !important;
+  color: rgb(var(--color-accent-red));
   border-color: rgba(239, 68, 68, 0.3);
 }
 
@@ -440,11 +475,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
 .members-count svg {
-  color: #60a5fa !important;
+  color: rgb(var(--color-primary));
 }
 
 /* Empty State */
@@ -461,19 +496,19 @@
 }
 
 .empty-icon {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   opacity: 0.5;
 }
 
 .empty-state h4 {
   margin: 0;
-  color: #fff !important;
+  color: var(--text-primary);
   font-size: 1.1rem;
 }
 
 .empty-state p {
   margin: 0;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   font-size: 0.9rem;
   max-width: 300px;
 }
@@ -523,7 +558,7 @@
 }
 
 .loading-state p {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -540,11 +575,11 @@
 
 .error-icon {
   font-size: 3rem;
-  color: #f87171 !important;
+  color: rgb(var(--color-accent-red));
 }
 
 .error-state p {
-  color: #f87171 !important;
+  color: rgb(var(--color-accent-red));
   margin: 0;
   max-width: 400px;
 }
@@ -554,7 +589,7 @@
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 8px;
-  color: #60a5fa !important;
+  color: rgb(var(--color-primary));
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;

@@ -1,8 +1,8 @@
-"use client";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from '../../../components/ui/AlertProvider';
 import api from "../../../services/reqInterceptor";
+import BackButton from "../../../components/ui/BackButton";
 import './Users.css';
 
 // Icons (you can use react-icons or inline SVGs)
@@ -140,9 +140,7 @@ export default function Users() {
         {/* Header */}
         <header className="users-header">
           <div className="header-left">
-            <button className="back-btn" onClick={() => navigate(-1)}>
-              Back
-            </button>
+            <BackButton />
             <div className="header-text">
               <h1 className="page-title">User Management</h1>
               <p className="page-subtitle">Manage your team members and their roles</p>
