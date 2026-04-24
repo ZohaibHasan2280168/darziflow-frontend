@@ -164,26 +164,26 @@ export default function LoginForm({ onSubmit, isLoading = false }) {
           align-items: center;
         }
 
-        /* Animated input field */
+        /* Animated input field connected to global theme */
         .animated-input {
           width: 100%;
           padding: 14px 16px 14px 44px;
-          border: 2px solid #e5e7eb;
+          border: 2px solid var(--border-light);
           border-radius: 12px;
           font-size: 16px;
           font-weight: 500;
-          color: #1f2937;
-          background: #f9fafb;
+          color: var(--text-primary);
+          background: var(--input-bg);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           outline: none;
         }
 
         .animated-input::placeholder {
-          color: #9ca3af;
+          color: var(--text-muted);
         }
 
         .animated-input:focus {
-          background: white;
+          background: var(--card-bg);
           border-color: #667eea;
           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 
                       0 8px 16px rgba(102, 126, 234, 0.15);
@@ -191,8 +191,8 @@ export default function LoginForm({ onSubmit, isLoading = false }) {
         }
 
         .animated-input:hover:not(:focus) {
-          border-color: #d1d5db;
-          background: #fafbfc;
+          border-color: var(--text-muted);
+          background: var(--card-hover-bg);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
@@ -217,7 +217,7 @@ export default function LoginForm({ onSubmit, isLoading = false }) {
         .input-icon {
           position: absolute;
           left: 12px;
-          color: #9ca3af;
+          color: var(--text-muted);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -237,7 +237,7 @@ export default function LoginForm({ onSubmit, isLoading = false }) {
           background: none;
           border: none;
           cursor: pointer;
-          color: #9ca3af;
+          color: var(--text-muted);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -342,44 +342,16 @@ export default function LoginForm({ onSubmit, isLoading = false }) {
           margin-right: 0;
         }
 
-        .dot:nth-child(1) {
-          animation-delay: -0.3s;
-        }
-
-        .dot:nth-child(2) {
-          animation-delay: -0.1s;
-        }
-
-        .dot:nth-child(3) {
-          animation-delay: 0.1s;
-        }
-
-        .dot:nth-child(4) {
-          animation-delay: 0.3s;
-        }
-
-        .dot:nth-child(5) {
-          animation-delay: 0.5s;
-        }
+        .dot:nth-child(1) { animation-delay: -0.3s; }
+        .dot:nth-child(2) { animation-delay: -0.1s; }
+        .dot:nth-child(3) { animation-delay: 0.1s; }
+        .dot:nth-child(4) { animation-delay: 0.3s; }
+        .dot:nth-child(5) { animation-delay: 0.5s; }
 
         @keyframes pulse {
-          0% {
-            transform: scale(0.8);
-            background-color: #b3d4fc;
-            box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
-          }
-
-          50% {
-            transform: scale(1.2);
-            background-color: #6793fb;
-            box-shadow: 0 0 0 10px rgba(178, 212, 252, 0);
-          }
-
-          100% {
-            transform: scale(0.8);
-            background-color: #b3d4fc;
-            box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7);
-          }
+          0% { transform: scale(0.8); background-color: #b3d4fc; box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7); }
+          50% { transform: scale(1.2); background-color: #6793fb; box-shadow: 0 0 0 10px rgba(178, 212, 252, 0); }
+          100% { transform: scale(0.8); background-color: #b3d4fc; box-shadow: 0 0 0 0 rgba(178, 212, 252, 0.7); }
         }
 
         @media (max-width: 640px) {
@@ -387,7 +359,6 @@ export default function LoginForm({ onSubmit, isLoading = false }) {
             padding: 12px 14px 12px 40px;
             font-size: 16px;
           }
-
           .submit-button {
             padding: 12px 20px;
             font-size: 15px;

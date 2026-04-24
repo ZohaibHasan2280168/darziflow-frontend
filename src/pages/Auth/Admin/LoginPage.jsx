@@ -7,7 +7,7 @@ export default function AdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login,logout } = useAuth();
+  const { login, logout } = useAuth();
 
   const handleSubmit = async (credentials) => {
     setIsLoading(true);
@@ -20,14 +20,13 @@ export default function AdminLoginPage() {
         platform: "WEB",
       });
 
-    if (userData.user.role !== "ADMIN") {
-      await logout(); 
-      setError("Access denied: Only admins can login here.");
-      return;
-    }
+      if (userData.user.role !== "ADMIN") {
+        await logout(); 
+        setError("Access denied: Only admins can login here.");
+        return;
+      }
 
-  
-    navigate("/dashboard");
+      navigate("/dashboard");
     
     } catch (err) {
       setError(
@@ -64,7 +63,7 @@ export default function AdminLoginPage() {
             {error && <div className="error-message">{error}</div>}
             <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />
 
-            {/* 🔹 Forgot Password Link */}
+            {/* Forgot Password Link */}
             <div className="forgot-password-wrapper">
               <Link to="/forgot-password" className="forgot-password-link">
                 Forgot Password?
@@ -93,22 +92,25 @@ export default function AdminLoginPage() {
         .overflow-hidden { overflow: hidden; }
         .pointer-events-none { pointer-events: none; }
 
+        /* Global background variable applied */
         .login-bg {
-          background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #667eea 100%);
+          background: var(--main-bg);
           position: relative;
           overflow: hidden;
+          transition: background 0.3s ease;
         }
 
         .floating-orb {
           position: absolute;
           border-radius: 50%;
-          opacity: 0.1;
           filter: blur(40px);
+          z-index: 0;
         }
 
-        .orb-1 { width: 300px; height: 300px; background: rgba(255, 255, 255, 0.5); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
-        .orb-2 { width: 200px; height: 200px; background: rgba(255, 255, 255, 0.3); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(255, 255, 255, 0.2); top: 50%; left: 10%; animation: float 12s ease-in-out infinite; }
+        /* Subtle theme-friendly colors for orbs */
+        .orb-1 { width: 300px; height: 300px; background: rgba(102, 126, 234, 0.15); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
+        .orb-2 { width: 200px; height: 200px; background: rgba(118, 75, 162, 0.12); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
+        .orb-3 { width: 250px; height: 250px; background: rgba(102, 126, 234, 0.1); top: 50%; left: 10%; animation: float 12s ease-in-out infinite; }
 
         @keyframes float {
           0%,100% { transform: translate(0,0); }
@@ -117,20 +119,20 @@ export default function AdminLoginPage() {
 
         .login-container { perspective: 1000px; position: relative; z-index: 10; padding: 20px; width: 100%; max-width: 450px; }
 
+        /* Theme-aware card */
         .login-card {
-          background: rgba(255, 255, 255, 0.95);
+          background: var(--card-bg);
           backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 48px 40px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          box-shadow: 0 20px 60px rgba(0,0,0,0.3),
-                      0 0 1px rgba(255,255,255,0.5) inset;
+          border: 1px solid var(--border-light);
+          box-shadow: var(--card-shadow);
           animation: cardSlideIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
           transform-style: preserve-3d;
-          transition: transform 0.3s ease;
+          transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        .login-card:hover { transform: translateZ(10px) rotateX(2deg); }
+        .login-card:hover { transform: translateZ(10px) rotateX(2deg); box-shadow: var(--card-shadow-hover); }
 
         @keyframes cardSlideIn {
           from { opacity: 0; transform: translateY(30px) rotateX(10deg); }
@@ -174,7 +176,7 @@ export default function AdminLoginPage() {
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .login-subtitle { font-size: 14px; color: #6b7280; margin: 0; font-weight: 500; }
+        .login-subtitle { font-size: 14px; color: var(--text-secondary); margin: 0; font-weight: 500; }
 
         .form-wrapper { animation: fadeInUp 0.8s ease 0.4s both; }
 
@@ -201,19 +203,19 @@ export default function AdminLoginPage() {
         }
 
         .error-message {
-          background: #fee2e2; color: #991b1b;
+          background: rgba(239, 68, 68, 0.1); color: #ef4444;
           padding: 12px 16px; border-radius: 8px;
           margin-bottom: 16px; font-size: 14px;
-          border-left: 4px solid #dc2626; animation: slideInDown 0.3s ease;
+          border-left: 4px solid #ef4444; animation: slideInDown 0.3s ease;
         }
 
         .login-footer {
           text-align: center; margin-top: 24px;
-          padding-top: 24px; border-top: 1px solid rgba(0,0,0,0.05);
+          padding-top: 24px; border-top: 1px solid var(--border-light);
           animation: fadeInUp 0.8s ease 0.6s both;
         }
 
-        .footer-text { font-size: 14px; color: #6b7280; margin: 0; }
+        .footer-text { font-size: 14px; color: var(--text-secondary); margin: 0; }
 
         .footer-link {
           color: #764ba2; text-decoration: none; font-weight: 600;

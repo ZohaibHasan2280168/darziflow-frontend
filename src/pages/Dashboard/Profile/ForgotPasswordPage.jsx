@@ -41,14 +41,12 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="forgot-bg min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Floating orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="floating-orb orb-1"></div>
         <div className="floating-orb orb-2"></div>
         <div className="floating-orb orb-3"></div>
       </div>
 
-      {/* Centered card */}
       <div className="forgot-card">
         <div className="header">
           <div className="logo-circle">
@@ -102,26 +100,29 @@ export default function ForgotPasswordPage() {
 
       <style>{`
         .forgot-bg {
-          background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #667eea 100%);
+          background: var(--main-bg);
           display: flex;
           align-items: center;
           justify-content: center;
           min-height: 100vh;
           position: relative;
+          transition: background 0.3s ease;
         }
 
         .forgot-card {
-          background: rgba(255, 255, 255, 0.95);
+          background: var(--card-bg);
           backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 48px 40px;
           width: 100%;
           max-width: 450px;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 1px rgba(255,255,255,0.5) inset;
+          border: 1px solid var(--border-light);
+          box-shadow: var(--card-shadow);
           display: flex;
           flex-direction: column;
           align-items: center;
           z-index: 10;
+          transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .header { text-align: center; margin-bottom: 32px; }
@@ -132,21 +133,22 @@ export default function ForgotPasswordPage() {
           color:white; margin:0 auto 16px; box-shadow:0 8px 24px rgba(102,126,234,0.4);
         }
         .title { font-size:28px; font-weight:800; margin-bottom:8px; background:linear-gradient(135deg,#667eea,#764ba2); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-        .subtitle { font-size:14px; color:#6b7280; margin:0; font-weight:500; }
+        .subtitle { font-size:14px; color: var(--text-secondary); margin:0; font-weight:500; }
 
         .space-y-6 { display:flex; flex-direction:column; gap:24px; }
         .input-group { position: relative; }
         .input-wrapper { position: relative; display: flex; align-items:center; }
+        
         .animated-input {
           width: 100%; padding:14px 16px 14px 44px;
-          border:2px solid #e5e7eb; border-radius:12px;
-          font-size:16px; font-weight:500; color:#1f2937; background:#f9fafb; outline:none;
+          border: 2px solid var(--border-light); border-radius:12px;
+          font-size:16px; font-weight:500; color: var(--text-primary); background: var(--input-bg); outline:none;
           transition: all 0.3s ease;
         }
-        .animated-input:focus { border-color:#667eea; background:white; transform:translateY(-1px); box-shadow:0 0 0 3px rgba(102,126,234,0.1), 0 8px 16px rgba(102,126,234,0.15); }
-        .input-underline { position:absolute; bottom:0; left:0; height:2px; width:0; background:linear-gradient(90deg,#667eea,#764ba2); border-radius:2px; transition:width 0.3s ease; }
+        .animated-input:focus { border-color:#667eea; background: var(--card-bg); transform:translateY(-1px); box-shadow:0 0 0 3px rgba(102,126,234,0.1), 0 8px 16px rgba(102,126,234,0.15); }
+        .input-underline { position:absolute; bottom:0; left:0; height:2px; width:0; background:linear-gradient(90deg,#667eea,#764ba2); border-radius:2px; transition:width 0.3s ease; pointer-events:none; }
         .animated-input:focus ~ .input-underline { width:100%; }
-        .input-icon { position:absolute; left:12px; color:#9ca3af; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+        .input-icon { position:absolute; left:12px; color: var(--text-muted); display:flex; align-items:center; justify-content:center; pointer-events:none; }
 
         .submit-button {
           width:100%; padding:14px 24px; background:linear-gradient(135deg,#667eea,#764ba2);
@@ -158,13 +160,13 @@ export default function ForgotPasswordPage() {
         .forgot-password-link { color:#764ba2; font-size:14px; font-weight:600; text-decoration:none; }
         .forgot-password-link:hover { color:#667eea; }
 
-        .error-message { background:#fee2e2; color:#991b1b; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; border-left:4px solid #dc2626; }
-        .success-message { background:#d1fae5; color:#065f46; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; border-left:4px solid #10b981; }
+        .error-message { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; border-left:4px solid #ef4444; }
+        .success-message { background: rgba(16, 185, 129, 0.1); color: #10b981; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; border-left:4px solid #10b981; }
 
-        .floating-orb { position:absolute; border-radius:50%; opacity:0.1; filter:blur(40px); }
-        .orb-1 { width:300px; height:300px; background:rgba(255,255,255,0.5); top:-100px; right:-100px; animation:float 8s ease-in-out infinite; }
-        .orb-2 { width:200px; height:200px; background:rgba(255,255,255,0.3); bottom:-50px; left:-50px; animation:float 10s ease-in-out infinite reverse; }
-        .orb-3 { width:250px; height:250px; background:rgba(255,255,255,0.2); top:50%; left:10%; animation:float 12s ease-in-out infinite; }
+        .floating-orb { position:absolute; border-radius:50%; filter:blur(40px); z-index: 0;}
+        .orb-1 { width:300px; height:300px; background:rgba(102, 126, 234, 0.15); top:-100px; right:-100px; animation:float 8s ease-in-out infinite; }
+        .orb-2 { width:200px; height:200px; background:rgba(118, 75, 162, 0.12); bottom:-50px; left:-50px; animation:float 10s ease-in-out infinite reverse; }
+        .orb-3 { width:250px; height:250px; background:rgba(102, 126, 234, 0.1); top:50%; left:10%; animation:float 12s ease-in-out infinite; }
 
         @keyframes float { 0%,100%{transform:translate(0,0);}50%{transform:translate(30px,30px);} }
 

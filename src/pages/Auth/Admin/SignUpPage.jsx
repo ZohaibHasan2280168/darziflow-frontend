@@ -54,7 +54,6 @@ export default function AdminSignupPage() {
         </div>
       </div>
 
-
       <style jsx>{`
         .min-h-screen { min-height: 100vh; }
         .flex { display: flex; }
@@ -65,16 +64,18 @@ export default function AdminSignupPage() {
         .overflow-hidden { overflow: hidden; }
         .pointer-events-none { pointer-events: none; }
 
+        /* Global background variable applied */
         .login-bg {
-          background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #667eea 100%);
+          background: var(--main-bg);
           position: relative;
           overflow: hidden;
+          transition: background 0.3s ease;
         }
 
-        .floating-orb { position: absolute; border-radius: 50%; opacity: 0.1; filter: blur(40px); }
-        .orb-1 { width: 300px; height: 300px; background: rgba(255,255,255,0.5); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
-        .orb-2 { width: 200px; height: 200px; background: rgba(255,255,255,0.3); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(255,255,255,0.2); top: 50%; left: 10%; animation: float 12s ease-in-out infinite; }
+        .floating-orb { position: absolute; border-radius: 50%; filter: blur(40px); z-index: 0; }
+        .orb-1 { width: 300px; height: 300px; background: rgba(102, 126, 234, 0.15); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
+        .orb-2 { width: 200px; height: 200px; background: rgba(118, 75, 162, 0.12); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
+        .orb-3 { width: 250px; height: 250px; background: rgba(102, 126, 234, 0.1); top: 50%; left: 10%; animation: float 12s ease-in-out infinite; }
 
         @keyframes float {
           0%,100% { transform: translate(0,0); }
@@ -82,14 +83,20 @@ export default function AdminSignupPage() {
         }
 
         .login-container { perspective: 1000px; position: relative; z-index: 10; padding: 20px; width: 100%; max-width: 450px; }
+        
+        /* Theme-aware card */
         .login-card {
-          background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 24px;
-          padding: 48px 40px; border: 1px solid rgba(255,255,255,0.3);
-          box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 1px rgba(255,255,255,0.5) inset;
+          background: var(--card-bg); 
+          backdrop-filter: blur(20px); 
+          border-radius: 24px;
+          padding: 48px 40px; 
+          border: 1px solid var(--border-light);
+          box-shadow: var(--card-shadow);
           animation: cardSlideIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
-          transform-style: preserve-3d; transition: transform 0.3s ease;
+          transform-style: preserve-3d; 
+          transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
         }
-        .login-card:hover { transform: translateZ(10px) rotateX(2deg); }
+        .login-card:hover { transform: translateZ(10px) rotateX(2deg); box-shadow: var(--card-shadow-hover); }
 
         @keyframes cardSlideIn { from { opacity:0; transform:translateY(30px) rotateX(10deg);} to {opacity:1; transform:translateY(0) rotateX(0);} }
 
@@ -104,18 +111,30 @@ export default function AdminSignupPage() {
         .logo-circle.admin-logo { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); box-shadow:0 8px 24px rgba(118,75,162,0.4); }
         @keyframes logoFloat { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
 
-        .login-title { font-size:28px; font-weight:800; color:#1f2937; margin:0 0 8px 0; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .login-title { font-size:28px; font-weight:800; margin:0 0 8px 0; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
         .login-title.admin-title { background: linear-gradient(135deg,#764ba2 0%,#667eea 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .login-subtitle { font-size:14px; color:#6b7280; margin:0; font-weight:500; }
+        
+        /* Connected subtitle to theme */
+        .login-subtitle { font-size:14px; color:var(--text-secondary); margin:0; font-weight:500; }
 
         .form-wrapper { animation: fadeInUp 0.8s ease 0.4s both; }
         @keyframes fadeInUp { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
 
-        .error-message { background:#fee2e2; color:#991b1b; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:14px; border-left:4px solid #dc2626; animation: slideInDown 0.3s ease; }
+        .error-message { 
+          background: rgba(239, 68, 68, 0.1); 
+          color: #ef4444; 
+          padding: 12px 16px; 
+          border-radius: 8px; 
+          margin-bottom: 16px; 
+          font-size: 14px; 
+          border-left: 4px solid #ef4444; 
+          animation: slideInDown 0.3s ease; 
+        }
         @keyframes slideInDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
 
-        .login-footer { text-align:center; margin-top:24px; padding-top:24px; border-top:1px solid rgba(0,0,0,0.05); animation: fadeInUp 0.8s ease 0.6s both; }
-        .footer-text { font-size:14px; color:#6b7280; margin:0; }
+        /* Connected footer to theme */
+        .login-footer { text-align:center; margin-top:24px; padding-top:24px; border-top:1px solid var(--border-light); animation: fadeInUp 0.8s ease 0.6s both; }
+        .footer-text { font-size:14px; color:var(--text-secondary); margin:0; }
         .footer-link { color:#764ba2; text-decoration:none; font-weight:600; transition:all 0.3s ease; position:relative; }
         .footer-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background: linear-gradient(90deg,#764ba2,#667eea); transition: width 0.3s ease; }
         .footer-link:hover::after { width:100%; }

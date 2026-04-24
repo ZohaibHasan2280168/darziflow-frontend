@@ -188,8 +188,8 @@ export default function Settings() {
       <style jsx>{`
         .settings-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #0f172a 0%, #1a1f2e 100%);
-          color: #e2e8f0;
+          background: var(--main-bg);
+          color: var(--text-primary);
           transition: background 0.3s, color 0.3s;
         }
 
@@ -207,15 +207,12 @@ export default function Settings() {
           font-size: 2.5rem;
           font-weight: 700;
           margin-bottom: 0.5rem;
-          background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: var(--text-primary);
         }
 
         .settings-subtitle {
           font-size: 1rem;
-          color: #94a3b8;
+          color: var(--text-secondary);
         }
 
         .settings-grid {
@@ -225,17 +222,12 @@ export default function Settings() {
         }
 
         .settings-category {
-          background: rgba(30, 41, 59, 0.8);
-          border: 1px solid rgba(148, 163, 184, 0.1);
+          background: var(--card-bg);
+          border: 1px solid var(--border-light);
           border-radius: 16px;
           overflow: hidden;
-          backdrop-filter: blur(10px);
+          box-shadow: var(--card-shadow);
           transition: all 0.3s ease;
-        }
-
-        .settings-category:hover {
-          border-color: rgba(106, 17, 203, 0.2);
-          background: rgba(30, 41, 59, 0.95);
         }
 
         .category-header {
@@ -243,8 +235,8 @@ export default function Settings() {
           align-items: center;
           gap: 1rem;
           padding: 1.5rem;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-          background: rgba(15, 23, 42, 0.5);
+          border-bottom: 1px solid var(--border-light);
+          background: var(--card-hover-bg);
         }
 
         .category-icon-wrapper {
@@ -255,13 +247,13 @@ export default function Settings() {
           justify-content: center;
           background: linear-gradient(135deg, rgba(106, 17, 203, 0.2) 0%, rgba(37, 117, 252, 0.2) 100%);
           border-radius: 10px;
-          color: #a78bfa;
+          color: #6a11cb;
         }
 
         .category-title {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #f1f5f9;
+          color: var(--text-primary);
         }
 
         .category-items {
@@ -282,7 +274,7 @@ export default function Settings() {
         }
 
         .settings-item:hover {
-          background: rgba(106, 17, 203, 0.05);
+          background: var(--card-hover-bg);
         }
 
         .item-info {
@@ -293,14 +285,14 @@ export default function Settings() {
           display: block;
           font-size: 1rem;
           font-weight: 600;
-          color: #f1f5f9;
+          color: var(--text-primary);
           margin-bottom: 0.25rem;
           cursor: pointer;
         }
 
         .item-description {
           font-size: 0.875rem;
-          color: #64748b;
+          color: var(--text-secondary);
           margin: 0;
         }
 
@@ -314,7 +306,7 @@ export default function Settings() {
         .toggle-btn {
           width: 48px;
           height: 28px;
-          background: #334155;
+          background: var(--border-light);
           border: none;
           border-radius: 14px;
           cursor: pointer;
@@ -345,64 +337,29 @@ export default function Settings() {
 
         .select-input {
           padding: 0.75rem 1rem;
-          background: transparent; /* flat */
-          border: 1px solid rgba(148, 163, 184, 0.08);
+          background: var(--input-bg);
+          border: 1px solid var(--border-light);
           border-radius: 10px;
-          color: inherit;
+          color: var(--text-primary);
           font-size: 0.9375rem;
           cursor: pointer;
           transition: all 0.15s ease;
           min-width: 180px;
-          box-shadow: none; /* remove heavy shadow */
-        }
-
-        .select-input:hover {
-          border-color: rgba(106, 17, 203, 0.12);
-          background: rgba(255,255,255,0.02);
         }
 
         .select-input:focus {
           outline: none;
-          border-color: rgba(106, 17, 203, 0.2);
-          box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.06);
-        }
-
-        .select-input option {
-          background: inherit;
-          color: inherit;
+          border-color: #6a11cb;
         }
 
         @media (max-width: 768px) {
-          .settings-content {
-            padding: 2rem 1rem;
-          }
-
-          .settings-title {
-            font-size: 2rem;
-          }
-
-          .settings-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-          }
-
-          .item-control {
-            width: 100%;
-          }
-
-          .select-input {
-            width: 100%;
-            min-width: auto;
-          }
-
-          .category-header {
-            gap: 0.75rem;
-          }
-
-          .category-title {
-            font-size: 1.1rem;
-          }
+          .settings-content { padding: 2rem 1rem; }
+          .settings-title { font-size: 2rem; }
+          .settings-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
+          .item-control { width: 100%; }
+          .select-input { width: 100%; min-width: auto; }
+          .category-header { gap: 0.75rem; }
+          .category-title { font-size: 1.1rem; }
         }
       `}</style>
     </div>

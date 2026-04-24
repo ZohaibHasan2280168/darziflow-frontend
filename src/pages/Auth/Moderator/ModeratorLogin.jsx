@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../../components/auth/LoginForm';
 import authService from "../../../services/authService";
 
-
 export default function ModeratorLogin() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -75,15 +74,17 @@ export default function ModeratorLogin() {
         .overflow-hidden { overflow: hidden; }
         .pointer-events-none { pointer-events: none; }
 
+        /* Global background variable applied */
         .login-bg {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+          background: var(--main-bg);
           position: relative;
+          transition: background 0.3s ease;
         }
 
-        .floating-orb { position: absolute; border-radius: 50%; opacity: 0.12; filter: blur(40px); }
-        .orb-1 { width: 300px; height: 300px; background: rgba(255,255,255,0.5); top: -120px; right: -80px; animation: float 8s ease-in-out infinite; }
-        .orb-2 { width: 220px; height: 220px; background: rgba(255,255,255,0.28); bottom: -60px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
-        .orb-3 { width: 260px; height: 260px; background: rgba(255,255,255,0.22); top: 45%; left: 8%; animation: float 12s ease-in-out infinite; }
+        .floating-orb { position: absolute; border-radius: 50%; filter: blur(40px); z-index: 0; }
+        .orb-1 { width: 300px; height: 300px; background: rgba(102, 126, 234, 0.15); top: -120px; right: -80px; animation: float 8s ease-in-out infinite; }
+        .orb-2 { width: 220px; height: 220px; background: rgba(118, 75, 162, 0.12); bottom: -60px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
+        .orb-3 { width: 260px; height: 260px; background: rgba(102, 126, 234, 0.1); top: 45%; left: 8%; animation: float 12s ease-in-out infinite; }
 
         @keyframes float {
           0%,100% { transform: translate(0,0); }
@@ -92,18 +93,19 @@ export default function ModeratorLogin() {
 
         .login-container { perspective: 1000px; position: relative; z-index: 10; padding: 20px; width:100%; max-width:480px; }
 
+        /* Theme-aware card */
         .login-card {
-          background: rgba(255,255,255,0.96);
+          background: var(--card-bg);
           backdrop-filter: blur(18px);
           border-radius: 22px;
           padding: 44px 36px;
-          border: 1px solid rgba(255,255,255,0.3);
-          box-shadow: 0 24px 60px rgba(0,0,0,0.28), 0 0 1px rgba(255,255,255,0.5) inset;
+          border: 1px solid var(--border-light);
+          box-shadow: var(--card-shadow);
           animation: cardSlideIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
           transform-style: preserve-3d;
-          transition: transform 0.28s ease;
+          transition: transform 0.28s ease, background-color 0.3s ease, border-color 0.3s ease;
         }
-        .login-card:hover { transform: translateZ(8px) rotateX(2deg); }
+        .login-card:hover { transform: translateZ(8px) rotateX(2deg); box-shadow: var(--card-shadow-hover); }
 
         @keyframes cardSlideIn {
           from { opacity:0; transform: translateY(30px) rotateX(8deg); } to { opacity:1; transform: translateY(0) rotateX(0); }
@@ -126,19 +128,21 @@ export default function ModeratorLogin() {
           background: linear-gradient(135deg,#667eea,#764ba2);
           -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
         }
-        .login-subtitle { margin:0; color:#6b7280; font-weight:500; font-size:14px; }
+        /* Connected subtitle to theme */
+        .login-subtitle { margin:0; color: var(--text-secondary); font-weight:500; font-size:14px; }
 
         .form-wrapper { animation: fadeInUp 0.8s ease 0.35s both; }
         @keyframes fadeInUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
 
         .error-message {
-          background: #fee2e2; color:#991b1b; padding:12px 14px; border-radius:8px; margin-bottom:14px;
-          font-size:14px; border-left:4px solid #dc2626; animation: slideInDown 0.28s ease;
+          background: rgba(239, 68, 68, 0.1); color: #ef4444; padding:12px 14px; border-radius:8px; margin-bottom:14px;
+          font-size:14px; border-left:4px solid #ef4444; animation: slideInDown 0.28s ease;
         }
         @keyframes slideInDown { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
 
-        .login-footer { text-align:center; margin-top:22px; padding-top:18px; border-top:1px solid rgba(0,0,0,0.04); animation: fadeInUp 0.8s ease 0.55s both; }
-        .footer-text { color:#6b7280; font-size:14px; margin:0; }
+        /* Connected footer to theme */
+        .login-footer { text-align:center; margin-top:22px; padding-top:18px; border-top:1px solid var(--border-light); animation: fadeInUp 0.8s ease 0.55s both; }
+        .footer-text { color: var(--text-secondary); font-size:14px; margin:0; }
         .footer-link { color:#667eea; text-decoration:none; font-weight:600; position:relative; }
         .footer-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background: linear-gradient(90deg,#667eea,#764ba2); transition: width .28s; }
         .footer-link:hover::after { width:100%; }

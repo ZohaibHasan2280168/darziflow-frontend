@@ -157,7 +157,7 @@ export default function SignupForm({ onSubmit, isLoading = false }) {
         .input-icon {
           position: absolute;
           left: 12px;
-          color: #9ca3af;
+          color: var(--text-muted);
           font-size: 18px;
           pointer-events: none;
           transition: color 0.3s ease;
@@ -166,22 +166,22 @@ export default function SignupForm({ onSubmit, isLoading = false }) {
         .animated-input {
           width: 100%;
           padding: 14px 16px 14px 44px;
-          border: 2px solid #e5e7eb;
+          border: 2px solid var(--border-light);
           border-radius: 12px;
           font-size: 16px;
           font-weight: 500;
-          color: #1f2937; /* dark text */
-          background: #f9fafb;
+          color: var(--text-primary);
+          background: var(--input-bg);
           transition: all 0.3s ease;
           outline: none;
         }
 
         .animated-input::placeholder {
-          color: #9ca3af;
+          color: var(--text-muted);
         }
 
         .animated-input:focus {
-          background: white;
+          background: var(--card-bg);
           border-color: #667eea;
           box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
         }
@@ -211,7 +211,7 @@ export default function SignupForm({ onSubmit, isLoading = false }) {
           background: none;
           border: none;
           cursor: pointer;
-          color: #9ca3af;
+          color: var(--text-muted);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -226,7 +226,7 @@ export default function SignupForm({ onSubmit, isLoading = false }) {
         }
 
         .error-text {
-          color: #e63946;
+          color: #ef4444; /* Standard red for errors */
           font-size: 0.9rem;
           margin-top: 4px;
         }

@@ -7,7 +7,6 @@ import { useAlert } from '../../../components/ui/AlertProvider'
 import api from "../../../services/reqInterceptor"
 import { useAuth } from "../../../components/context/AuthContext"
 
-
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { showAlert } = useAlert()
@@ -23,13 +22,10 @@ export default function ProfilePage() {
   const [passwordMsg, setPasswordMsg] = useState("")
   const [passwordMsgType, setPasswordMsgType] = useState("")
 
-
-  // Fetch user profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-      
-    const res = await api.get(`/profile`)
+        const res = await api.get(`/profile`)
         setUser(res.data)
       } catch (err) {
         setError(err.response?.data?.msg || err.message)
@@ -37,7 +33,6 @@ export default function ProfilePage() {
         setLoading(false)
       }
     }
-
     fetchProfile()
   }, [])
 
@@ -61,8 +56,6 @@ export default function ProfilePage() {
         newPassword: passwords.newPassword,
       })
 
-
-      // show success alert
       showAlert({ title: 'Success', message: res.data.msg || 'Password updated', type: 'success' })
       setMustChangePassword(false)
       navigate("/dashboard")
@@ -101,8 +94,8 @@ export default function ProfilePage() {
           <button
             onClick={() => navigate("/dashboard")}
             style={styles.backBtn}
-            onMouseEnter={(e) => (e.target.style.background = "rgba(255, 255, 255, 0.2)")}
-            onMouseLeave={(e) => (e.target.style.background = "rgba(255, 255, 255, 0.1)")}
+            onMouseEnter={(e) => (e.target.style.background = "rgba(106, 17, 203, 0.2)")}
+            onMouseLeave={(e) => (e.target.style.background = "rgba(106, 17, 203, 0.1)")}
           >
             <FaArrowLeft size={16} />
             Back
@@ -199,11 +192,8 @@ export default function ProfilePage() {
           padding: 0;
           box-sizing: border-box;
         }
-
         body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-            'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-            'Helvetica Neue', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
         }
       `}</style>
     </div>
@@ -213,19 +203,20 @@ export default function ProfilePage() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+    background: "var(--main-bg)",
     padding: "2rem",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
   container: {
-    background: "#fff",
+    background: "var(--card-bg)",
     borderRadius: "24px",
+    border: "1px solid var(--border-light)",
     maxWidth: "600px",
     width: "100%",
     padding: "2.5rem",
-    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+    boxShadow: "var(--card-shadow)",
   },
   header: {
     display: "flex",
@@ -233,12 +224,12 @@ const styles = {
     alignItems: "center",
     marginBottom: "2rem",
     paddingBottom: "1.5rem",
-    borderBottom: "2px solid #f0f0f0",
+    borderBottom: "2px solid var(--border-light)",
   },
   title: {
     fontSize: "1.875rem",
     fontWeight: "700",
-    color: "#1a1a1a",
+    color: "var(--text-primary)",
     letterSpacing: "-0.5px",
   },
   backBtn: {
@@ -259,7 +250,7 @@ const styles = {
     textAlign: "center",
     marginBottom: "2.5rem",
     paddingBottom: "2rem",
-    borderBottom: "2px solid #f0f0f0",
+    borderBottom: "2px solid var(--border-light)",
   },
   iconWrapper: {
     display: "flex",
@@ -278,69 +269,18 @@ const styles = {
   userName: {
     fontSize: "1.5rem",
     fontWeight: "700",
-    color: "#1a1a1a",
+    color: "var(--text-primary)",
     marginBottom: "0.25rem",
   },
   userEmail: {
     fontSize: "0.938rem",
-    color: "#666",
-  },
-  infoSection: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "1rem",
-    marginBottom: "2.5rem",
-  },
-  infoCard: {
-    display: "flex",
-    gap: "1rem",
-    padding: "1rem",
-    background: "#f9f9f9",
-    borderRadius: "12px",
-    border: "1px solid #f0f0f0",
-  },
-  infoIconWrapper: {
-    width: "44px",
-    height: "44px",
-    borderRadius: "10px",
-    background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  infoIcon: {
-    color: "#fff",
-    fontSize: "1.25rem",
-  },
-  infoContent: {
-    flex: 1,
-    minWidth: 0,
-  },
-  infoLabel: {
-    display: "block",
-    fontSize: "0.75rem",
-    fontWeight: "700",
-    color: "#999",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-    marginBottom: "0.25rem",
-  },
-  infoInput: {
-    width: "100%",
-    padding: "0.5rem",
-    border: "none",
-    background: "transparent",
-    color: "#1a1a1a",
-    fontWeight: "600",
-    fontSize: "0.938rem",
-    outline: "none",
+    color: "var(--text-secondary)",
   },
   passwordSection: {
-    background: "#f9f9f9",
+    background: "var(--card-hover-bg)",
     padding: "2rem",
     borderRadius: "16px",
-    border: "1px solid #f0f0f0",
+    border: "1px solid var(--border-light)",
   },
   sectionHeader: {
     display: "flex",
@@ -355,7 +295,7 @@ const styles = {
   sectionTitle: {
     fontSize: "1.25rem",
     fontWeight: "700",
-    color: "#1a1a1a",
+    color: "var(--text-primary)",
   },
   form: {
     display: "flex",
@@ -370,20 +310,20 @@ const styles = {
   label: {
     fontSize: "0.875rem",
     fontWeight: "600",
-    color: "#1a1a1a",
+    color: "var(--text-primary)",
   },
   inputWrapper: {
     display: "flex",
     alignItems: "center",
     gap: "0.75rem",
     padding: "0.75rem 1rem",
-    background: "#fff",
-    border: "1px solid #e0e0e0",
+    background: "var(--input-bg)",
+    border: "1px solid var(--border-light)",
     borderRadius: "10px",
     transition: "all 0.3s ease",
   },
   inputIcon: {
-    color: "#999",
+    color: "var(--text-muted)",
     fontSize: "1rem",
     flexShrink: 0,
   },
@@ -393,12 +333,8 @@ const styles = {
     outline: "none",
     background: "transparent",
     fontSize: "0.938rem",
-    color: "#1a1a1a",
+    color: "var(--text-primary)",
     fontFamily: "inherit",
-    WebkitAutofill: {
-      WebkitBoxShadow: "0 0 0 1000px #fff inset",
-      WebkitTextFillColor: "#1a1a1a",
-    },
   },
   submitBtn: {
     padding: "0.875rem 1.5rem",
@@ -425,8 +361,8 @@ const styles = {
   },
   successMessage: {
     background: "rgba(34, 197, 94, 0.1)",
-    color: "#22c55e",
-    border: "1px solid #22c55e",
+    color: "#10b981",
+    border: "1px solid #10b981",
   },
   errorMessage: {
     background: "rgba(239, 68, 68, 0.1)",
@@ -435,36 +371,37 @@ const styles = {
   },
   loadingContainer: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+    background: "var(--main-bg)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    color: "#fff",
+    color: "var(--text-primary)",
     fontSize: "1.125rem",
   },
   spinner: {
     width: "50px",
     height: "50px",
-    border: "4px solid rgba(255, 255, 255, 0.3)",
-    borderTop: "4px solid #fff",
+    border: "4px solid rgba(106, 17, 203, 0.3)",
+    borderTop: "4px solid #6a11cb",
     borderRadius: "50%",
     animation: "spin 1s linear infinite",
     marginBottom: "1rem",
   },
   errorContainer: {
     minHeight: "100vh",
-    background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+    background: "var(--main-bg)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
   errorText: {
-    background: "#fff",
+    background: "var(--card-bg)",
     padding: "1.5rem",
     borderRadius: "12px",
     color: "#ef4444",
     fontSize: "1.125rem",
     fontWeight: "600",
+    border: "1px solid var(--border-light)",
   },
 }

@@ -37,7 +37,7 @@ export default function VerifyEmailPage() {
   return (
     <div className="verify-page">
       <div className="verify-card">
-        {status === "loading" && <p>Verifying your email...</p>}
+        {status === "loading" && <p className="loading-text">Verifying your email...</p>}
         {status === "success" && <p className="success">{message}</p>}
         {status === "error" && <p className="error">{message}</p>}
       </div>
@@ -48,19 +48,23 @@ export default function VerifyEmailPage() {
           justify-content: center;
           align-items: center;
           height: 100vh;
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: #1f2937;
+          background: var(--main-bg);
+          color: var(--text-primary);
+          transition: background 0.3s ease;
         }
         .verify-card {
-          background: white;
+          background: var(--card-bg);
           padding: 40px 30px;
           border-radius: 16px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+          border: 1px solid var(--border-light);
+          box-shadow: var(--card-shadow);
           text-align: center;
           font-size: 16px;
+          transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .success { color: #16a34a; font-weight: 600; }
-        .error { color: #dc2626; font-weight: 600; }
+        .loading-text { color: var(--text-primary); font-weight: 500; }
+        .success { color: #10b981; font-weight: 600; }
+        .error { color: #ef4444; font-weight: 600; }
       `}</style>
     </div>
   );
