@@ -15,9 +15,7 @@ export default function AdminSignupPage() {
     setError("");
     try {
       await authService.register({ ...formData, role: "ADMIN" });
-
       await login({ email: formData.email, password: formData.password });
-
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Signup failed");
@@ -27,119 +25,103 @@ export default function AdminSignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center login-bg">
-      <div className="login-container">
-        <div className="login-card">
+    <div className="auth-page-wrapper">
+      <div className="signup-container">
+        {/* Animated Border Class Added */}
+        <div className="signup-card animated-gradient-border">
           <div className="login-header">
             <div className="logo-circle admin-logo">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
               </svg>
             </div>
-            <h1 className="login-title admin-title">Admin Sign Up</h1>
-            <p className="login-subtitle">Create an administrator account</p>
+            <h1 className="login-title">Admin Sign Up</h1>
+            <p className="login-subtitle">Create your account</p>
           </div>
 
+          {error && <div className="error-message">{error}</div>}
+
           <div className="form-wrapper">
-            {error && <div className="error-message">{error}</div>}
             <SignupForm onSubmit={handleSubmit} isLoading={isLoading} />
           </div>
 
           <div className="login-footer">
             <p className="footer-text">
-              Already have an account?{" "}
-              <a href="/admin-login" className="footer-link">Login</a>
+              Already have an account? <button onClick={() => navigate("/admin-login")} className="footer-link-btn">Login</button>
             </p>
           </div>
         </div>
       </div>
 
       <style jsx>{`
-        .min-h-screen { min-height: 100vh; }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .absolute { position: absolute; }
-        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-        .overflow-hidden { overflow: hidden; }
-        .pointer-events-none { pointer-events: none; }
-
-        /* Global background variable applied */
-        .login-bg {
-          background: var(--main-bg);
-          position: relative;
+        .auth-page-wrapper {
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--body-bg);
           overflow: hidden;
-          transition: background 0.3s ease;
+          padding: 10px;
         }
-
-        .floating-orb { position: absolute; border-radius: 50%; filter: blur(40px); z-index: 0; }
-        .orb-1 { width: 300px; height: 300px; background: rgba(102, 126, 234, 0.15); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
-        .orb-2 { width: 200px; height: 200px; background: rgba(118, 75, 162, 0.12); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(102, 126, 234, 0.1); top: 50%; left: 10%; animation: float 12s ease-in-out infinite; }
-
-        @keyframes float {
-          0%,100% { transform: translate(0,0); }
-          50% { transform: translate(30px,30px); }
-        }
-
-        .login-container { perspective: 1000px; position: relative; z-index: 10; padding: 20px; width: 100%; max-width: 450px; }
+        .signup-container { width: 100%; max-width: 420px; z-index: 10; }
         
-        /* Theme-aware card */
-        .login-card {
-          background: var(--card-bg); 
-          backdrop-filter: blur(20px); 
+        .signup-card {
           border-radius: 24px;
-          padding: 48px 40px; 
-          border: 1px solid var(--border-light);
-          box-shadow: var(--card-shadow);
-          animation: cardSlideIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
-          transform-style: preserve-3d; 
-          transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+          padding: 25px 35px; /* Compact padding */
+          position: relative;
+          z-index: 11;
+          /* Background transparent rakha hai taake animation dikhe */
         }
-        .login-card:hover { transform: translateZ(10px) rotateX(2deg); box-shadow: var(--card-shadow-hover); }
-
-        @keyframes cardSlideIn { from { opacity:0; transform:translateY(30px) rotateX(10deg);} to {opacity:1; transform:translateY(0) rotateX(0);} }
-
-        .login-header { text-align:center; margin-bottom:32px; animation: fadeInDown 0.8s ease 0.2s both; }
-        @keyframes fadeInDown { from {opacity:0; transform:translateY(-20px);} to {opacity:1; transform:translateY(0);} }
 
         .logo-circle {
-          width: 64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-          color:white; margin:0 auto 16px; box-shadow:0 8px 24px rgba(102,126,234,0.4);
-          animation: logoFloat 3s ease-in-out infinite; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          width: 50px; height: 50px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          background: var(--accent-gradient); color: white; margin: 0 auto 10px;
         }
-        .logo-circle.admin-logo { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); box-shadow:0 8px 24px rgba(118,75,162,0.4); }
-        @keyframes logoFloat { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
 
-        .login-title { font-size:28px; font-weight:800; margin:0 0 8px 0; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .login-title.admin-title { background: linear-gradient(135deg,#764ba2 0%,#667eea 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        
-        /* Connected subtitle to theme */
-        .login-subtitle { font-size:14px; color:var(--text-secondary); margin:0; font-weight:500; }
-
-        .form-wrapper { animation: fadeInUp 0.8s ease 0.4s both; }
-        @keyframes fadeInUp { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-
-        .error-message { 
-          background: rgba(239, 68, 68, 0.1); 
-          color: #ef4444; 
-          padding: 12px 16px; 
-          border-radius: 8px; 
-          margin-bottom: 16px; 
-          font-size: 14px; 
-          border-left: 4px solid #ef4444; 
-          animation: slideInDown 0.3s ease; 
+        .login-title {
+          font-size: 24px; font-weight: 800; text-align: center;
+          background: var(--accent-gradient);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          margin: 0;
         }
-        @keyframes slideInDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
 
-        /* Connected footer to theme */
-        .login-footer { text-align:center; margin-top:24px; padding-top:24px; border-top:1px solid var(--border-light); animation: fadeInUp 0.8s ease 0.6s both; }
-        .footer-text { font-size:14px; color:var(--text-secondary); margin:0; }
-        .footer-link { color:#764ba2; text-decoration:none; font-weight:600; transition:all 0.3s ease; position:relative; }
-        .footer-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background: linear-gradient(90deg,#764ba2,#667eea); transition: width 0.3s ease; }
-        .footer-link:hover::after { width:100%; }
+        .login-subtitle { text-align: center; color: var(--text-secondary); font-size: 13px; margin-bottom: 15px; }
 
-        @media(max-width:640px){ .login-card{padding:32px 24px;} .login-title{font-size:24px;} .logo-circle{width:56px;height:56px;} }
+        .form-wrapper { position: relative; z-index: 20; }
+
+        .error-message {
+          background: rgba(239, 68, 68, 0.1); color: #ef4444;
+          padding: 8px; border-radius: 8px; margin-bottom: 10px; font-size: 12px;
+          border-left: 4px solid #ef4444;
+        }
+
+        .login-footer {
+          text-align: center; margin-top: 15px;
+          padding-top: 15px; border-top: 1px solid var(--border-light);
+        }
+
+        .footer-text { font-size: 13px; color: var(--text-secondary); }
+        .footer-link-btn {
+          background: none; border: none; color: #764ba2;
+          font-weight: 600; cursor: pointer; padding: 0 5px;
+        }
+
+        :global(.animated-input) {
+          width: 100%; padding: 10px 12px 10px 40px;
+          background: var(--input-bg); border: 1px solid var(--border-light);
+          border-radius: 10px; color: var(--text-primary); outline: none;
+        }
+
+        :global(.submit-button) {
+          width: 100%; padding: 12px; margin-top: 10px;
+          background: var(--accent-gradient); color: white;
+          border: none; border-radius: 10px; font-weight: 700;
+          cursor: pointer; z-index: 30; position: relative;
+        }
       `}</style>
     </div>
   );

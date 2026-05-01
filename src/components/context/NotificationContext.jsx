@@ -105,13 +105,15 @@ export const NotificationProvider = ({ children }) => {
     fetchNotifications(1);
 
     // Set up polling
-    const pollInterval = setInterval(() => {
-      if (user?.role) {
-        refreshUnreadCount();
-      }
-    }, 30000);
 
-    return () => clearInterval(pollInterval);
+    // const pollInterval = setInterval(() => {
+    //   if (user?.role) {
+    //     refreshUnreadCount();
+    //   }
+    // }, 30000);
+
+    // return () => clearInterval(pollInterval);
+
   }, [user, fetchNotifications, refreshUnreadCount]);
 
   const value = {

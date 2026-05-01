@@ -7,6 +7,22 @@ import { useAuth } from "../../components/context/AuthContext";
 import DashboardLoader from "../../components/ui/Loader";
 import MustChangePasswordModal from "../../components/modals/MustChangePasswordModal";
 
+// Move initial stats outside component to avoid recreating on each render
+const initialUserStats = [
+  { name: "Admin", value: 0, backendKey: "ADMIN", color: "rgb(0, 136, 254)" },
+  { name: "Client", value: 0, backendKey: "CLIENT", color: "rgb(0, 196, 159)" },
+  { name: "QC Member", value: 0, backendKey: "QC_MEMBER", color: "rgb(255, 187, 40)" },
+  { name: "Department Head", value: 0, backendKey: "DEPT_HEAD", color: "rgb(168, 85, 247)" },
+];
+
+const initialOrderStats = [
+  { name: "Draft", value: 0, color: "rgb(148, 163, 184)" },
+  { name: "Docs Pending", value: 0, color: "rgb(245, 158, 11)" },
+  { name: "Ready to Start", value: 0, color: "rgb(16, 185, 129)" },
+  { name: "In Progress", value: 0, color: "rgb(59, 130, 246)" },
+  { name: "Completed", value: 0, color: "rgb(139, 92, 246)" },
+];
+
 export default function Dashboard() {
   const { user, mustChangePassword } = useAuth();
   const navigate = useNavigate();
@@ -105,7 +121,7 @@ export default function Dashboard() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [navigate]);
 
   const handleUserRoleClick = (roleDisplayName) => {
     const urlRoleSlug = roleDisplayName.toLowerCase().replace(/\s+/g, '_');
@@ -131,6 +147,7 @@ export default function Dashboard() {
       )}
 
       <div className="dashboard-content">
+        <div className="boxed-pattern" />
         {/* Welcome Header */}
         <div className="dashboard-header">
           <h1>Welcome back, {user.name || user.email}!</h1>
@@ -203,7 +220,7 @@ export default function Dashboard() {
             
             <div className="legend-container">
               {userStats.map((stat, idx) => (
-                <div key={stat.name} className="legend-item clickable">
+                <div key={stat.name} className="legend-item clickable" onClick={() => handleUserRoleClick(stat.name)}>
                   <div className="legend-color" style={{ backgroundColor: stat.color || "#888" }}></div>
                   <div className="legend-text">
                     <span className="legend-name">{stat.name}</span>
@@ -300,6 +317,7 @@ export default function Dashboard() {
           max-width: 1400px;
           margin: 0 auto;
           padding: 2rem;
+          position: relative; /* enable absolute overlay from boxed-pattern */
         }
 
         .dashboard-header {

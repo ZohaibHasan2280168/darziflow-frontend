@@ -10,6 +10,25 @@
   -webkit-text-fill-color: var(--text-primary) !important; /* Force fill */
 }
 
+
+
+
+/* Dark mode background fix for Plexus visibility */
+:root.dark body {
+  background-color: #071026 !important;
+}
+
+/* Ensure Plexus stays behind all content */
+#tsparticles {
+  position: fixed !important;
+  z-index: -1 !important;
+}
+
+
+
+
+
+
 /* Light Mode Specific (Agar mazeed dark karna ho) */
 :root.light .form-header h1, 
 :root.light .page-title {
@@ -599,15 +618,21 @@ input:focus, textarea:focus {
 
 /* Dark mode - All containers */
 :root.dark {
-  --main-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  --body-bg: #0f1419;
-  --card-bg: #1a1f35;
-  --card-hover-bg: #242d45;
-  --input-bg: #111827;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --border-light: #334155;
+  /* Vibrant, glassy dark theme variables */
+  --main-bg: radial-gradient(circle at 10% 10%, rgba(6,182,212,0.04), rgba(124,58,237,0.04)), linear-gradient(135deg, #071129 0%, #0f172a 100%);
+  --body-bg: #071026;
+  --card-bg: rgba(255,255,255,0.03);
+  --card-hover-bg: rgba(255,255,255,0.04);
+  --glass-bg: rgba(255,255,255,0.03);
+  --input-bg: rgba(255,255,255,0.02);
+  --text-primary: #e6eefb;
+  --text-secondary: #bcd4f6;
+  --text-muted: #9aa9bb;
+  --border-light: rgba(255,255,255,0.06);
+  --accent: #06b6d4; /* cyan */
+  --accent-2: #ff4db1; /* magenta */
+  --card-shadow: 0 10px 30px rgba(2,6,23,0.7);
+  --card-glow: 0 8px 48px rgba(124,58,237,0.12);
 }
 
 :root.dark .departments-container,
@@ -615,7 +640,7 @@ input:focus, textarea:focus {
 :root.dark .order-detail-wrapper,
 :root.dark .form-container,
 :root.dark .moderator-bg {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  background: var(--main-bg) !important;
   color: var(--text-primary) !important;
 }
 
@@ -657,7 +682,10 @@ input:focus, textarea:focus {
 :root.dark .modal-card {
   background: var(--card-bg) !important;
   color: var(--text-primary) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--card-shadow), var(--card-glow);
+  border: 1px solid var(--border-light) !important;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
 }
 
 :root.dark .modal-title,
@@ -722,6 +750,176 @@ input:focus, textarea:focus {
   background: rgba(0, 0, 0, 0.7) !important;
 }
 
+/* === Dark-mode: Glassy & Futuristic Accents === */
+:root.dark .form-card,
+:root.dark .modal-card,
+:root.dark .main-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  box-shadow: var(--card-shadow), var(--card-glow) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+:root.dark .form-card::after,
+:root.dark .modal-card::after,
+:root.dark .main-card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(90deg, transparent 10%, rgba(124,58,237,0.12) 40%, rgba(6,182,212,0.08) 60%, transparent 90%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+:root.dark .input,
+:root.dark input,
+:root.dark textarea,
+:root.dark select {
+  background: var(--input-bg) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+:root.dark input:focus,
+:root.dark textarea:focus {
+  border-color: rgba(59,130,246,0.8) !important;
+  box-shadow: 0 6px 24px rgba(59,130,246,0.08), 0 0 10px rgba(6,182,212,0.06) !important;
+  outline: none !important;
+}
+
+:root.dark .chip {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent) !important;
+  border: 1px solid rgba(124,58,237,0.12) !important;
+  color: var(--text-muted) !important;
+  box-shadow: 0 2px 8px rgba(3,7,18,0.6) !important;
+}
+
+:root.dark .chip.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  color: white !important;
+  box-shadow: 0 6px 24px rgba(124,58,237,0.12) !important;
+}
+
+:root.dark .modal-overlay {
+  background: linear-gradient(180deg, rgba(3,6,23,0.6), rgba(3,6,23,0.45)) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+}
+
+:root.dark .btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+:root.dark .btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 18px 40px rgba(6,182,212,0.14), 0 6px 18px rgba(124,58,237,0.06) !important;
+}
+
+/* === Dark-mode: Neon accents, button gradients & card shimmer === */
+:root.dark .btn-save,
+:root.dark .btn-submit,
+:root.dark .btn-edit {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  box-shadow: 0 8px 30px rgba(124,58,237,0.12), 0 4px 18px rgba(6,182,212,0.06) !important;
+}
+
+:root.dark .btn-delete {
+  background: linear-gradient(90deg, #ff416c, #ff4b2b) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 30px rgba(255,75,43,0.08) !important;
+}
+
+:root.dark .btn-cancel {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-secondary) !important;
+}
+
+:root.dark .btn:focus {
+  box-shadow: 0 18px 60px rgba(124,58,237,0.18), 0 0 0 8px rgba(124,58,237,0.08) !important;
+  outline: none !important;
+}
+
+/* card shimmer and ambient glows */
+:root.dark .form-card::before,
+:root.dark .modal-card::before,
+:root.dark .main-card::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -30%;
+  width: 160%;
+  height: 180%;
+  background-image: radial-gradient(circle at 20% 20%, rgba(124,58,237,0.12), transparent 8%), radial-gradient(circle at 80% 80%, rgba(6,182,212,0.10), transparent 10%);
+  transform: rotate(12deg);
+  mix-blend-mode: overlay;
+  opacity: 1;
+  pointer-events: none;
+  animation: card-shimmer 8s linear infinite;
+}
+
+@keyframes card-shimmer {
+  0% { transform: translateX(-5%) rotate(12deg); }
+  50% { transform: translateX(5%) rotate(12deg); }
+  100% { transform: translateX(-5%) rotate(12deg); }
+}
+
+/* input focus neon outline */
+:root.dark input:focus,
+:root.dark textarea:focus,
+:root.dark select:focus {
+  box-shadow: 0 8px 30px rgba(6,182,212,0.06), 0 0 18px rgba(124,58,237,0.06) !important;
+  border-color: rgba(124,58,237,0.6) !important;
+}
+
+/* subtle vignette for main containers to add depth */
+:root.dark .departments-container::before,
+:root.dark .users-container::before,
+:root.dark .form-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 120px 120px -60px rgba(2,6,23,0.6), inset 0 -80px 80px -40px rgba(2,6,23,0.6);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* subtle neon grid/box lining overlay */
+:root.dark .departments-container::after,
+:root.dark .users-container::after,
+:root.dark .form-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+  background-image:
+    linear-gradient(to right, rgba(6,182,212,0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,77,177,0.08) 1px, transparent 1px),
+    radial-gradient(circle at 10% 10%, rgba(6,182,212,0.06), transparent 12%),
+    radial-gradient(circle at 90% 90%, rgba(255,77,177,0.04), transparent 14%);
+  background-size: 80px 80px, 80px 80px, 60% 60%, 60% 60%;
+}
+
+/* framed boxes pattern near edges */
+:root.dark .form-container .boxed-pattern,
+:root.dark .departments-container .boxed-pattern,
+:root.dark .users-container .boxed-pattern {
+  position: absolute;
+  inset: 12% 6% 12% 6%;
+  border: 1px solid rgba(6,182,212,0.04);
+  box-shadow: 0 0 40px rgba(6,182,212,0.02) inset;
+  pointer-events: none;
+  border-radius: 14px;
+}
+
 /* Dark mode - Tables */
 :root.dark .departments-table,
 :root.dark .users-table {
@@ -745,6 +943,154 @@ input:focus, textarea:focus {
 :root.dark .departments-table thead,
 :root.dark .users-table thead {
   background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Compatibility: also apply when `dark` class is on html or body */
+html.dark .form-card,
+body.dark .form-card,
+:root.dark .form-card,
+html.dark .modal-card,
+body.dark .modal-card,
+:root.dark .modal-card,
+html.dark .main-card,
+body.dark .main-card,
+:root.dark .main-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  box-shadow: var(--card-shadow), var(--card-glow) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+html.dark .input,
+body.dark .input,
+:root.dark .input,
+html.dark input,
+body.dark input,
+:root.dark input,
+html.dark textarea,
+body.dark textarea,
+:root.dark textarea,
+html.dark select,
+body.dark select,
+:root.dark select {
+  background: var(--input-bg) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+html.dark input:focus,
+body.dark input:focus,
+:root.dark input:focus,
+html.dark textarea:focus,
+body.dark textarea:focus,
+:root.dark textarea:focus {
+  border-color: rgba(59,130,246,0.8) !important;
+  box-shadow: 0 6px 24px rgba(59,130,246,0.08), 0 0 10px rgba(6,182,212,0.06) !important;
+  outline: none !important;
+}
+
+html.dark .chip,
+body.dark .chip,
+:root.dark .chip {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent) !important;
+  border: 1px solid rgba(124,58,237,0.12) !important;
+  color: var(--text-muted) !important;
+  box-shadow: 0 2px 8px rgba(3,7,18,0.6) !important;
+}
+
+html.dark .chip.active,
+body.dark .chip.active,
+:root.dark .chip.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  color: white !important;
+  box-shadow: 0 6px 24px rgba(124,58,237,0.12) !important;
+}
+
+html.dark .modal-overlay,
+body.dark .modal-overlay,
+:root.dark .modal-overlay {
+  background: linear-gradient(180deg, rgba(3,6,23,0.6), rgba(3,6,23,0.45)) !important;
+  backdrop-filter: blur(6px) saturate(120%) !important;
+}
+
+html.dark .btn-save,
+body.dark .btn-save,
+:root.dark .btn-save,
+html.dark .btn-submit,
+body.dark .btn-submit,
+:root.dark .btn-submit,
+html.dark .btn-edit,
+body.dark .btn-edit,
+:root.dark .btn-edit {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  box-shadow: 0 8px 30px rgba(124,58,237,0.12), 0 4px 18px rgba(6,182,212,0.06) !important;
+}
+
+html.dark .btn-delete,
+body.dark .btn-delete,
+:root.dark .btn-delete {
+  background: linear-gradient(90deg, #ff416c, #ff4b2b) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 30px rgba(255,75,43,0.08) !important;
+}
+
+html.dark .btn-cancel,
+body.dark .btn-cancel,
+:root.dark .btn-cancel {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Full-page SVG wave background for dark mode (applies to all pages) */
+html.dark,
+body.dark,
+:root.dark {
+  background-image: linear-gradient(180deg, rgba(7,16,38,0.6), rgba(7,16,38,0.7)), url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 1920 1080'><rect width='100%25' height='100%25' fill='%23071129'/><path d='M0 220 C300 180 600 260 900 220 C1200 180 1500 260 1920 220' fill='none' stroke='%23006B8D' stroke-opacity='0.06' stroke-width='2'/><path d='M0 760 C300 720 600 800 900 760 C1200 720 1500 800 1920 760' fill='none' stroke='%23FF4DB1' stroke-opacity='0.04' stroke-width='1'/></svg>") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+}
+
+/* Make main layout containers slightly transparent so background shows through */
+:root.dark .dashboard-container,
+:root.dark .form-container,
+html.dark .dashboard-container,
+html.dark .form-container,
+body.dark .dashboard-container,
+body.dark .form-container {
+  background: transparent !important;
+}
+
+/* Override common page containers to glassy look in dark mode */
+html.dark .container,
+body.dark .container,
+:root.dark .container,
+html.dark .card,
+body.dark .card,
+:root.dark .card,
+html.dark .panel,
+body.dark .panel,
+:root.dark .panel,
+html.dark .box,
+body.dark .box,
+:root.dark .box,
+html.dark .auth-card,
+body.dark .auth-card,
+:root.dark .auth-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+  border: 1px solid var(--border-light) !important;
+  backdrop-filter: blur(10px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%) !important;
+  box-shadow: var(--card-shadow) !important;
 }
 
 
@@ -934,3 +1280,101 @@ input:focus, textarea:focus {
   color: var(--text-muted);
 }
 
+
+
+
+
+
+
+
+
+/* ============================================================
+   FIX: SHOW ANIMATION ON LOGIN, SIGNUP & PUBLIC PAGES
+   ============================================================ */
+
+/* 1. In pages ke main containers ko transparent karein */
+.form-container, 
+.moderator-bg, 
+.auth-page-wrapper,
+.role-selection-container {
+  background: transparent !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* 2. Login/Signup card ko thora "Glassy" look dein taake animation piche se dikhe */
+.form-card, 
+.moderator-card {
+  background: rgba(30, 41, 59, 0.7) !important; /* Semi-transparent dark slate */
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 3. Dark mode body background layer fix */
+:root.dark body {
+  background-color: #071026 !important;
+  background-image: none !important; /* Purana static image hata kar animation ko jagah dein */
+}
+
+/* 4. Plexus layer priority */
+#tsparticles {
+  z-index: 1 !important;
+}
+
+/* --- App.css --- */
+:root.light .login-card, :root.light .signup-card {
+  --card-bg: #ffffff;
+}
+:root.light {
+  --body-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border-light: #e2e8f0;
+  --input-bg: #f1f5f9;
+  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+:root.dark .login-card, :root.dark .signup-card {
+  --card-bg: #0f172a;
+}
+:root.dark {
+  --body-bg: #071026;
+  --card-bg: rgba(15, 23, 42, 0.4);
+  --text-primary: #e6eefb;
+  --text-secondary: #bcd4f6;
+  --text-muted: #9aa9bb;
+  --border-light: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.02);
+  --accent-gradient: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Gradient Border Animation Class */
+.animated-gradient-border {
+  position: relative;
+  /* Border width set karein */
+  border: 2px solid transparent !important;
+  /* Card background aur Gradient background ka combination */
+  background-image: linear-gradient(var(--card-bg), var(--card-bg)), 
+                    linear-gradient(135deg, #667eea, #764ba2, #667eea, #764ba2);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-size: 200% 100%;
+  animation: border-glow 4s linear infinite;
+  /* Taake edges saaf nazar aayein */
+  z-index: 1;
+}
+
+@keyframes border-glow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--body-bg);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease;
+}

@@ -1,12 +1,15 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./components/context/AuthContext";
-import { ThemeProvider } from "./components/context/ThemeContext";
+import { ThemeProvider, useTheme } from "./components/context/ThemeContext";
 import AlertProvider from "./components/ui/AlertProvider";
+
+// --- Components ---
+import PlexusBackground from "./components/PlexusBackground";
 
 // --- Page Imports ---
 import RoleUserList from "./pages/Dashboard/User/RoleUserList";
-import RoleSelection from "./pages/Dashboard/Home/index";
+import RoleSelection from "./pages/Dashboard/Home/RoleSelection";
 import ModeratorLogin from "./pages/Auth/Moderator/ModeratorLogin";
 import VerifyEmailPage from "./pages/Dashboard/Profile/VerifyEmailPage";
 import AdminLoginPage from "./pages/Auth/Admin/LoginPage";
@@ -42,6 +45,13 @@ import AuditLogPage from "./pages/Dashboard/Audit/AuditLogPage";
 
 import { NotificationProvider } from "./components/context/NotificationContext";
 import MainLayout from "./components/layout/MainLayout";
+import LandingPage from "./pages/Landing/LandingPage";
+
+// Yeh component check karega ke dark mode on hai ya nahi
+const PlexusWrapper = () => {
+  const { theme } = useTheme();
+  return theme === "dark" ? <PlexusBackground /> : null;
+};
 
 function App() {
   return (
@@ -51,13 +61,17 @@ function App() {
           <ThemeProvider>
             <AlertProvider>
               
+              
+              {/* Theme logic ke mutabiq background yahan render hoga */}
+              <PlexusWrapper />
 
               <MustChangePasswordModal />
               <Routes>
                 {/* ==========================================
                   PUBLIC ROUTES (No Login)
               ========================================== */}
-                <Route path="/" element={<RoleSelection />} />
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/role-selection" element={<RoleSelection />} />
                 <Route path="/moderator-login" element={<ModeratorLogin />} />
                 <Route path="/admin-login" element={<AdminLoginPage />} />
                 <Route path="/admin-signup" element={<AdminSignUpPage />} />
@@ -75,7 +89,6 @@ function App() {
                   PROTECTED ROUTES (Wrap in MainLayout)
               ========================================== */}
                 <Route element={<MainLayout />}>
-                  {/* ADMIN ONLY ROUTES */}
                   <Route
                     path="/dashboard"
                     element={
@@ -133,7 +146,6 @@ function App() {
                     }
                   />
 
-                  {/* ADMIN & MODERATOR SHARED ROUTES */}
                   <Route
                     path="/departments"
                     element={
@@ -245,7 +257,6 @@ function App() {
                     }
                   />
 
-                  {/* MODERATOR ONLY ROUTES */}
                   <Route
                     path="/moderator-dashboard"
                     element={

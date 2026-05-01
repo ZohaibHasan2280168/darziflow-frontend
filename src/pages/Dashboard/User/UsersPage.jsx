@@ -43,6 +43,21 @@ const FilterIcon = () => (
 );
 
 export default function Users() {
+
+  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+// Theme change detect karne ke liye
+useEffect(() => {
+  const observer = new MutationObserver(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  return () => observer.disconnect();
+}, []);
+
+const dynamicColor = isDark ? '#ffffff' : '#0f172a';
+
+
+
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -164,7 +179,9 @@ export default function Users() {
             </div>
             <div className="stat-content">
               <span className="stat-label">Total Users</span>
-              <span className="stat-number">{users.length}</span>
+             <span className="stat-number" style={{ color: dynamicColor, fontWeight: '800' }}>
+  {users.length}
+</span>
             </div>
           </div>
 
@@ -175,7 +192,9 @@ export default function Users() {
               </div>
               <div className="stat-content">
                 <span className="stat-label">{role.replace('_', ' ')}</span>
-                <span className="stat-number">{count}</span>
+                <span className="stat-number" style={{ color: dynamicColor, fontWeight: '800' }}>
+  {count}
+</span>
               </div>
             </div>
           ))}
@@ -350,3 +369,21 @@ export default function Users() {
     </div>
   );
 }
+
+{/* Dynamic Style for Theme Aware Numbers */}
+      {/* Dynamic Style for Theme Aware Numbers & Visibility Fix */}
+      {/* Dynamic Style for Theme Aware Numbers */}
+      <style>{`
+        .theme-aware-text {
+          color: var(--text-primary);
+          transition: color 0.3s ease;
+        }
+        /* Light mode fix */
+        :root.light .theme-aware-text { 
+          color: #0f172a !important; 
+        }
+        /* Dark mode fix */
+        :root.dark .theme-aware-text { 
+          color: #ffffff !important; 
+        }
+      `}</style>

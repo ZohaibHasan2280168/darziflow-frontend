@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LoginForm from '../../../components/auth/LoginForm';
 import { useAuth } from "../../../components/context/AuthContext";
 
@@ -12,7 +12,6 @@ export default function AdminLoginPage() {
   const handleSubmit = async (credentials) => {
     setIsLoading(true);
     setError("");
-
     try {
       const userData = await login({
         email: credentials.email,
@@ -25,216 +24,97 @@ export default function AdminLoginPage() {
         setError("Access denied: Only admins can login here.");
         return;
       }
-
       navigate("/dashboard");
-    
     } catch (err) {
-      setError(
-        err.response?.data?.message || err?.message || "Login failed. Please try again."
-      );
+      setError(err.response?.data?.message || err?.message || "Login failed.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center login-bg">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="floating-orb orb-1"></div>
-        <div className="floating-orb orb-2"></div>
-        <div className="floating-orb orb-3"></div>
-      </div>
-
-      {/* Main login card */}
+    <div className="auth-page-wrapper">
       <div className="login-container">
-        <div className="login-card">
+        <div className="login-card animated-gradient-border">
           <div className="login-header">
             <div className="logo-circle admin-logo">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
               </svg>
             </div>
-            <h1 className="login-title admin-title">Admin Login</h1>
-            <p className="login-subtitle">Full system access</p>
+            <h1 className="login-title">Admin Login</h1>
+            <p className="login-subtitle">Secure Access</p>
           </div>
 
-          <div className="form-wrapper">
-            {error && <div className="error-message">{error}</div>}
-            <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />
+          {error && <div className="error-message">{error}</div>}
 
-            {/* Forgot Password Link */}
-            <div className="forgot-password-wrapper">
-              <Link to="/forgot-password" className="forgot-password-link">
-                Forgot Password?
-              </Link>
-            </div>
+          <div className="form-wrapper">
+            <LoginForm onSubmit={handleSubmit} isLoading={isLoading} />
           </div>
 
           <div className="login-footer">
             <p className="footer-text">
-              Need help?{" "}
-              <a href="#" className="footer-link">
-                Contact support
-              </a>
+              Don't have an account? <button onClick={() => navigate("/admin-signup")} className="footer-link-btn">Sign Up</button>
             </p>
           </div>
         </div>
       </div>
 
-      <style>{`
-        .min-h-screen { min-height: 100vh; }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .absolute { position: absolute; }
-        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-        .overflow-hidden { overflow: hidden; }
-        .pointer-events-none { pointer-events: none; }
-
-        /* Global background variable applied */
-        .login-bg {
-          background: var(--main-bg);
-          position: relative;
+      <style jsx>{`
+        .auth-page-wrapper {
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--body-bg);
           overflow: hidden;
-          transition: background 0.3s ease;
         }
-
-        .floating-orb {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(40px);
-          z-index: 0;
-        }
-
-        /* Subtle theme-friendly colors for orbs */
-        .orb-1 { width: 300px; height: 300px; background: rgba(102, 126, 234, 0.15); top: -100px; right: -100px; animation: float 8s ease-in-out infinite; }
-        .orb-2 { width: 200px; height: 200px; background: rgba(118, 75, 162, 0.12); bottom: -50px; left: -50px; animation: float 10s ease-in-out infinite reverse; }
-        .orb-3 { width: 250px; height: 250px; background: rgba(102, 126, 234, 0.1); top: 50%; left: 10%; animation: float 12s ease-in-out infinite; }
-
-        @keyframes float {
-          0%,100% { transform: translate(0,0); }
-          50% { transform: translate(30px,30px); }
-        }
-
-        .login-container { perspective: 1000px; position: relative; z-index: 10; padding: 20px; width: 100%; max-width: 450px; }
-
-        /* Theme-aware card */
+        .login-container { width: 100%; max-width: 400px; z-index: 10; }
+        
         .login-card {
-          background: var(--card-bg);
-          backdrop-filter: blur(20px);
           border-radius: 24px;
-          padding: 48px 40px;
-          border: 1px solid var(--border-light);
-          box-shadow: var(--card-shadow);
-          animation: cardSlideIn 0.8s cubic-bezier(0.34,1.56,0.64,1);
-          transform-style: preserve-3d;
-          transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .login-card:hover { transform: translateZ(10px) rotateX(2deg); box-shadow: var(--card-shadow-hover); }
-
-        @keyframes cardSlideIn {
-          from { opacity: 0; transform: translateY(30px) rotateX(10deg); }
-          to { opacity: 1; transform: translateY(0) rotateX(0); }
-        }
-
-        .login-header { text-align: center; margin-bottom: 32px; animation: fadeInDown 0.8s ease 0.2s both; }
-
-        @keyframes fadeInDown {
-          from { opacity: 0; transform: translateY(-20px); }
-          to { opacity: 1; transform: translateY(0); }
+          padding: 35px 40px;
+          position: relative;
+          z-index: 11;
         }
 
         .logo-circle {
-          width: 64px; height: 64px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 50%; display: flex; align-items: center; justify-content: center;
-          color: white; margin: 0 auto 16px;
-          box-shadow: 0 8px 24px rgba(102,126,234,0.4);
-          animation: logoFloat 3s ease-in-out infinite;
-        }
-
-        .logo-circle.admin-logo {
-          background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-          box-shadow: 0 8px 24px rgba(118,75,162,0.4);
-        }
-
-        @keyframes logoFloat {
-          0%,100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
+          width: 55px; height: 55px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          background: var(--accent-gradient); color: white; margin: 0 auto 15px;
         }
 
         .login-title {
-          font-size: 28px; font-weight: 800; margin: 0 0 8px;
-          background: linear-gradient(135deg,#667eea,#764ba2);
+          font-size: 26px; font-weight: 800; text-align: center;
+          background: var(--accent-gradient);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          margin-bottom: 5px;
         }
 
-        .login-title.admin-title {
-          background: linear-gradient(135deg,#764ba2,#667eea);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        .login-subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 25px; }
 
-        .login-subtitle { font-size: 14px; color: var(--text-secondary); margin: 0; font-weight: 500; }
-
-        .form-wrapper { animation: fadeInUp 0.8s ease 0.4s both; }
-
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .forgot-password-wrapper {
-          text-align: right;
-          margin-top: 10px;
-        }
-
-        .forgot-password-link {
-          color: #764ba2;
-          font-size: 14px;
-          font-weight: 600;
-          text-decoration: none;
-          transition: color 0.3s ease;
-        }
-
-        .forgot-password-link:hover {
-          color: #667eea;
-        }
+        .form-wrapper { position: relative; z-index: 20; }
 
         .error-message {
           background: rgba(239, 68, 68, 0.1); color: #ef4444;
-          padding: 12px 16px; border-radius: 8px;
-          margin-bottom: 16px; font-size: 14px;
-          border-left: 4px solid #ef4444; animation: slideInDown 0.3s ease;
+          padding: 10px; border-radius: 8px; margin-bottom: 15px;
+          border-left: 4px solid #ef4444; font-size: 13px;
         }
 
         .login-footer {
-          text-align: center; margin-top: 24px;
-          padding-top: 24px; border-top: 1px solid var(--border-light);
-          animation: fadeInUp 0.8s ease 0.6s both;
+          text-align: center; margin-top: 20px;
+          padding-top: 20px; border-top: 1px solid var(--border-light);
         }
 
-        .footer-text { font-size: 14px; color: var(--text-secondary); margin: 0; }
-
-        .footer-link {
-          color: #764ba2; text-decoration: none; font-weight: 600;
-          transition: all 0.3s ease; position: relative;
+        .footer-text { font-size: 14px; color: var(--text-secondary); }
+        .footer-link-btn {
+          background: none; border: none; color: #764ba2;
+          font-weight: 600; cursor: pointer; padding: 0 5px;
         }
 
-        .footer-link::after {
-          content: ''; position: absolute; bottom: -2px; left: 0;
-          width: 0; height: 2px;
-          background: linear-gradient(90deg,#764ba2,#667eea);
-          transition: width 0.3s ease;
-        }
-
-        .footer-link:hover::after { width: 100%; }
-
-        @media (max-width: 640px) {
-          .login-card { padding: 32px 24px; }
-          .login-title { font-size: 24px; }
-          .logo-circle { width: 56px; height: 56px; }
+        :global(.submit-button) {
+          z-index: 30;
+          position: relative;
         }
       `}</style>
     </div>
