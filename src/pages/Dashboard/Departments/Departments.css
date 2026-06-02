@@ -43,7 +43,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .header-left {
@@ -117,8 +117,8 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 1.25rem;
   display: flex;
@@ -128,9 +128,9 @@
 }
 
 .stat-card:hover {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: var(--border-default);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .stat-icon {
@@ -170,7 +170,7 @@
 
 .stat-label {
   font-size: 0.85rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -247,19 +247,14 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 0.9rem; /* slightly tighter padding when inside outer pill */
-  background: transparent; /* inner wrapper transparent so only outer pill shows */
-  border: none; /* rely on outer .filters-bar border */
+  padding: 0; /* remove inner pill padding so outer .filters-bar shapes the container */
+  background: transparent;
+  border: none;
   border-radius: 12px;
   color: var(--text-primary);
   position: relative;
   min-width: 220px;
   transition: all 0.18s ease;
-}
-
-.filter-select-wrapper:hover {
-  /* subtle lift inside the outer pill */
-  background: rgba(255,255,255,0.01);
 }
 
 /* Funnel icon color: use text-secondary so it's visible in light and dark */
@@ -299,17 +294,17 @@
 
 /* Main Card */
 .main-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
 }
 
 .table-header {
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .table-title h3 {
@@ -336,7 +331,7 @@
 }
 
 .departments-table thead {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-bg);
 }
 
 .departments-table th {
@@ -344,10 +339,10 @@
   text-align: left;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .dept-info-col { width: 40%; }
@@ -356,7 +351,7 @@
 .members-col { width: 20%; }
 
 .dept-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-light);
   transition: all 0.2s ease;
 }
 
@@ -365,7 +360,7 @@
 }
 
 .dept-row.clickable:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-hover-bg);
 }
 
 .departments-table td {
@@ -428,8 +423,49 @@
 
 .head-name {
   font-weight: 500;
-  color: #fff !important;
+  color: var(--text-primary) !important;
 }
+
+/* Minimal custom dropdown used in filters */
+.custom-dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 240px; /* match Users dropdown width */
+}
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--dropdown-bg, var(--card-bg));
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.dropdown-trigger .chev { margin-left: 6px; opacity: 0.9; }
+.dropdown-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  z-index: 50; /* align with Users z-index */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.dropdown-options { max-height: 220px; overflow-y: auto; padding: 0.25rem 0; display:flex; flex-direction:column; }
+.dropdown-option { padding: 0.5rem 1rem; cursor: pointer; color: var(--text-primary); display:flex; align-items:center; gap:0.5rem; }
+.dropdown-option:hover { background: var(--card-hover-bg); }
 
 .head-email {
   font-size: 0.8rem;

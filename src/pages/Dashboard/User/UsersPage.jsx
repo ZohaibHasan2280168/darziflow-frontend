@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAlert } from '../../../components/ui/AlertProvider';
 import api from "../../../services/reqInterceptor";
 import BackButton from "../../../components/ui/BackButton";
 import './Users.css';
 
-// Icons (you can use react-icons or inline SVGs)
+// Icons
 const EditIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -22,13 +22,6 @@ const DeleteIcon = () => (
   </svg>
 );
 
-const AddIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 5v14"></path>
-    <path d="M5 12h14"></path>
-  </svg>
-);
-
 const SearchIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="11" cy="11" r="8"></circle>
@@ -36,34 +29,33 @@ const SearchIcon = () => (
   </svg>
 );
 
-const FilterIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-  </svg>
-);
-
 export default function Users() {
-
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
-// Theme change detect karne ke liye
-useEffect(() => {
-  const observer = new MutationObserver(() => {
-    setIsDark(document.documentElement.classList.contains('dark'));
-  });
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  return () => observer.disconnect();
-}, []);
+  
+  // Theme change detect karne ke liye
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
-const dynamicColor = isDark ? '#ffffff' : '#0f172a';
-
-
+  const dynamicColor = isDark ? '#ffffff' : '#0f172a';
 
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("ALL");
   const [error, setError] = useState("");
+  
+  // Custom Filter Dropdown State
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [roleSearch, setRoleSearch] = useState("");
+  const [selectedRoles, setSelectedRoles] = useState([]);
+  const [tempSelectedRoles, setTempSelectedRoles] = useState([]);
+  const dropdownRef = useRef(null);
+
   const navigate = useNavigate();
   const { showAlert } = useAlert();
 
@@ -75,7 +67,7 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
     CLIENT: { bg: "rgba(239, 68, 68, 0.12)", text: "#fca5a5", border: "rgba(239, 68, 68, 0.25)" },
   };
 
-  const roles = ["ALL", "ADMIN", "MODERATOR", "DEPARTMENT_HEAD", "QC_MEMBER", "CLIENT"];
+  const filterableRoles = ["ADMIN", "MODERATOR", "DEPARTMENT_HEAD", "QC_MEMBER", "CLIENT"];
 
   useEffect(() => {
     fetchUsers();
@@ -83,7 +75,18 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
 
   useEffect(() => {
     filterUsers();
-  }, [users, searchTerm, roleFilter]);
+  }, [users, searchTerm, selectedRoles]);
+
+  // Handle clicking outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const fetchUsers = async () => {
     try {
@@ -112,9 +115,9 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
       );
     }
 
-    // Apply role filter
-    if (roleFilter !== "ALL") {
-      filtered = filtered.filter(user => user.role === roleFilter);
+    // Apply multiple role filter
+    if (selectedRoles.length > 0) {
+      filtered = filtered.filter(user => selectedRoles.includes(user.role));
     }
 
     setFilteredUsers(filtered);
@@ -149,6 +152,24 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
 
   const roleStats = getRoleStats();
 
+  const handleDropdownOpen = () => {
+    setTempSelectedRoles(selectedRoles);
+    setIsFilterOpen(!isFilterOpen);
+  };
+
+  const toggleRoleSelection = (role) => {
+    if (tempSelectedRoles.includes(role)) {
+      setTempSelectedRoles(tempSelectedRoles.filter(r => r !== role));
+    } else {
+      setTempSelectedRoles([...tempSelectedRoles, role]);
+    }
+  };
+
+  const applyRoleFilter = () => {
+    setSelectedRoles(tempSelectedRoles);
+    setIsFilterOpen(false);
+  };
+
   return (
     <div className="users-container">
       <div className="users-content">
@@ -179,9 +200,9 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
             </div>
             <div className="stat-content">
               <span className="stat-label">Total Users</span>
-             <span className="stat-number" style={{ color: dynamicColor, fontWeight: '800' }}>
-  {users.length}
-</span>
+              <span className="stat-number" style={{ color: dynamicColor, fontWeight: '800' }}>
+                {users.length}
+              </span>
             </div>
           </div>
 
@@ -193,8 +214,8 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
               <div className="stat-content">
                 <span className="stat-label">{role.replace('_', ' ')}</span>
                 <span className="stat-number" style={{ color: dynamicColor, fontWeight: '800' }}>
-  {count}
-</span>
+                  {count}
+                </span>
               </div>
             </div>
           ))}
@@ -212,20 +233,45 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          
+          {/* Custom Dropdown UI */}
           <div className="filter-group">
-            <div className="filter-select-wrapper">
-              <FilterIcon />
-              <select
-                className="filter-select"
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-              >
-                {roles.map(role => (
-                  <option key={role} value={role}>
-                    {role === "ALL" ? "All Roles" : role.replace('_', ' ')}
-                  </option>
-                ))}
-              </select>
+            <div className="custom-dropdown-container" ref={dropdownRef}>
+              <button className="dropdown-trigger" onClick={handleDropdownOpen}>
+                <span>Role {selectedRoles.length > 0 && `(${selectedRoles.length})`}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: '8px' }}>
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </button>
+
+              {isFilterOpen && (
+                <div className="dropdown-popover">
+                  
+                  <div className="dropdown-options">
+                    {filterableRoles
+                      .filter(r => r.toLowerCase().includes(roleSearch.toLowerCase()))
+                      .map(role => (
+                        <label key={role} className="dropdown-option">
+                          <input
+                            type="checkbox"
+                            checked={tempSelectedRoles.includes(role)}
+                            onChange={() => toggleRoleSelection(role)}
+                          />
+                          <span className="checkbox-custom"></span>
+                          <span className="option-text">{role.replace('_', ' ')}</span>
+                        </label>
+                      ))}
+                    {filterableRoles.filter(r => r.toLowerCase().includes(roleSearch.toLowerCase())).length === 0 && (
+                      <div className="dropdown-no-results">No roles found</div>
+                    )}
+                  </div>
+                  <div className="dropdown-footer">
+                    <button className="apply-btn" onClick={applyRoleFilter}>
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -350,7 +396,7 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
                 </table>
               </div>
 
-              {/* Pagination (Optional) */}
+              {/* Pagination */}
               {filteredUsers.length > 10 && (
                 <div className="pagination">
                   <button className="pagination-btn prev" disabled>
@@ -366,24 +412,15 @@ const dynamicColor = isDark ? '#ffffff' : '#0f172a';
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-{/* Dynamic Style for Theme Aware Numbers */}
-      {/* Dynamic Style for Theme Aware Numbers & Visibility Fix */}
-      {/* Dynamic Style for Theme Aware Numbers */}
+      
       <style>{`
         .theme-aware-text {
           color: var(--text-primary);
           transition: color 0.3s ease;
         }
-        /* Light mode fix */
-        :root.light .theme-aware-text { 
-          color: #0f172a !important; 
-        }
-        /* Dark mode fix */
-        :root.dark .theme-aware-text { 
-          color: #ffffff !important; 
-        }
+        :root.light .theme-aware-text { color: #0f172a !important; }
+        :root.dark .theme-aware-text { color: #ffffff !important; }
       `}</style>
+    </div>
+  );
+}

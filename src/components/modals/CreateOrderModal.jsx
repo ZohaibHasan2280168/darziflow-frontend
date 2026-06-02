@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   FiX, FiPlus, FiInfo, FiUser, FiLayers, FiFileText, FiCalendar,
   FiCheckCircle, FiAlertCircle, FiArrowLeft, FiChevronRight,
@@ -189,6 +189,15 @@ const CreateOrderModal = ({
     resetForm();
     onClose();
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

@@ -74,7 +74,7 @@ export default function ModeratorLogin() {
           background: linear-gradient(135deg,#667eea,#764ba2);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .login-subtitle { text-align: center; color: var(--text-secondary); font-size: 14px; }
+        .login-subtitle { text-align: center; color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
         .error-message { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 12px; border-radius: 8px; margin-bottom: 14px; border-left: 4px solid #ef4444; }
         .login-footer { text-align: center; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-light); }
       `}</style>

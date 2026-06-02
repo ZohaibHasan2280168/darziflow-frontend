@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FiSearch, FiEdit2, FiTrash2, FiLayers, 
@@ -23,6 +23,12 @@ const OrdersList = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
 
+  // Custom dropdown state/refs for status and type filters
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const statusRef = useRef(null);
+  const typeRef = useRef(null);
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [orderToEdit, setOrderToEdit] = useState(null);
@@ -42,6 +48,32 @@ const OrdersList = () => {
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleOutside = (e) => {
+      try {
+        const path = e.composedPath ? e.composedPath() : (e.path || []);
+        if (statusRef.current) {
+          const clickedInsideStatus = path.length ? path.includes(statusRef.current) : statusRef.current.contains(e.target);
+          if (!clickedInsideStatus) setIsStatusOpen(false);
+        }
+        if (typeRef.current) {
+          const clickedInsideType = path.length ? path.includes(typeRef.current) : typeRef.current.contains(e.target);
+          if (!clickedInsideType) setIsTypeOpen(false);
+        }
+      } catch (err) {
+        if (statusRef.current && !statusRef.current.contains(e.target)) setIsStatusOpen(false);
+        if (typeRef.current && !typeRef.current.contains(e.target)) setIsTypeOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('touchstart', handleOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+    };
   }, []);
 
   const handleDelete = async (id) => {
@@ -164,33 +196,52 @@ const OrdersList = () => {
           />
         </div>
         <div className="filter-group">
-          <div className="filter-select-wrap">
-            <FiFilter size={14} />
-            <select 
-              className="filter-select"
-              value={statusFilter} 
-              onChange={(e) => setStatusFilter(e.target.value)}
+          <div className="custom-dropdown-container" ref={statusRef}>
+            <button
+              type="button"
+              className="dropdown-trigger"
+              onClick={(e) => { e.stopPropagation(); setIsStatusOpen(s => !s); }}
+              aria-haspopup="true"
+              aria-expanded={isStatusOpen}
             >
-              <option value="ALL">All Status</option>
-              <option value="DRAFT">Draft</option>
-              <option value="DOCS_PENDING">Docs Pending</option>
-              <option value="READY_TO_START">Ready to Start</option>
-              <option value="IN_PROGRESS">In Progress</option>
-            </select>
+              <span>{statusFilter === 'ALL' ? 'All Status' : statusFilter.replace(/_/g, ' ')}</span>
+              <FiFilter size={14} style={{ marginLeft: 8 }} />
+            </button>
+            {isStatusOpen && (
+              <div className="dropdown-popover">
+                <div className="dropdown-options">
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('ALL'); setIsStatusOpen(false); }}>All Status</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('DRAFT'); setIsStatusOpen(false); }}>Draft</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('DOCS_PENDING'); setIsStatusOpen(false); }}>Docs Pending</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('READY_TO_START'); setIsStatusOpen(false); }}>Ready to Start</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('IN_PROGRESS'); setIsStatusOpen(false); }}>In Progress</div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="filter-select-wrap">
-            <FiLayers size={14} />
-            <select 
-              className="filter-select"
-              value={typeFilter} 
-              onChange={(e) => setTypeFilter(e.target.value)}
+
+          <div className="custom-dropdown-container" ref={typeRef}>
+            <button
+              type="button"
+              className="dropdown-trigger"
+              onClick={(e) => { e.stopPropagation(); setIsTypeOpen(s => !s); }}
+              aria-haspopup="true"
+              aria-expanded={isTypeOpen}
             >
-              <option value="ALL">All Types</option>
-              <option value="PANT">Pant</option>
-              <option value="JACKET">Jacket</option>
-              <option value="SHORTS">Shorts</option>
-              <option value="OTHER">Other</option>
-            </select>
+              <span>{typeFilter === 'ALL' ? 'All Types' : typeFilter}</span>
+              <FiLayers size={14} style={{ marginLeft: 8 }} />
+            </button>
+            {isTypeOpen && (
+              <div className="dropdown-popover">
+                <div className="dropdown-options">
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('ALL'); setIsTypeOpen(false); }}>All Types</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('PANT'); setIsTypeOpen(false); }}>Pant</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('JACKET'); setIsTypeOpen(false); }}>Jacket</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('SHORTS'); setIsTypeOpen(false); }}>Shorts</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('OTHER'); setIsTypeOpen(false); }}>Other</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

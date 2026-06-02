@@ -10,6 +10,12 @@
   -webkit-text-fill-color: var(--text-primary) !important; /* Force fill */
 }
 
+/* App layout variables */
+:root {
+  --navbar-height: 72px; /* adjust if your header is a different height */
+  --modal-footer-height: 72px;
+}
+
 
 
 
@@ -551,6 +557,14 @@ input:focus, textarea:focus {
   --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
 }
 
+/* Light theme scrollbar variables */
+:root.light {
+  --scroll-thumb: rgba(99,102,241,0.18);
+  --scroll-thumb-hover: rgba(99,102,241,0.28);
+  --scroll-track: rgba(241,245,249,0.9);
+}
+
+
 
 
 
@@ -559,6 +573,29 @@ input:focus, textarea:focus {
 :root.light .order-detail-wrapper,
 :root.light .form-container {
   background: var(--body-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure the whole page background switches in light mode (covers body/html) */
+html.light, body.light, :root.light {
+  background: var(--body-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Make custom select / dropdown clearly visible in light mode */
+:root.light .filter-select,
+html.light .filter-select,
+body.light .filter-select {
+  color: var(--text-primary) !important;
+  background-color: var(--card-bg) !important;
+  color-scheme: light !important;
+}
+
+/* Ensure dropdown option text/background are readable in light mode */
+:root.light .filter-select option,
+html.light .filter-select option,
+body.light .filter-select option {
+  background-color: var(--card-bg) !important;
   color: var(--text-primary) !important;
 }
 
@@ -608,6 +645,62 @@ input:focus, textarea:focus {
   color: var(--text-secondary) !important;
 }
 
+/* Light-mode fixes for separators, cards and controls that used hard-coded white colors */
+:root.light .main-card,
+:root.light .stat-card,
+:root.light .form-card,
+:root.light .modal-card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+:root.light .table-header,
+:root.light .table-title,
+:root.light .table-subtitle {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+:root.light .users-table thead {
+  background: transparent !important;
+}
+
+:root.light .users-table th,
+:root.light .users-table td {
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+  background-color: transparent !important;
+}
+
+:root.light .users-table th {
+  color: var(--text-secondary) !important;
+}
+
+:root.light .export-btn {
+  background: transparent !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-secondary) !important;
+}
+
+:root.light .export-btn:hover {
+  background: var(--card-hover-bg) !important;
+}
+
+:root.light .dropdown-trigger,
+:root.light .dropdown-popover,
+:root.light .dropdown-option {
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-light) !important;
+}
+
+:root.light .dropdown-option:hover {
+  background: var(--card-hover-bg) !important;
+}
+
 /* ==================== DARK MODE SUPPORT ==================== */
 
 /* Dark mode text colors */
@@ -634,6 +727,50 @@ input:focus, textarea:focus {
   --card-shadow: 0 10px 30px rgba(2,6,23,0.7);
   --card-glow: 0 8px 48px rgba(124,58,237,0.12);
 }
+
+/* Dark theme scrollbar variables */
+:root.dark {
+  --scroll-thumb: rgba(124,58,237,0.28);
+  --scroll-thumb-hover: rgba(124,58,237,0.4);
+  --scroll-track: rgba(2,6,23,0.12);
+}
+
+/* Styled scrollbar for custom dropdowns and popovers */
+.dropdown-options,
+.filter-select-wrap .filter-select,
+.filter-select {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+/* WebKit-based browsers */
+.dropdown-options::-webkit-scrollbar,
+.filter-select::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dropdown-options::-webkit-scrollbar-track,
+.filter-select::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 8px;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb,
+.filter-select::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb:hover,
+.filter-select::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+/* Ensure popovers render smoothly */
+.dropdown-popover, .filter-select-wrap { will-change: transform; }
 
 :root.dark .departments-container,
 :root.dark .users-container,
@@ -1335,6 +1472,28 @@ body.dark .auth-card,
   --border-light: #e2e8f0;
   --input-bg: #f1f5f9;
   --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+/* Ensure form fields show dark text in light mode globally */
+html.light input,
+body.light input,
+:root.light input,
+html.light textarea,
+body.light textarea,
+:root.light textarea,
+html.light select,
+body.light select,
+:root.light select {
+  color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+}
+
+html.light input::placeholder,
+body.light input::placeholder,
+:root.light input::placeholder,
+html.light textarea::placeholder,
+body.light textarea::placeholder,
+:root.light textarea::placeholder {
+  color: var(--text-muted) !important;
 }
 :root.dark .login-card, :root.dark .signup-card {
   --card-bg: #0f172a;

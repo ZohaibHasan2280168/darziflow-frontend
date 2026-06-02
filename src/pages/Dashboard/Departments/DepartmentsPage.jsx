@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../services/reqInterceptor";
 import BackButton from "../../../components/ui/BackButton";
@@ -19,11 +19,7 @@ const SearchIcon = () => (
   </svg>
 );
 
-const FilterIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-  </svg>
-);
+// FilterIcon removed — dropdown uses outer container without a separate icon
 
 const UsersIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -75,6 +71,33 @@ const Departments = () => {
   useEffect(() => {
     filterDepartments();
   }, [departments, searchTerm, statusFilter]);
+
+  // Status dropdown state/ref for custom dropdown
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const statusRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      try {
+        const el = statusRef.current;
+        if (!el) return;
+        const path = e.composedPath ? e.composedPath() : (e.path || []);
+        const clickedInside = path.length ? path.includes(el) : el.contains(e.target);
+        if (!clickedInside) setIsStatusOpen(false);
+      } catch (err) {
+        // fallback to simple contains check
+        if (statusRef.current && !statusRef.current.contains(e.target)) setIsStatusOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
+  const statusLabel = statusFilter === 'ALL' ? 'All Status' : statusFilter === 'ACTIVE' ? 'Active' : 'Inactive';
 
   const filterDepartments = () => {
     let filtered = [...departments];
@@ -198,17 +221,27 @@ const Departments = () => {
             />
           </div>
           <div className="filter-group">
-            <div className="filter-select-wrapper">
-              <FilterIcon />
-              <select
-                className="filter-select"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+            <div className="custom-dropdown-container" ref={statusRef}>
+              <button
+                type="button"
+                className="dropdown-trigger"
+                onClick={(e) => { e.stopPropagation(); setIsStatusOpen(s => !s); }}
+                aria-haspopup="true"
+                aria-expanded={isStatusOpen}
               >
-                <option value="ALL">All Status</option>
-                <option value="ACTIVE">Active</option>
-                <option value="INACTIVE">Inactive</option>
-              </select>
+                <span>{statusLabel}</span>
+                <span className="chev">▾</span>
+              </button>
+
+              {isStatusOpen && (
+                <div className="dropdown-popover">
+                  <div className="dropdown-options">
+                    <div className="dropdown-option" onClick={() => { setStatusFilter('ALL'); setIsStatusOpen(false); }}>All Status</div>
+                    <div className="dropdown-option" onClick={() => { setStatusFilter('ACTIVE'); setIsStatusOpen(false); }}>Active</div>
+                    <div className="dropdown-option" onClick={() => { setStatusFilter('INACTIVE'); setIsStatusOpen(false); }}>Inactive</div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
