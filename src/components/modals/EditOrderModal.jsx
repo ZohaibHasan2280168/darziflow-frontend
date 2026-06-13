@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { FiPlus,
-  FiX, FiEdit2, FiInfo, FiUser, FiLayers, FiFileText, FiCalendar,
+import { 
+  FiX, FiPlus, FiEdit2, FiInfo, FiUser, FiLayers, FiFileText, FiCalendar,
   FiCheckCircle, FiAlertCircle, FiArrowLeft, FiChevronRight,
-  FiTag, FiMail, FiList, FiTrash2
+  FiTag, FiMail, FiChevronUp, FiChevronDown, FiLoader, FiTrash2
 } from "react-icons/fi";
 import api from "../../services/reqInterceptor";
 import { useAlert } from "../../components/ui/AlertProvider";
@@ -14,8 +14,15 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   const [docInput, setDocInput] = useState("");
   const [selectedDeptId, setSelectedDeptId] = useState("");
   const { showAlert } = useAlert();
+  
+  const [departmentsList, setDepartmentsList] = useState(departments || []);
+  const [loadingDepartments, setLoadingDepartments] = useState(false);
+  const [departmentsError, setDepartmentsError] = useState("");
 
-  // Format date for input field (YYYY-MM-DD)
+  const [checkingUser, setCheckingUser] = useState(false);
+  const [userExistsStatus, setUserExistsStatus] = useState(null);
+  const [matchedUserId, setMatchedUserId] = useState(null);
+
   const formatDateForInput = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -37,7 +44,16 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
 
   useEffect(() => {
     if (orderData && isOpen) {
-      // Transform the order data to match our form structure
+      const baseDocsArray = orderData.requiredDocuments || orderData.requiredDocTypes || [];
+      const extractedTypes = [];
+
+      baseDocsArray.forEach(d => {
+        const typeStr = d.docType || d;
+        if(typeStr && typeof typeStr === 'string') {
+          extractedTypes.push(typeStr);
+        }
+      });
+
       setEditedOrder({
         name: orderData.name || "",
         type: orderData.type || "PANT",
@@ -47,29 +63,58 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
         amount: orderData.amount || "",
         currency: orderData.currency || "Rs.",
         dueDate: orderData.dueDate ? formatDateForInput(orderData.dueDate) : "",
-        requiredDocTypes: orderData.requiredDocuments?.map(d => d.docType) || [],
-        departmentSequenceIds: orderData.departmentSequence?.map(d => d._id || d) || []
+        requiredDocTypes: extractedTypes,
+        departmentSequenceIds: orderData.departmentSequence?.map(d => d._id || d) || orderData.departmentSequenceIds || []
       });
+      
       setFormStep(1);
       setFormErrors({});
       setDocInput("");
       setSelectedDeptId("");
+      setUserExistsStatus('EXISTS'); 
+      const rawClientId = orderData.clientId?._id || orderData.clientId || null;
+      setMatchedUserId(rawClientId ? String(rawClientId) : null);
     }
   }, [orderData, isOpen]);
 
   const stepInfo = [
-    { num: 1, title: 'Order Details', icon: FiInfo },
+    { num: 1, title: 'Details', icon: FiInfo },
     { num: 2, title: 'Client Info', icon: FiUser },
     { num: 3, title: 'Workflow', icon: FiLayers },
-    { num: 4, title: 'Documents', icon: FiFileText }
+    { num: 4, title: 'Doc Specifications', icon: FiFileText }
   ];
 
+  // Strictly syncs with backend validation schema
   const garmentTypes = [
     { value: 'PANT', label: 'Pant' },
     { value: 'JACKET', label: 'Jacket' },
     { value: 'SHORTS', label: 'Shorts' },
     { value: 'OTHER', label: 'Other' }
   ];
+
+  const handleEmailBlur = async () => {
+    const email = editedOrder.clientEmail.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+
+    try {
+      setCheckingUser(true);
+      const response = await api.get(`/users?email=${email}`);
+      const data = response.data?.users || response.data || [];
+      const match = Array.isArray(data) ? data.find(u => u.email?.toLowerCase() === email.toLowerCase()) : null;
+      
+      if (match) {
+        setUserExistsStatus('EXISTS');
+        setMatchedUserId(match._id || match.id);
+      } else {
+        setUserExistsStatus('NOT_FOUND');
+        setMatchedUserId(null);
+      }
+    } catch (err) {
+      setUserExistsStatus(null);
+    } finally {
+      setCheckingUser(false);
+    }
+  };
 
   const addDocType = (e) => {
     if (e) e.preventDefault();
@@ -92,8 +137,7 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     }));
   };
 
-  const addDeptToSequence = (e) => {
-    if (e) e.preventDefault();
+  const addDeptToSequence = () => {
     if (selectedDeptId) {
       setEditedOrder(prev => ({
         ...prev,
@@ -101,6 +145,18 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
       }));
       setSelectedDeptId("");
     }
+  };
+
+  const moveDept = (index, direction) => {
+    setEditedOrder(prev => {
+      const seq = [...prev.departmentSequenceIds];
+      const newIndex = direction === 'up' ? index - 1 : index + 1;
+      if (newIndex < 0 || newIndex >= seq.length) return prev;
+      const tmp = seq[newIndex];
+      seq[newIndex] = seq[index];
+      seq[index] = tmp;
+      return { ...prev, departmentSequenceIds: seq };
+    });
   };
 
   const removeDeptFromSequence = (index) => {
@@ -111,49 +167,42 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
     });
   };
 
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      if (departments && departments.length) return;
+      try {
+        setLoadingDepartments(true);
+        const res = await api.get('/departments');
+        setDepartmentsList(res.data?.departments || res.data || []);
+      } catch (err) {
+        setDepartmentsError('Failed to sync pipelines.');
+      } finally {
+        setLoadingDepartments(false);
+      }
+    };
+    if (isOpen) fetchDepartments();
+  }, [isOpen, departments]);
+
   const validateStep = (step) => {
     const errors = {};
-    
-    if (step === 1) {
-      if (!editedOrder.name.trim()) errors.name = "Order name is required";
-      if (!editedOrder.amount) errors.amount = "Quote amount is required";
-      if (!editedOrder.dueDate) errors.dueDate = "Due date is required";
-      
-      // Validate due date is not in the past
-      if (editedOrder.dueDate) {
-        const selectedDate = new Date(editedOrder.dueDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset time to compare dates only
-        
-        if (selectedDate < today) {
-          errors.dueDate = "Due date cannot be in the past";
-        }
-      }
+    if (step === 1 || step === 'all') {
+      if (!editedOrder.name.trim()) errors.name = "Order name required";
+      if (!editedOrder.amount) errors.amount = "Quote metric required";
+      if (!editedOrder.dueDate) errors.dueDate = "Target deadline parameters required";
     }
-    
-    if (step === 2) {
-      if (!editedOrder.clientName.trim()) errors.clientName = "Client name is required";
-      if (!editedOrder.clientEmail.trim()) {
-        errors.clientEmail = "Client email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editedOrder.clientEmail)) {
-        errors.clientEmail = "Please enter a valid email";
-      }
+    if (step === 2 || step === 'all') {
+      if (!editedOrder.clientName.trim()) errors.clientName = "Client identity name required";
+      if (!editedOrder.clientEmail.trim()) errors.clientEmail = "Client email required";
     }
-    
-    if (step === 3) {
-      if (editedOrder.departmentSequenceIds.length === 0) {
-        errors.departments = "At least one department is required";
-      }
+    if (step === 3 || step === 'all') {
+      if (editedOrder.departmentSequenceIds.length === 0) errors.departments = "Workflow route tracks required";
     }
-    
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleNextStep = () => {
-    if (validateStep(formStep)) {
-      setFormStep(prev => Math.min(prev + 1, 4));
-    }
+    if (validateStep(formStep)) setFormStep(prev => Math.min(prev + 1, 4));
   };
 
   const handlePrevStep = () => {
@@ -162,8 +211,8 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
 
   const handleUpdateOrder = async (e) => {
     e.preventDefault();
-    if (!validateStep(3)) return;
-    
+    if (!validateStep('all')) return;
+
     try {
       const payload = {
         name: editedOrder.name,
@@ -174,514 +223,185 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
         description: editedOrder.description,
         clientName: editedOrder.clientName,
         clientEmail: editedOrder.clientEmail,
-        requiredDocTypes: editedOrder.requiredDocTypes,
-        departmentSequenceIds: editedOrder.departmentSequenceIds
+        departmentSequenceIds: editedOrder.departmentSequenceIds,
+        requiredDocTypes: editedOrder.requiredDocTypes
       };
 
-      await api.put(`/orders/${orderData.uniqueId}`, payload);
-      
+      if (userExistsStatus === 'EXISTS' && matchedUserId) {
+        payload.clientId = matchedUserId;
+      }
+
+      const activeOrderId = orderData._id || orderData.id;
+      await api.put(`/order/${activeOrderId}`, payload);
+
       showAlert({
-        title: "Success",
-        message: "Order updated successfully!",
+        title: "Updated Successfully",
+        message: "Order blueprint modified cleanly.",
         type: "success"
       });
-      
       onUpdateSuccess();
       onClose();
     } catch (err) {
       showAlert({
-        title: "Error",
-        message: err.response?.data?.message || "Failed to update order",
+        title: "Update Failed",
+        message: err.response?.data?.message || "Failed to update target configurations.",
         type: "error"
       });
     }
   };
 
-  const resetForm = () => {
-    setEditedOrder({
-      name: "",
-      type: "PANT",
-      description: "",
-      clientName: "",
-      clientEmail: "",
-      amount: "",
-      currency: "Rs.",
-      dueDate: "",
-      requiredDocTypes: [],
-      departmentSequenceIds: []
-    });
-    setFormStep(1);
-    setFormErrors({});
-    setDocInput("");
-    setSelectedDeptId("");
-  };
-
-  const handleClose = () => {
-    resetForm();
-    onClose();
-  };
-
   if (!isOpen || !orderData) return null;
 
-  // Get department names for display
-  const getDeptName = (id) => {
-    const dept = departments.find(d => d._id === id);
-    return dept?.name || "Unknown Department";
-  };
-
   return (
-    <div className="modal-backdrop" onClick={handleClose}>
-      <div className="modal-container modal-lg edit-order-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Modal Header */}
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-container modal-lg" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title-group">
-            <div className="modal-icon">
-              <FiEdit2 size={24} />
-            </div>
+            <div className="modal-icon"><FiEdit2 size={24} /></div>
             <div>
-              <h2 className="modal-title">Edit Order</h2>
-              <p className="modal-subtitle">Update order: {orderData.uniqueId || orderData._id?.slice(-8).toUpperCase()}</p>
+              <h2 className="modal-title">Edit Order Parameters</h2>
+              <p className="modal-subtitle">Track Code: {orderData.uniqueId || orderData._id?.slice(-6).toUpperCase()}</p>
             </div>
           </div>
-          <button className="modal-close" onClick={handleClose}>
-            <FiX size={20} />
-          </button>
+          <button className="modal-close" onClick={onClose}><FiX size={20} /></button>
         </div>
 
-        {/* Step Progress Indicator */}
         <div className="step-progress">
-          {stepInfo.map((step, idx) => (
+          {stepInfo.map((step) => (
             <div 
-              key={step.num}
+              key={step.num} 
               className={`step-item ${formStep === step.num ? 'active' : ''} ${formStep > step.num ? 'completed' : ''}`}
-              onClick={() => formStep > step.num && setFormStep(step.num)}
             >
-              <div className="step-circle">
-                {formStep > step.num ? <FiCheckCircle size={16} /> : <step.icon size={16} />}
-              </div>
+              <div className="step-circle"><step.icon size={14}/></div>
               <span className="step-label">{step.title}</span>
-              {idx < stepInfo.length - 1 && <div className="step-line" />}
             </div>
           ))}
         </div>
 
         <form onSubmit={handleUpdateOrder} className="modal-form">
           <div className="modal-body">
-            {/* Step 1: Order Details */}
             {formStep === 1 && (
               <div className="form-step">
-                <div className="step-header">
-                  <FiInfo size={20} />
-                  <div>
-                    <h3>Order Details</h3>
-                    <p>Update the basic information for this order</p>
-                  </div>
-                </div>
-
                 <div className="form-group">
-                  <label className="form-label">
-                    Reference Name <span className="required">*</span>
-                  </label>
-                  <input 
-                    type="text" 
-                    className={`form-input ${formErrors.name ? 'error' : ''}`}
-                    value={editedOrder.name} 
-                    onChange={(e) => setEditedOrder({...editedOrder, name: e.target.value})} 
-                    placeholder="e.g., Summer Collection Batch 01"
-                  />
-                  {formErrors.name && (
-                    <span className="error-message">
-                      <FiAlertCircle size={12} /> {formErrors.name}
-                    </span>
-                  )}
+                  <label className="form-label">Reference Operational Name</label>
+                  <input type="text" className="form-input" value={editedOrder.name} onChange={(e) => setEditedOrder({...editedOrder, name: e.target.value})} />
                 </div>
-
                 <div className="form-group">
-                  <label className="form-label">Garment Type</label>
+                  <label className="form-label">Garment Configuration Category</label>
                   <div className="garment-type-grid">
-                    {garmentTypes.map(type => (
-                      <button
-                        key={type.value}
-                        type="button"
-                        className={`garment-type-btn ${editedOrder.type === type.value ? 'selected' : ''}`}
-                        onClick={() => setEditedOrder({...editedOrder, type: type.value})}
-                      >
-                        <FiTag size={18} />
-                        <span className="garment-label">{type.label}</span>
-                      </button>
+                    {garmentTypes.map(g => (
+                      <button key={g.value} type="button" className={`garment-type-btn ${editedOrder.type === g.value ? 'selected' : ''}`} onClick={() => setEditedOrder({...editedOrder, type: g.value})}>{g.label}</button>
                     ))}
                   </div>
                 </div>
-
                 <div className="form-group">
-                  <label className="form-label">
-                    Financial Quote <span className="required">*</span>
-                  </label>
-                  <div className="input-combo">
-                    <select 
-                      className="combo-prefix"
-                      value={editedOrder.currency} 
-                      onChange={(e) => setEditedOrder({...editedOrder, currency: e.target.value})}
-                    >
-                      <option value="Rs.">Rs.</option>
-                      <option value="$">USD</option>
-                      <option value="EUR">EUR</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                    <input 
-                      type="number" 
-                      className={`combo-input ${formErrors.amount ? 'error' : ''}`}
-                      value={editedOrder.amount} 
-                      onChange={(e) => setEditedOrder({...editedOrder, amount: e.target.value})} 
-                      placeholder="0.00"
-                      step="0.01"
-                      min="0"
-                    />
-                  </div>
-                  {formErrors.amount && (
-                    <span className="error-message">
-                      <FiAlertCircle size={12} /> {formErrors.amount}
-                    </span>
-                  )}
+                  <label className="form-label">Financial Evaluation Valuation</label>
+                  <input type="number" className="form-input" value={editedOrder.amount} onChange={(e) => setEditedOrder({...editedOrder, amount: e.target.value})} />
                 </div>
-
-                {/* Due Date Field - Added */}
                 <div className="form-group">
-                  <label className="form-label">
-                    Due Date <span className="required">*</span>
-                  </label>
-                  <div className="input-with-icon">
-                    <FiCalendar className="input-icon" size={18} />
-                    <input 
-                      type="date" 
-                      className={`form-input with-icon ${formErrors.dueDate ? 'error' : ''}`}
-                      value={editedOrder.dueDate} 
-                      onChange={(e) => setEditedOrder({...editedOrder, dueDate: e.target.value})} 
-                      min={new Date().toISOString().split('T')[0]} // Prevent past dates
-                    />
-                  </div>
-                  {formErrors.dueDate && (
-                    <span className="error-message">
-                      <FiAlertCircle size={12} /> {formErrors.dueDate}
-                    </span>
-                  )}
-                  <div className="date-hint">
-                    <FiInfo size={12} />
-                    <span>Select the expected completion date for this order</span>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Description (Optional)</label>
-                  <textarea 
-                    className="form-textarea"
-                    value={editedOrder.description} 
-                    onChange={(e) => setEditedOrder({...editedOrder, description: e.target.value})} 
-                    placeholder="Add notes or special instructions for this order..."
-                    rows={3}
-                  />
+                  <label className="form-label">Delivery Commitment Deadline</label>
+                  <input type="date" className="form-input" value={editedOrder.dueDate} onChange={(e) => setEditedOrder({...editedOrder, dueDate: e.target.value})} />
                 </div>
               </div>
             )}
 
-            {/* Step 2: Client Information */}
             {formStep === 2 && (
               <div className="form-step">
-                <div className="step-header">
-                  <FiUser size={20} />
-                  <div>
-                    <h3>Client Information</h3>
-                    <p>Update the client details for this order</p>
-                  </div>
-                </div>
-
                 <div className="form-group">
-                  <label className="form-label">
-                    Client Name <span className="required">*</span>
-                  </label>
-                  <div className="input-with-icon">
-                    <FiUser className="input-icon" size={18} />
-                    <input 
-                      type="text" 
-                      className={`form-input with-icon ${formErrors.clientName ? 'error' : ''}`}
-                      value={editedOrder.clientName} 
-                      onChange={(e) => setEditedOrder({...editedOrder, clientName: e.target.value})} 
-                      placeholder="Enter client's full name"
-                    />
-                  </div>
-                  {formErrors.clientName && (
-                    <span className="error-message">
-                      <FiAlertCircle size={12} /> {formErrors.clientName}
-                    </span>
+                  <label className="form-label">Client System Communication Email</label>
+                  <input 
+                    type="email" 
+                    className="form-input" 
+                    value={editedOrder.clientEmail} 
+                    onChange={(e) => setEditedOrder({...editedOrder, clientEmail: e.target.value})} 
+                    onBlur={handleEmailBlur}
+                  />
+                  {checkingUser && <span className="inline-loader-text"><FiLoader className="spin" size={12}/> Auditing logs...</span>}
+                  {userExistsStatus === 'EXISTS' && (
+                    <div className="field-suggestion-box status-exists">
+                      <FiCheckCircle size={14} /> <span>User recognized correctly. Order updates will preserve identity linkage.</span>
+                    </div>
+                  )}
+                  {userExistsStatus === 'NOT_FOUND' && (
+                    <div className="field-suggestion-box status-missing">
+                      <FiAlertCircle size={14} /> <span>User not registered in standard directories.</span>
+                    </div>
                   )}
                 </div>
-
                 <div className="form-group">
-                  <label className="form-label">
-                    Client Email <span className="required">*</span>
-                  </label>
-                  <div className="input-with-icon">
-                    <FiMail className="input-icon" size={18} />
-                    <input 
-                      type="email" 
-                      className={`form-input with-icon ${formErrors.clientEmail ? 'error' : ''}`}
-                      value={editedOrder.clientEmail} 
-                      onChange={(e) => setEditedOrder({...editedOrder, clientEmail: e.target.value})} 
-                      placeholder="client@example.com"
-                    />
-                  </div>
-                  {formErrors.clientEmail && (
-                    <span className="error-message">
-                      <FiAlertCircle size={12} /> {formErrors.clientEmail}
-                    </span>
-                  )}
-                </div>
-
-                <div className="client-preview-card">
-                  <div className="preview-avatar">
-                    {editedOrder.clientName ? editedOrder.clientName.charAt(0).toUpperCase() : '?'}
-                  </div>
-                  <div className="preview-info">
-                    <span className="preview-name">{editedOrder.clientName || 'Client Name'}</span>
-                    <span className="preview-email">{editedOrder.clientEmail || 'client@email.com'}</span>
-                  </div>
+                  <label className="form-label">Client Registered Name</label>
+                  <input type="text" className="form-input" value={editedOrder.clientName} onChange={(e) => setEditedOrder({...editedOrder, clientName: e.target.value})} />
                 </div>
               </div>
             )}
 
-            {/* Step 3: Department Workflow */}
             {formStep === 3 && (
               <div className="form-step">
-                <div className="step-header">
-                  <FiLayers size={20} />
-                  <div>
-                    <h3>Department Workflow</h3>
-                    <p>Update the production sequence for this order</p>
-                  </div>
-                </div>
-
                 <div className="form-group">
-                  <label className="form-label">Add Department to Sequence</label>
+                  <label className="form-label">Modify Processing Path Map</label>
                   <div className="adder-row">
-                    <select 
-                      className="form-select"
-                      value={selectedDeptId} 
-                      onChange={(e) => setSelectedDeptId(e.target.value)}
-                    >
-                      <option value="">Select Department...</option>
-                      {departments.map(d => (
-                        <option key={d._id} value={d._id} disabled={editedOrder.departmentSequenceIds.includes(d._id)}>
-                          {d.name}
-                        </option>
+                    <select className="form-select" value={selectedDeptId} onChange={(e) => setSelectedDeptId(e.target.value)}>
+                      <option value="">Select Processing Department...</option>
+                      {departmentsList.map(d => (
+                        <option key={d._id} value={d._id} disabled={editedOrder.departmentSequenceIds.includes(d._id)}>{d.name}</option>
                       ))}
                     </select>
-                    <button 
-                      type="button" 
-                      className="add-btn"
-                      onClick={addDeptToSequence}
-                      disabled={!selectedDeptId}
-                    >
-                      <FiPlus size={16} />
-                      Add
-                    </button>
+                    <button type="button" className="add-btn" onClick={addDeptToSequence}>Link Node</button>
                   </div>
-                  {formErrors.departments && (
-                    <span className="error-message">
-                      <FiAlertCircle size={12} /> {formErrors.departments}
-                    </span>
-                  )}
                 </div>
-
                 <div className="workflow-sequence">
-                  <div className="sequence-label">
-                    <FiList size={14} />
-                    <span>Production Sequence ({editedOrder.departmentSequenceIds.length} steps)</span>
-                  </div>
-                  <div className="sequence-list">
-                    {editedOrder.departmentSequenceIds.length === 0 ? (
-                      <div className="sequence-empty">
-                        <FiLayers size={32} />
-                        <span>No departments added yet</span>
-                        <p>Add departments above to define the workflow</p>
+                  {editedOrder.departmentSequenceIds.map((id, index) => {
+                    const deptNode = departmentsList.find(d => d._id === id);
+                    return (
+                      <div key={index} className="sequence-item">
+                        <span>{index + 1}. {deptNode?.name || 'Department Track Line'}</span>
+                        <div className="sequence-actions">
+                          <button type="button" onClick={() => moveDept(index, 'up')} disabled={index === 0}><FiChevronUp/></button>
+                          <button type="button" onClick={() => moveDept(index, 'down')} disabled={index === editedOrder.departmentSequenceIds.length - 1}><FiChevronDown/></button>
+                          <button type="button" onClick={() => removeDeptFromSequence(index)}><FiTrash2/></button>
+                        </div>
                       </div>
-                    ) : (
-                      editedOrder.departmentSequenceIds.map((id, index) => {
-                        const deptName = getDeptName(id);
-                        return (
-                          <div key={index} className="sequence-item">
-                            <div className="sequence-connector">
-                              <span className="sequence-num">{index + 1}</span>
-                              {index < editedOrder.departmentSequenceIds.length - 1 && (
-                                <div className="connector-line" />
-                              )}
-                            </div>
-                            <div className="sequence-content">
-                              <span className="sequence-name">{deptName}</span>
-                              <span className="sequence-meta">Step {index + 1} of {editedOrder.departmentSequenceIds.length}</span>
-                            </div>
-                            <button 
-                              type="button"
-                              className="sequence-remove"
-                              onClick={() => removeDeptFromSequence(index)}
-                            >
-                              <FiTrash2 size={14} />
-                            </button>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Step 4: Required Documents */}
             {formStep === 4 && (
               <div className="form-step">
-                <div className="step-header">
-                  <FiFileText size={20} />
-                  <div>
-                    <h3>Required Documents</h3>
-                    <p>Update documents needed before production starts</p>
-                  </div>
-                </div>
-
                 <div className="form-group">
-                  <label className="form-label">Add Document Type</label>
+                  <label className="form-label">Append Specification Verification Rules</label>
                   <div className="adder-row">
-                    <input 
-                      type="text" 
-                      className="form-input"
-                      placeholder="e.g., TECH_PACK, FABRIC_SAMPLE"
-                      value={docInput} 
-                      onChange={(e) => setDocInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && addDocType(e)} 
-                    />
-                    <button 
-                      type="button" 
-                      className="add-btn"
-                      onClick={addDocType}
-                      disabled={!docInput.trim()}
-                    >
-                      <FiPlus size={16} />
-                      Add
-                    </button>
+                    <input type="text" className="form-input" value={docInput} onChange={(e) => setDocInput(e.target.value)} placeholder="e.g., SEWING_GUIDE" />
+                    <button type="button" className="add-btn" onClick={addDocType}>Add Rule Block</button>
                   </div>
                 </div>
 
                 <div className="documents-container">
-                  <div className="docs-label">
-                    <FiFileText size={14} />
-                    <span>Required Documents ({editedOrder.requiredDocTypes.length})</span>
-                  </div>
-                  <div className="docs-list">
-                    {editedOrder.requiredDocTypes.length === 0 ? (
-                      <div className="docs-empty">
-                        <FiFileText size={32} />
-                        <span>No documents required</span>
-                        <p>Add document types above if needed</p>
+                  <div className="docs-upload-master-grid">
+                    {editedOrder.requiredDocTypes.map((docType, index) => (
+                      <div key={index} className="document-upload-card-row">
+                        <div className="doc-meta-info">
+                          <span className="doc-type-badge">{docType}</span>
+                          <span className="doc-file-assigned-name" style={{ fontStyle: 'italic' }}>Managed on tracking panel</span>
+                        </div>
+                        <div className="doc-upload-action-hub">
+                          <button type="button" className="doc-row-purge" onClick={() => removeDocType(docType)}><FiX/></button>
+                        </div>
                       </div>
-                    ) : (
-                      <div className="docs-tags">
-                        {editedOrder.requiredDocTypes.map((doc, idx) => (
-                          <span key={idx} className="doc-tag">
-                            <FiFileText size={12} />
-                            {doc}
-                            <button 
-                              type="button"
-                              className="tag-remove"
-                              onClick={() => removeDocType(doc)}
-                            >
-                              <FiX size={12} />
-                            </button>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Order Summary - Updated with Due Date */}
-                <div className="order-summary edit-order-summary">
-                  <div className="summary-title">
-                    <FiCheckCircle size={16} />
-                    <span>Order Summary</span>
-                  </div>
-                  <div className="summary-grid">
-                    <div className="summary-item">
-                      <span className="summary-label">Order Name</span>
-                      <span className="summary-value">{editedOrder.name || '-'}</span>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Type</span>
-                      <span className="summary-value">{editedOrder.type}</span>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Quote</span>
-                      <span className="summary-value">{editedOrder.currency} {editedOrder.amount || '0'}</span>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Due Date</span>
-                      <span className="summary-value">
-                        {editedOrder.dueDate ? new Date(editedOrder.dueDate).toLocaleDateString() : '-'}
-                      </span>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Client</span>
-                      <span className="summary-value">{editedOrder.clientName || '-'}</span>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Workflow Steps</span>
-                      <span className="summary-value">{editedOrder.departmentSequenceIds.length}</span>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Documents</span>
-                      <span className="summary-value">{editedOrder.requiredDocTypes.length}</span>
-                    </div>
+                    ))}
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Modal Footer */}
           <div className="modal-footer">
-            <div className="footer-left">
-              <button 
-                type="button" 
-                className="btn-ghost"
-                onClick={handleClose}
-              >
-                Cancel
-              </button>
-            </div>
+            <button type="button" className="btn-ghost" onClick={onClose}>Cancel</button>
             <div className="footer-right">
-              {formStep > 1 && (
-                <button 
-                  type="button" 
-                  className="btn-secondary"
-                  onClick={handlePrevStep}
-                >
-                  <FiArrowLeft size={16} />
-                  Previous
-                </button>
-              )}
-              {formStep < 4 && (
-                <button 
-                  type="button" 
-                  className="btn-primary"
-                  onClick={handleNextStep}
-                >
-                  Next Step
-                  <FiChevronRight size={16} />
-                </button>
-              )}
-              {formStep === 4 && (
-                <button type="submit" className="btn-primary btn-success btn-update">
-                  <FiCheckCircle size={16} />
-                  Update Order
-                </button>
-              )}
+              {formStep > 1 && <button type="button" className="btn-secondary" onClick={handlePrevStep}>Previous</button>}
+              {formStep < 4 && <button type="button" className="btn-primary" onClick={handleNextStep}>Next Step</button>}
+              {formStep === 4 && <button type="submit" className="btn-primary btn-success">Apply Track Updates</button>}
             </div>
           </div>
         </form>
@@ -690,4 +410,4 @@ const EditOrderModal = ({ isOpen, onClose, orderData, onUpdateSuccess, departmen
   );
 };
 
-export default EditOrderModal;
+export default EditOrderModal;  

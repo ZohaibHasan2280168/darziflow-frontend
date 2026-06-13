@@ -93,7 +93,7 @@ export default function Dashboard() {
         setDepartmentCount(departments.length);
 
         // Fetch orders data
-        const ordersRes = await api.get("/orders");
+        const ordersRes = await api.get("/order");
         const orders = ordersRes.data?.orders || [];
 
         // Calculate order status counts

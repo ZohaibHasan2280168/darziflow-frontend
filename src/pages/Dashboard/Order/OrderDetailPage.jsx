@@ -55,7 +55,7 @@ const OrderDetailPage = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      const res = await api.get(`/orders/${orderId}`);
+      const res = await api.get(`/order/${orderId}`);
       const orderData = res.data.order || res.data;
       setOrder(orderData);
       setLoading(false);
@@ -73,7 +73,7 @@ const OrderDetailPage = () => {
   const handleApproveCheckpoint = async (checkpointId, operationId) => {
     try {
       await api.patch(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/approve`
+        `/checkpoints/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/approve`
       );
       toast.success('Checkpoint QC approved successfully');
       fetchOrderDetails();
@@ -87,7 +87,7 @@ const OrderDetailPage = () => {
   const handleRejectCheckpoint = async (checkpointId, operationId, comment) => {
     try {
       await api.patch(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/reject`,
+        `/checkpoints/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/reject`,
         { comment }
       );
       toast.success('Checkpoint rejected');
@@ -102,7 +102,7 @@ const OrderDetailPage = () => {
   const handleFinalApproveCheckpoint = async (checkpointId, operationId) => {
     try {
       await api.patch(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/final-approve`
+        `/checkpoints/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/final-approve`
       );
       toast.success('Checkpoint marked as COMPLETED');
       fetchOrderDetails();
@@ -134,7 +134,7 @@ const handleAdminSubmitCheckpoint = async (
     }
 
     await api.post(
-      `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/submit`,
+      `/checkpoints/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/submit`,
       {
         submissionText,
         files: uploadedFiles
@@ -168,7 +168,7 @@ const handleFileUpload = async (e, docType) => {
     );
 
     await api.post(
-      `/orders/${orderId}/prerequisites/${docType}`,
+      `/workflow/${orderId}/prerequisites/${docType}`,
       uploaded
     );
 
@@ -208,7 +208,7 @@ const handleFileUpload = async (e, docType) => {
     setActionLoading(true);
     try {
       await api.patch(
-        `/orders/${orderId}/prerequisite/${docType}/${action}`
+        `/workflow/${orderId}/prerequisite/${docType}/${action}`
       );
       toast.success(`Document ${action === 'approve' ? 'approved' : 'rejected'}`);
       fetchOrderDetails();
@@ -276,7 +276,7 @@ const handleFileUpload = async (e, docType) => {
           <button
             className="start-btn"
             onClick={() =>
-              api.put(`/orders/${orderId}/start-workflow`).then(fetchOrderDetails)
+              api.put(`/workflow/${orderId}/start-workflow`).then(fetchOrderDetails)
             }
           >
             <Zap size={16} />

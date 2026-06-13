@@ -1,16 +1,17 @@
 import axios from "axios";
 
 // Vite ya CRA dono mein se jo available ho wo utha lega
-const BASE_URL = (import.meta && import.meta.env && import.meta.env.VITE_API_BASE_URL) || 
-                 process.env.REACT_APP_API_BASE_URL;
+let BASE_URL = (import.meta && import.meta.env && import.meta.env.VITE_API_BASE_URL) || 
+               (process.env && process.env.REACT_APP_API_BASE_URL);
 
-// Agar variable load nahi hua toh console me error dikhayega
-if (!BASE_URL) {
-  console.error("API Base URL is missing! .env file check karein ya server restart karein.");
+// Guard against missing, empty, or literally "undefined" string config
+if (!BASE_URL || BASE_URL === "undefined") {
+  BASE_URL = "https://darziflowbackend-buagfcfpfveadmgm.centralindia-01.azurewebsites.net/api";
+  console.warn("API Base URL was missing or 'undefined'. Falling back to live Azure backend: " + BASE_URL);
 }
 
 const api = axios.create({
-  baseURL: BASE_URL && BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`,
+  baseURL: BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`,
   withCredentials: true,
 });
 

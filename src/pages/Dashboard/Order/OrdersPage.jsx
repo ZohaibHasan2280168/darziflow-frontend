@@ -36,7 +36,7 @@ const OrdersList = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const ordersRes = await api.get(`/orders`);
+      const ordersRes = await api.get(`/order`);
       setOrders(ordersRes.data.orders || []);
       setLoading(false);
     } catch (err) {
@@ -79,7 +79,7 @@ const OrdersList = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this order? This action cannot be undone.")) {
       try {
-        await api.delete(`/orders/${id}`);
+        await api.delete(`/order/${id}`);
         fetchData();
         showAlert({
           title: "Success",
