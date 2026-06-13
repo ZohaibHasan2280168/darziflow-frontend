@@ -27,11 +27,22 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
-    await authService.logout();
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("user");
-    setUser(null);
+    try {
+      await authService.logout();
+    } catch (err) {
+      console.error("Logout API error:", err?.response?.data || err.message || err);
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+      setUser(null);
+    }
   }, []);
+
+  const updateAvatar = useCallback(({ url, publicId }) => {
+    const updatedUser = { ...user, avatar: { url, publicId } };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+  }, [user]);
 
   return (
     <AuthContext.Provider
@@ -42,6 +53,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         mustChangePassword,
         setMustChangePassword,
+        updateAvatar,
       }}
     >
       {children}

@@ -27,7 +27,7 @@ const Navbar = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [sideOpen, setSideOpen] = useState(false);
 
-  const { logout } = useAuth();
+  const { logout, user: authUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [user, setUser] = useState({
     name: "",
@@ -54,7 +54,8 @@ const Navbar = () => {
         setUser({
           name: res.data.name,
           email: res.data.email,
-          profilePic: res.data.profilePic || null
+          profilePic: res.data.profilePic || null,
+          avatar: res.data.avatar || null
         });
       } catch (err) {
         console.error("Error fetching profile:", err);
@@ -98,9 +99,14 @@ const Navbar = () => {
     return () => document.removeEventListener("keydown", handleEsc);
   }, [sideOpen]);
 
-  const handleLogout = () => {
-    authService.logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error("Logout failed:", err?.response?.data || err.message || err);
+    } finally {
+      navigate("/login");
+    }
   };
 
   const handleNavigation = (path) => {
@@ -148,7 +154,11 @@ const Navbar = () => {
               className="profile-icon"
               onClick={() => setProfileDropdownOpen((prev) => !prev)}
             >
-              {user.profilePic ? (
+              {authUser?.avatar?.url ? (
+                <img src={authUser.avatar.url} alt="Profile" />
+              ) : user.avatar?.url ? (
+                <img src={user.avatar.url} alt="Profile" />
+              ) : user.profilePic ? (
                 <img src={user.profilePic} alt="Profile" />
               ) : (
                 <span>{user.name ? user.name.charAt(0).toUpperCase() : "U"}</span>

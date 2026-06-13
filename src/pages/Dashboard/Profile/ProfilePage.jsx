@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { FaUser, FaLock, FaArrowLeft, FaCheck } from "react-icons/fa"
+import { FaUser, FaLock, FaArrowLeft, FaCheck, FaCamera } from "react-icons/fa"
 import { useAlert } from '../../../components/ui/AlertProvider'
 import api from "../../../services/reqInterceptor"
 import { useAuth } from "../../../components/context/AuthContext"
+import { uploadAvatarToCloudinary } from "../../../utils/uploadToCloudinary"
 
 export default function ProfilePage() {
   const navigate = useNavigate()
@@ -13,7 +14,9 @@ export default function ProfilePage() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const { setMustChangePassword } = useAuth()
+  const { setMustChangePassword, updateAvatar } = useAuth()
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef(null)
   const [passwords, setPasswords] = useState({
     oldPassword: "",
     newPassword: "",
@@ -71,6 +74,36 @@ export default function ProfilePage() {
     }
   }
 
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    if (!allowedTypes.includes(file.type)) {
+      showAlert({ title: "Invalid File", message: "Please select a JPEG, PNG, GIF, or WebP image.", type: "error" })
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showAlert({ title: "File Too Large", message: "Image must be under 5MB.", type: "error" })
+      return
+    }
+
+    setUploading(true)
+    try {
+      const { url, publicId } = await uploadAvatarToCloudinary(file)
+      await api.put("/profile/avatar", { url, publicId })
+      updateAvatar({ url, publicId })
+      setUser((prev) => ({ ...prev, avatar: { url, publicId } }))
+      showAlert({ title: "Success", message: "Profile picture updated.", type: "success" })
+    } catch (err) {
+      const msg = err.response?.data?.msg || err.message || "Failed to upload profile picture"
+      showAlert({ title: "Error", message: msg, type: "error" })
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+  }
+
   if (loading)
     return (
       <div style={styles.loadingContainer}>
@@ -103,8 +136,26 @@ export default function ProfilePage() {
         </div>
 
         <div style={styles.profileSection}>
-          <div style={styles.iconWrapper}>
-            <FaUser size={64} style={styles.profileIcon} />
+          <div style={styles.avatarContainer}>
+            <div style={styles.iconWrapper}>
+              {user?.avatar?.url ? (
+                <img src={user.avatar.url} alt={user.name} style={styles.avatarImage} />
+              ) : (
+                <FaUser size={64} style={styles.profileIcon} />
+              )}
+              {uploading && <div style={styles.uploadOverlay}><div style={styles.spinnerSmall}></div></div>}
+            </div>
+            <label style={styles.cameraLabel} title="Upload profile picture">
+              <FaCamera size={18} />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleAvatarUpload}
+                disabled={uploading}
+              />
+            </label>
           </div>
           <h2 style={styles.userName}>{user?.name || "User"}</h2>
           <p style={styles.userEmail}>{user?.email || "email@example.com"}</p>
@@ -403,5 +454,53 @@ const styles = {
     fontSize: "1.125rem",
     fontWeight: "600",
     border: "1px solid var(--border-light)",
+  },
+  avatarContainer: {
+    position: "relative",
+    display: "inline-block",
+    marginBottom: "1rem",
+  },
+  avatarImage: {
+    width: "120px",
+    height: "120px",
+    borderRadius: "50%",
+    objectFit: "cover",
+  },
+  cameraLabel: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+    color: "#fff",
+    width: "36px",
+    height: "36px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    border: "3px solid var(--card-bg)",
+    transition: "all 0.3s ease",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+  },
+  uploadOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "120px",
+    height: "120px",
+    borderRadius: "50%",
+    background: "rgba(0,0,0,0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  spinnerSmall: {
+    width: "30px",
+    height: "30px",
+    border: "3px solid rgba(255,255,255,0.3)",
+    borderTop: "3px solid #fff",
+    borderRadius: "50%",
+    animation: "spin 1s linear infinite",
   },
 }
