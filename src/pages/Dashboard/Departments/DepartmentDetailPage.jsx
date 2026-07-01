@@ -149,8 +149,8 @@ if (loading) return <Loader label="Loading Department Details..." />;
             <FiUser className="icon" />
             <div>
               <label>Department Head</label>
-              {/* FIX: Object rendering error solution */}
-              <span>{typeof dept.departmentHead === 'object' ? dept.departmentHead.name : (dept.departmentHead || "Not Assigned")}</span>
+              {/* FIX: Proper null check for department head */}
+              <span>{dept.departmentHead ? dept.departmentHead.name : "Not Assigned"}</span>
             </div>
           </div>
           <div className="meta-item">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import { useAlert } from '../../../components/ui/AlertProvider';
@@ -37,6 +37,10 @@ export default function AddDepartment() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [isHeadOpen, setIsHeadOpen] = useState(false);
+  const headDropdownRef = useRef(null);
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const statusDropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchHeads = async () => {
@@ -49,6 +53,30 @@ export default function AddDepartment() {
     };
     fetchHeads();
   }, []);
+
+  // close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (headDropdownRef.current && !headDropdownRef.current.contains(e.target)) {
+        setIsHeadOpen(false);
+      }
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(e.target)) {
+        setIsStatusOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleHeadSelect = (id) => {
+    setForm((p) => ({ ...p, departmentHead: id }));
+    setIsHeadOpen(false);
+  };
+
+  const handleStatusSelect = (val) => {
+    setForm((p) => ({ ...p, status: val }));
+    setIsStatusOpen(false);
+  };
 
   const handleRootChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -338,25 +366,60 @@ export default function AddDepartment() {
           <div className="add-department-input-row">
             <div className="add-department-input-group">
               <label>Department Head</label>
-              <select 
-                name="departmentHead" 
-                value={form.departmentHead} 
-                onChange={handleRootChange}
-              >
-                <option value="">-- Select Department Head --</option>
-                {availableHeads.map((head) => (
-                  <option key={head._id} value={head._id}>
-                    {head.name} {head.email ? `(${head.email})` : ''}
-                  </option>
-                ))}
-              </select>
+              <div className="custom-dropdown" ref={headDropdownRef}>
+                <button
+                  type="button"
+                  className={`dropdown-trigger ${!form.departmentHead ? 'placeholder' : ''}`}
+                  onClick={() => setIsHeadOpen((s) => !s)}
+                >
+                  <span>{availableHeads.find(h => h._id === form.departmentHead)?.name || '-- Select Department Head --'}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 9l6 6 6-6"></path>
+                  </svg>
+                </button>
+
+                {isHeadOpen && (
+                  <div className="dropdown-popover">
+                    <div className="dropdown-options">
+                      <div className={`dropdown-option ${!form.departmentHead ? 'selected' : ''}`} onClick={() => handleHeadSelect('')}>-- Select Department Head --</div>
+                      {availableHeads.map((head) => (
+                        <div key={head._id} className={`dropdown-option ${form.departmentHead === head._id ? 'selected' : ''}`} onClick={() => handleHeadSelect(head._id)}>
+                          <span className="option-text">{head.name}{head.email ? ` (${head.email})` : ''}</span>
+                          {form.departmentHead === head._id && (
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="add-department-input-group">
               <label>Status</label>
-              <select name="status" value={form.status} onChange={handleRootChange}>
-                <option value="ACTIVE">Active</option>
-                <option value="INACTIVE">Inactive</option>
-              </select>
+              <div className="custom-dropdown" ref={statusDropdownRef}>
+                <button
+                  type="button"
+                  className={`dropdown-trigger ${!form.status ? 'placeholder' : ''}`}
+                  onClick={() => setIsStatusOpen((s) => !s)}
+                >
+                  <span>{form.status === 'ACTIVE' ? 'Active' : 'Inactive'}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 9l6 6 6-6"></path>
+                  </svg>
+                </button>
+
+                {isStatusOpen && (
+                  <div className="dropdown-popover">
+                    <div className="dropdown-options">
+                      <div className={`dropdown-option ${form.status === 'ACTIVE' ? 'selected' : ''}`} onClick={() => handleStatusSelect('ACTIVE')}>Active</div>
+                      <div className={`dropdown-option ${form.status === 'INACTIVE' ? 'selected' : ''}`} onClick={() => handleStatusSelect('INACTIVE')}>Inactive</div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           

@@ -1,15 +1,11 @@
-import axios from "axios";
 import api from "../services/reqInterceptor.js";
-
- const API_URL = "http://localhost:5000/api/auth";
-//const API_URL = "https://darziflow-backend.onrender.com/api/auth"; 
 
 // Register user
 const register = async (userData) => {
-  const response = await axios.post(`${API_URL}/register`, userData);
+  const response = await api.post("/auth/register", userData);
   return response.data;
 };
-  
+
 // Login user
 const login = async ({ email, password, platform = "WEB" }) => {
   const response = await api.post("/auth/login", {
@@ -18,27 +14,32 @@ const login = async ({ email, password, platform = "WEB" }) => {
     platform,
   });
 
-  if (response.data.accessToken) {
+  // Store token and update Authorization header if backend sends it in body
+  if (response.data?.accessToken) {
     localStorage.setItem("accessToken", response.data.accessToken);
+    api.defaults.headers.common["Authorization"] = `Bearer ${response.data.accessToken}`;
   }
 
   return response.data;
 };
 
-
-
 // Logout user
-const logout = async () => {
-  await api.post("/auth/logout");
+const logout = async (fcmToken) => {
+  await api.post("/auth/logout", { fcmToken });
   localStorage.removeItem("accessToken");
 };
 
-
+// Update FCM Token
+const updateFcmToken = async (token) => {
+  const response = await api.post("/auth/update-fcm-token", { token });
+  return response.data;
+};
 
 const authService = {
   register,
   login,
   logout,
+  updateFcmToken,
 };
 
 export default authService;

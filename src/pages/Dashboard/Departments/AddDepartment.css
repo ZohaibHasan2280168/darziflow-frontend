@@ -6,23 +6,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%);
+  background: var(--main-bg);
   padding: 2rem 1rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Inter', sans-serif;
 }
 
 /* Card styles - scoped */
 .add-department-card {
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
   padding: 2.5rem;
   border-radius: 16px;
   width: 100%;
   max-width: 900px;
-  color: #f8fafc;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
-              0 0 0 1px rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  box-shadow: var(--card-shadow);
 }
 
 /* Title */
@@ -56,11 +55,11 @@
 
 .add-department-form h2 {
   font-size: 1.375rem;
-  color: #e2e8f0 !important; /* Force white color */
+  color: var(--text-primary) !important;
   padding-bottom: 0.75rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.12);
   font-weight: 600;
   position: relative;
 }
@@ -78,14 +77,14 @@
 
 .add-department-form h3 {
   font-size: 1.125rem;
-  color: #94a3b8 !important; /* Force light gray color */
+  color: var(--text-secondary) !important;
   margin: 0;
   font-weight: 500;
 }
 
 .add-department-form h4 {
   font-size: 1rem;
-  color: #cbd5e1 !important; /* Force light gray color */
+  color: var(--text-secondary) !important;
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 600;
@@ -114,7 +113,7 @@
 
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group label {
   margin-bottom: 0.5rem;
-  color: #cbd5e1 !important; /* Force light gray color */
+  color: var(--text-secondary) !important;
   font-weight: 500;
   font-size: 0.875rem;
   display: flex;
@@ -132,12 +131,12 @@
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group input,
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group textarea,
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select {
-  background: rgba(30, 41, 59, 0.6) !important;
-  border: 1.5px solid rgba(100, 116, 139, 0.3) !important;
+  background: var(--input-bg) !important;
+  border: 1.5px solid var(--border-light) !important;
   border-radius: 10px !important;
   padding: 0.875rem !important;
   font-size: 0.95rem !important;
-  color: #f1f5f9 !important; /* Force white text color */
+  color: var(--text-primary) !important;
   outline: none !important;
   transition: all 0.2s ease !important;
   font-family: inherit !important;
@@ -147,7 +146,7 @@
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group input::placeholder,
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group textarea::placeholder,
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select::placeholder {
-  color: #64748b !important; /* Force gray placeholder */
+  color: var(--text-muted) !important;
 }
 
 /* Focus states */
@@ -156,13 +155,13 @@
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select:focus {
   border-color: #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
-  background: rgba(30, 41, 59, 0.8) !important;
+  background: var(--input-bg) !important;
 }
 
 /* Select dropdown options */
 .add-department-container-wrapper .add-department-card .add-department-form .add-department-input-group select option {
-  background: #1e293b !important;
-  color: #f1f5f9 !important; /* Force white text for options */
+  background: var(--card-bg) !important;
+  color: var(--text-primary) !important;
   padding: 0.5rem !important;
 }
 
@@ -175,10 +174,10 @@
 
 /* Operation Block */
 .add-department-operation-block {
-  border: 1.5px solid rgba(59, 130, 246, 0.15);
+  border: 1.5px solid rgba(59, 130, 246, 0.12);
   border-radius: 14px;
   padding: 1.75rem;
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--card-bg);
   margin-bottom: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
@@ -198,7 +197,7 @@
 
 .add-department-operation-block:hover {
   border-color: rgba(59, 130, 246, 0.3);
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--card-hover-bg);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
@@ -212,11 +211,11 @@
 
 /* Checkpoint Form */
 .add-department-checkpoint-form {
-  border: 1px solid rgba(100, 116, 139, 0.2);
+  border: 1px solid var(--border-light);
   border-radius: 10px;
   padding: 1.25rem;
   margin-bottom: 1rem;
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--card-bg);
   transition: all 0.2s ease;
   position: relative;
 }
@@ -234,8 +233,8 @@
 }
 
 .add-department-checkpoint-form:hover {
-  border-color: rgba(100, 116, 139, 0.4);
-  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(100, 116, 139, 0.25);
+  background: var(--card-hover-bg);
 }
 
 /* Checkbox Switch */
@@ -255,6 +254,11 @@
   user-select: none;
 }
 
+/* Add spacing so QC toggle doesn't touch surrounding fields */
+.add-department-input-row.add-department-input-row-small-fields .add-department-checkbox-group {
+  margin-top: 0.45rem;
+}
+
 .add-department-checkbox-group .add-department-switch input {
   display: none;
 }
@@ -262,12 +266,13 @@
 .add-department-checkbox-group .add-department-switch-slider {
   width: 48px;
   height: 26px;
-  background: #334155;
+  background: var(--input-bg);
   border-radius: 999px;
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  margin-right: 8px;
 }
 
 .add-department-checkbox-group .add-department-switch-slider::after {
@@ -275,12 +280,12 @@
   position: absolute;
   width: 22px;
   height: 22px;
-  background: #f8fafc;
+  background: var(--text-primary);
   border-radius: 50%;
   top: 2px;
   left: 2px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .add-department-checkbox-group .add-department-switch input:checked + .add-department-switch-slider {
@@ -293,7 +298,7 @@
 }
 
 .add-department-checkbox-group .add-department-switch-label {
-  color: #e2e8f0 !important; /* Force light gray color */
+  color: var(--text-secondary) !important;
   font-weight: 500;
   white-space: nowrap;
   font-size: 0.875rem;
@@ -305,10 +310,10 @@
   align-items: center;
   gap: 0.625rem;
   padding: 0.75rem 1.25rem;
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(100, 116, 139, 0.2);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
   border-radius: 10px;
-  color: #cbd5e1 !important; /* Force light gray color */
+  color: white !important;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -317,9 +322,7 @@
 }
 
 .add-department-back-btn:hover {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: rgba(59, 130, 246, 0.4);
-  color: #f1f5f9 !important; /* Force white color on hover */
+  filter: brightness(0.95);
   transform: translateX(-4px);
 }
 
@@ -483,16 +486,15 @@
 }
 
 .add-department-cancel-btn {
-  background: rgba(71, 85, 105, 0.3);
-  color: #cbd5e1 !important; /* Force light gray color */
-  border: 1px solid rgba(100, 116, 139, 0.3);
+  background: linear-gradient(135deg, #ef4444, #fb7185);
+  color: white !important;
+  border: none;
 }
 
 .add-department-cancel-btn:hover {
-  background: rgba(71, 85, 105, 0.5);
-  border-color: rgba(100, 116, 139, 0.5);
+  filter: brightness(0.98);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Error Text */
@@ -644,23 +646,36 @@
   }
 }
 
-/* Scrollbar Styling */
+/* Scrollbar Styling (theme-aware) */
 .add-department-card::-webkit-scrollbar {
   width: 8px;
 }
 
 .add-department-card::-webkit-scrollbar-track {
-  background: rgba(30, 41, 59, 0.3);
+  background: var(--scroll-track, rgba(241,245,249,0.9));
   border-radius: 4px;
 }
 
 .add-department-card::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.4);
+  background: var(--scroll-thumb, rgba(99,102,241,0.18));
   border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .add-department-card::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.6);
+  background: var(--scroll-thumb-hover, rgba(99,102,241,0.28));
+}
+
+/* Hide native number input spinners for consistent appearance */
+.add-department-input-group input[type="number"]::-webkit-inner-spin-button,
+.add-department-input-group input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.add-department-input-group input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 /* Focus visible styles */
@@ -735,10 +750,61 @@
 
 /* Additional specificity for paragraph text */
 .add-department-container-wrapper .add-department-card p {
-  color: #94a3b8 !important;
+  color: var(--text-secondary) !important;
 }
 
 /* Optional: Add a scoping wrapper class to your JSX component */
 .add-department-scoped * {
   color: inherit !important; /* Force inheritance within the scoped container */
 }
+
+/* Custom dropdown styles (scoped) */
+.custom-dropdown { position: relative; }
+
+.custom-dropdown .dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.custom-dropdown .dropdown-trigger.placeholder { color: var(--text-secondary); }
+
+.custom-dropdown .dropdown-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  z-index: 60;
+  overflow: hidden;
+}
+
+.custom-dropdown .dropdown-options { max-height: 220px; overflow-y: auto; }
+
+.custom-dropdown .dropdown-option {
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.custom-dropdown .dropdown-option:hover { background: var(--card-hover-bg); }
+
+.custom-dropdown .dropdown-option.selected { background: rgba(59,130,246,0.08); }
+
+.custom-dropdown .dropdown-options::-webkit-scrollbar { width: 8px; }
+.custom-dropdown .dropdown-options::-webkit-scrollbar-track { background: var(--scroll-track); border-radius: 8px; }
+.custom-dropdown .dropdown-options::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 8px; }
+.custom-dropdown .dropdown-options::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover); }

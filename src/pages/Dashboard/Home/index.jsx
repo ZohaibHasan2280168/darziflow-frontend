@@ -53,11 +53,12 @@ export default function RoleSelection() {
           align-items: center;
         }
         
-        /* Modern gradient background */
+        /* Global theme background apply kiya hai */
         .modern-bg {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: var(--main-bg);
           position: relative;
           overflow: hidden;
+          transition: background 0.3s ease;
         }
 
         .modern-bg::before {
@@ -67,7 +68,8 @@ export default function RoleSelection() {
           right: -50%;
           width: 100%;
           height: 100%;
-          background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+          /* Dots color ko dono theme ke liye friendly banaya hai */
+          background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 1px, transparent 1px);
           background-size: 50px 50px;
           animation: float 20s ease-in-out infinite;
         }
@@ -77,21 +79,22 @@ export default function RoleSelection() {
           50% { transform: translate(30px, 30px); }
         }
         
-        /* Enhanced container with modern card design */
+        /* Card ko theme connect kiya hai */
         .container {
           max-width: 500px;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
+          background: var(--card-bg);
+          backdrop-filter: blur(20px);
           border-radius: 24px;
           padding: 48px 40px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          border: 1px solid var(--border-light);
+          box-shadow: var(--card-shadow);
           margin: 20px;
           display: flex;
           flex-direction: column;
           align-items: center;
           position: relative;
           z-index: 1;
+          transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
         .logo-badge {
@@ -116,7 +119,7 @@ export default function RoleSelection() {
         }
         
         .subtitle {
-          color: #6b7280;
+          color: var(--text-secondary);
           font-size: 1.1rem;
           font-weight: 500;
         }
@@ -125,19 +128,10 @@ export default function RoleSelection() {
           text-align: center;
         }
         
-        .mb-3 {
-          margin-bottom: 0.75rem;
-        }
-
-        .mb-6 {
-          margin-bottom: 1.5rem;
-        }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-12 { margin-bottom: 3rem; }
         
-        .mb-12 {
-          margin-bottom: 3rem;
-        }
-        
-        /* Modern button container with gap */
         .button-container {
           display: flex;
           flex-direction: column;
@@ -146,15 +140,15 @@ export default function RoleSelection() {
           margin-top: 2rem;
         }
         
-        /* Enhanced role button styling */
+        /* Enhanced role button styling with theme support */
         .role-button {
           display: flex;
           align-items: center;
           gap: 16px;
           padding: 20px 24px;
-          border: 2px solid transparent;
+          border: 2px solid var(--border-light);
           border-radius: 16px;
-          background: #f8f9fa;
+          background: var(--input-bg);
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           font-size: 1rem;
@@ -170,7 +164,7 @@ export default function RoleSelection() {
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
           transition: left 0.5s;
         }
 
@@ -189,27 +183,24 @@ export default function RoleSelection() {
 
         /* Moderator button styling */
         .moderator-button {
-          border-color: #667eea;
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.05) 100%);
+          border-color: var(--border-light);
         }
 
         .moderator-button:hover {
-          background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(102, 126, 234, 0.1) 100%);
+          background: rgba(102, 126, 234, 0.1);
           border-color: #667eea;
         }
 
         /* Admin button styling */
         .admin-button {
-          border-color: #764ba2;
-          background: linear-gradient(135deg, rgba(118, 75, 162, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+          border-color: var(--border-light);
         }
 
         .admin-button:hover {
-          background: linear-gradient(135deg, rgba(118, 75, 162, 0.2) 0%, rgba(118, 75, 162, 0.1) 100%);
+          background: rgba(118, 75, 162, 0.1);
           border-color: #764ba2;
         }
 
-        /* Button icon styling */
         .button-icon {
           display: flex;
           align-items: center;
@@ -235,7 +226,6 @@ export default function RoleSelection() {
           transform: scale(1.1);
         }
 
-        /* Button content styling */
         .button-content {
           flex: 1;
           text-align: left;
@@ -244,14 +234,14 @@ export default function RoleSelection() {
         .button-title {
           font-size: 1.1rem;
           font-weight: 700;
-          color: #1f2937;
+          color: var(--text-primary);
           margin: 0;
           margin-bottom: 4px;
         }
 
         .button-description {
           font-size: 0.875rem;
-          color: #6b7280;
+          color: var(--text-muted);
           margin: 0;
           font-weight: 500;
         }
@@ -259,44 +249,24 @@ export default function RoleSelection() {
         /* Arrow indicator */
         .button-arrow {
           font-size: 1.5rem;
-          color: #d1d5db;
+          color: var(--text-muted);
           transition: all 0.3s ease;
           flex-shrink: 0;
         }
 
         .role-button:hover .button-arrow {
-          color: #667eea;
           transform: translateX(4px);
         }
 
-        .admin-button:hover .button-arrow {
-          color: #764ba2;
-        }
+        .moderator-button:hover .button-arrow { color: #667eea; }
+        .admin-button:hover .button-arrow { color: #764ba2; }
 
         @media (max-width: 640px) {
-          .container {
-            padding: 32px 24px;
-            max-width: 100%;
-          }
-
-          .main-title {
-            font-size: 2rem;
-          }
-
-          .role-button {
-            padding: 16px 20px;
-            gap: 12px;
-          }
-
-          .button-icon {
-            width: 40px;
-            height: 40px;
-          }
-
-          .button-icon svg {
-            width: 24px;
-            height: 24px;
-          }
+          .container { padding: 32px 24px; max-width: 100%; }
+          .main-title { font-size: 2rem; }
+          .role-button { padding: 16px 20px; gap: 12px; }
+          .button-icon { width: 40px; height: 40px; }
+          .button-icon svg { width: 24px; height: 24px; }
         }
       `}</style>
     </div>

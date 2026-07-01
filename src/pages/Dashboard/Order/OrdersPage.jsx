@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  FiSearch, FiEdit2, FiTrash2, FiLayers, 
+import {
+  FiSearch, FiEdit2, FiTrash2, FiLayers,
   FiArrowLeft, FiPlus,
   FiPackage, FiCheckCircle, FiClock, FiActivity, FiFilter,
   FiChevronRight, FiHash
@@ -15,13 +15,19 @@ import './OrderList.css';
 const OrdersList = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [departments, setDepartments] = useState([]); 
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const { showAlert } = useAlert();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
+
+  // Custom dropdown state/refs for status and type filters
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const statusRef = useRef(null);
+  const typeRef = useRef(null);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -30,20 +36,12 @@ const OrdersList = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [ordersRes, deptsRes] = await Promise.all([
-        api.get(`/orders`),
-        api.get(`/departments`)
-      ]);
+      const ordersRes = await api.get(`/order`);
       setOrders(ordersRes.data.orders || []);
-      setDepartments(deptsRes.data || []);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching data:", err);
-      showAlert({
-        title: "Error",
-        message: "Failed to load orders",
-        type: "error"
-      });
+      showAlert({ title: "Error", message: "Failed to load orders", type: "error" });
       setLoading(false);
     }
   };
@@ -52,10 +50,36 @@ const OrdersList = () => {
     fetchData();
   }, []);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleOutside = (e) => {
+      try {
+        const path = e.composedPath ? e.composedPath() : (e.path || []);
+        if (statusRef.current) {
+          const clickedInsideStatus = path.length ? path.includes(statusRef.current) : statusRef.current.contains(e.target);
+          if (!clickedInsideStatus) setIsStatusOpen(false);
+        }
+        if (typeRef.current) {
+          const clickedInsideType = path.length ? path.includes(typeRef.current) : typeRef.current.contains(e.target);
+          if (!clickedInsideType) setIsTypeOpen(false);
+        }
+      } catch (err) {
+        if (statusRef.current && !statusRef.current.contains(e.target)) setIsStatusOpen(false);
+        if (typeRef.current && !typeRef.current.contains(e.target)) setIsTypeOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('touchstart', handleOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('touchstart', handleOutside);
+    };
+  }, []);
+
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this order? This action cannot be undone.")) {
       try {
-        await api.delete(`/orders/${id}`);
+        await api.delete(`/order/${id}`);
         fetchData();
         showAlert({
           title: "Success",
@@ -89,7 +113,7 @@ const OrdersList = () => {
   });
 
   const getStatusClass = (status) => {
-    switch(status) {
+    switch (status) {
       case 'READY_TO_START': return 'status-ready';
       case 'DOCS_PENDING': return 'status-pending';
       case 'IN_PROGRESS': return 'status-progress';
@@ -106,6 +130,7 @@ const OrdersList = () => {
         <div className="header-content">
           <button className="back-button" onClick={() => navigate(-1)}>
             <FiArrowLeft size={20} />
+            <span style={{ fontSize: '14px', marginLeft: '4px' }}>Back</span>
           </button>
           <div className="header-text">
             <h1 className="page-title">Order Workflows</h1>
@@ -162,42 +187,61 @@ const OrdersList = () => {
       <div className="filters-bar">
         <div className="search-wrapper">
           <FiSearch className="search-icon" size={18} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             className="search-input"
-            placeholder="Search by name or ID..." 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
+            placeholder="Search by name or ID..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="filter-group">
-          <div className="filter-select-wrap">
-            <FiFilter size={14} />
-            <select 
-              className="filter-select"
-              value={statusFilter} 
-              onChange={(e) => setStatusFilter(e.target.value)}
+          <div className="custom-dropdown-container" ref={statusRef}>
+            <button
+              type="button"
+              className="dropdown-trigger"
+              onClick={(e) => { e.stopPropagation(); setIsStatusOpen(s => !s); }}
+              aria-haspopup="true"
+              aria-expanded={isStatusOpen}
             >
-              <option value="ALL">All Status</option>
-              <option value="DRAFT">Draft</option>
-              <option value="DOCS_PENDING">Docs Pending</option>
-              <option value="READY_TO_START">Ready to Start</option>
-              <option value="IN_PROGRESS">In Progress</option>
-            </select>
+              <span>{statusFilter === 'ALL' ? 'All Status' : statusFilter.replace(/_/g, ' ')}</span>
+              <FiFilter size={14} style={{ marginLeft: 8 }} />
+            </button>
+            {isStatusOpen && (
+              <div className="dropdown-popover">
+                <div className="dropdown-options">
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('ALL'); setIsStatusOpen(false); }}>All Status</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('DRAFT'); setIsStatusOpen(false); }}>Draft</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('DOCS_PENDING'); setIsStatusOpen(false); }}>Docs Pending</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('READY_TO_START'); setIsStatusOpen(false); }}>Ready to Start</div>
+                  <div className="dropdown-option" onClick={() => { setStatusFilter('IN_PROGRESS'); setIsStatusOpen(false); }}>In Progress</div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="filter-select-wrap">
-            <FiLayers size={14} />
-            <select 
-              className="filter-select"
-              value={typeFilter} 
-              onChange={(e) => setTypeFilter(e.target.value)}
+
+          <div className="custom-dropdown-container" ref={typeRef}>
+            <button
+              type="button"
+              className="dropdown-trigger"
+              onClick={(e) => { e.stopPropagation(); setIsTypeOpen(s => !s); }}
+              aria-haspopup="true"
+              aria-expanded={isTypeOpen}
             >
-              <option value="ALL">All Types</option>
-              <option value="PANT">Pant</option>
-              <option value="JACKET">Jacket</option>
-              <option value="SHORTS">Shorts</option>
-              <option value="OTHER">Other</option>
-            </select>
+              <span>{typeFilter === 'ALL' ? 'All Types' : typeFilter}</span>
+              <FiLayers size={14} style={{ marginLeft: 8 }} />
+            </button>
+            {isTypeOpen && (
+              <div className="dropdown-popover">
+                <div className="dropdown-options">
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('ALL'); setIsTypeOpen(false); }}>All Types</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('PANT'); setIsTypeOpen(false); }}>Pant</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('JACKET'); setIsTypeOpen(false); }}>Jacket</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('SHORTS'); setIsTypeOpen(false); }}>Shorts</div>
+                  <div className="dropdown-option" onClick={() => { setTypeFilter('OTHER'); setIsTypeOpen(false); }}>Other</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -233,7 +277,7 @@ const OrdersList = () => {
               filteredOrders.map((order) => (
                 <tr key={order._id} className="table-row">
                   <td>
-                    <div 
+                    <div
                       className="order-info clickable"
                       onClick={() => navigate(`/orders/${order._id}`)}
                     >
@@ -257,21 +301,21 @@ const OrdersList = () => {
                   </td>
                   <td>
                     <div className="actions-group">
-                      <button 
+                      <button
                         className="action-btn view-btn"
                         onClick={() => navigate(`/orders/${order._id}`)}
                         title="View Details"
                       >
                         <FiChevronRight size={18} />
                       </button>
-                      <button 
+                      <button
                         className="action-btn edit-btn"
                         onClick={() => { setOrderToEdit(order); setShowEditModal(true); }}
                         title="Edit Order"
                       >
                         <FiEdit2 size={16} />
                       </button>
-                      <button 
+                      <button
                         className="action-btn delete-btn"
                         onClick={() => handleDelete(order._id)}
                         title="Delete Order"
@@ -295,14 +339,14 @@ const OrdersList = () => {
         onOrderCreated={handleOrderCreated}
       />
 
-      
-<EditOrderModal 
-  isOpen={showEditModal} 
-  onClose={() => setShowEditModal(false)} 
-  orderData={orderToEdit} 
-  onUpdateSuccess={fetchData}
-  departments={departments}
-/>
+
+      <EditOrderModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        orderData={orderToEdit}
+        onUpdateSuccess={fetchData}
+        departments={departments}
+      />
     </div>
   );
 };

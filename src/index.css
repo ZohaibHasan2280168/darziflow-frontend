@@ -2,159 +2,286 @@
 
 /* Tailwind-like utility classes for flexibility */
 
-  :root {
-    --color-primary: 59 130 246; /* blue-500 */
-    --color-primary-hover: 37 99 235; /* blue-600 */
-    --color-disabled: 209 213 219; /* gray-300 */
-    --color-text: 31 41 55; /* gray-800 */
-    --color-text-light: 75 85 99; /* gray-600 */
-    --color-bg: 243 244 246; /* gray-100 */
-    --color-white: 255 255 255;
-  }
+/* ============ LIGHT MODE (Default) ============ */
+:root.light {
+  /* Backgrounds */
+  --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --body-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f9fafb;
+  --input-bg: #ffffff;
+  --dropdown-bg: rgba(255, 255, 255, 0.98);
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  /* Text Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
 
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background-color: rgb(var(--color-bg));
-    color: rgb(var(--color-text));
-    min-height: 100vh;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
+  /* Borders */
+  --border-light: #e5e7eb;
+  --border-default: #d1d5db;
 
-  /* Reusable button styles */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    text-align: center;
-  }
+  /* Colors */
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-disabled: 209 213 219;
+  --color-text: 31 41 55;
+  --color-text-light: 75 85 99;
+  --color-bg: 243 244 246;
+  --color-white: 255 255 255;
+  /* Accent colors */
+  --color-accent-emerald: 16 185 129;
+  --color-accent-amber: 245 158 11;
+  --color-accent-red: 239 68 68;
+  --color-accent-purple: 139 92 246;
+  --color-accent-cyan: 6 182 212;
+  --color-accent-pink: 236 72 153;
+}
 
-  .btn-primary {
-    background-color: rgb(var(--color-primary));
-    color: rgb(var(--color-white));
-  }
+/* ============ DARK MODE ============ */
+:root.dark {
+  /* Backgrounds */
+  --main-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  --body-bg: #0f1419;
+  --card-bg: #1a1f35;
+  --card-hover-bg: #242d45;
+  --input-bg: #111827;
+  --dropdown-bg: rgba(15, 23, 42, 0.98);
 
-  .btn-primary:hover {
-    background-color: rgb(var(--color-primary-hover));
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  }
+  /* Text Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f1419;
 
-  .btn-disabled {
-    background-color: rgb(var(--color-disabled));
-    color: rgb(var(--color-text-light));
-    cursor: not-allowed;
-  }
+  /* Borders */
+  --border-light: #334155;
+  --border-default: #475569;
 
-  /* Container utilities */
-  .flex-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  /* Colors */
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-disabled: 71 85 105;
+  --color-text: 226 232 240;
+  --color-text-light: 148 163 184;
+  --color-bg: 15 23 42;
+  --color-white: 30 41 59;
+  /* Accent colors */
+  --color-accent-emerald: 16 185 129;
+  --color-accent-amber: 245 158 11;
+  --color-accent-red: 239 68 68;
+  --color-accent-purple: 139 92 246;
+  --color-accent-cyan: 6 182 212;
+  --color-accent-pink: 236 72 153;
+}
 
-  .max-w-xs {
-    max-width: 20rem; /* 320px */
-  }
+/* ============ DEFAULT (Light Mode) ============ */
+:root {
+  /* Backgrounds */
+  --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --body-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --card-hover-bg: #f9fafb;
+  --input-bg: #ffffff;
+  --dropdown-bg: rgba(255, 255, 255, 0.98);
 
-  .w-full {
-    width: 100%;
-  }
+  /* Text Colors */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
 
-  /* Text utilities */
-  .text-center {
-    text-align: center;
-  }
+  /* Borders */
+  --border-light: #e5e7eb;
+  --border-default: #d1d5db;
 
-  .text-xl {
-    font-size: 1.25rem; /* 20px */
-    line-height: 1.75rem; /* 28px */
-  }
+  /* Colors */
+  --color-primary: 59 130 246;
+  --color-primary-hover: 37 99 235;
+  --color-disabled: 209 213 219;
+  --color-text: 31 41 55;
+  --color-text-light: 75 85 99;
+  --color-bg: 243 244 246;
+  --color-white: 255 255 255;
+  /* Accent colors */
+  --color-accent-emerald: 16 185 129;
+  --color-accent-amber: 245 158 11;
+  --color-accent-red: 239 68 68;
+  --color-accent-purple: 139 92 246;
+  --color-accent-cyan: 6 182 212;
+  --color-accent-pink: 236 72 153;
+}
 
-  .text-3xl {
-    font-size: 1.875rem; /* 30px */
-    line-height: 2.25rem; /* 36px */
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  .font-bold {
-    font-weight: 700;
-  }
+html {
+  scroll-behavior: smooth;
+  transition: background 0.3s ease, color 0.3s ease;
+}
 
-  /* Spacing utilities */
-  .p-4 {
-    padding: 1rem;
-  }
+html.light {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: rgb(var(--color-text));
+}
 
-  .px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
+html.dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: rgb(var(--color-text));
+}
 
-  .py-8 {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--body-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  .mb-2 {
-    margin-bottom: 0.5rem;
-  }
+/* Reusable button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+}
 
-  .mb-8 {
-    margin-bottom: 2rem;
-  }
+.btn-primary {
+  background-color: rgb(var(--color-primary));
+  color: rgb(var(--color-white));
+}
 
-  /* Shadow utility */
-  .shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
+.btn-primary:hover {
+  background-color: rgb(var(--color-primary-hover));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-disabled {
+  background-color: rgb(var(--color-disabled));
+  color: rgb(var(--color-text-light));
+  cursor: not-allowed;
+}
+
+/* Container utilities */
+.flex-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.max-w-xs {
+  max-width: 20rem;
+  /* 320px */
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+  /* 20px */
+  line-height: 1.75rem;
+  /* 28px */
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  /* 30px */
+  line-height: 2.25rem;
+  /* 36px */
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+/* Spacing utilities */
+.p-4 {
+  padding: 1rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+/* Shadow utility */
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
 /* Add to your existing utility classes */
 .gap-4 {
-  gap: 1rem; /* 16px spacing between items */
+  gap: 1rem;
+  /* 16px spacing between items */
 }
 
 /* Optional: Add responsive gap sizes */
 @media (min-width: 768px) {
   .md\:gap-6 {
-    gap: 1.5rem; /* 24px on larger screens */
+    gap: 1.5rem;
+    /* 24px on larger screens */
   }
 }
 
 /* Add to your existing utilities */
-.space-y-4 > * + * {
-  margin-top: 1rem; /* 16px spacing between elements */
+.space-y-4>*+* {
+  margin-top: 1rem;
+  /* 16px spacing between elements */
 }
 
-.space-y-6 > * + * {
-  margin-top: 1.5rem; /* 24px spacing */
+.space-y-6>*+* {
+  margin-top: 1.5rem;
+  /* 24px spacing */
 }
 
 /* More precise button spacing */
-.btn-spacing > button {
+.btn-spacing>button {
   margin-top: 1rem;
 }
 
 /* Horizontal spacing utility */
-.space-x-4 > * + * {
-  margin-left: 1rem; /* 16px spacing between horizontal items */
+.space-x-4>*+* {
+  margin-left: 1rem;
+  /* 16px spacing between horizontal items */
 }
 
 /* Optional: Responsive horizontal spacing */
 @media (min-width: 768px) {
-  .md\:space-x-6 > * + * {
-    margin-left: 1.5rem; /* 24px on larger screens */
+  .md\:space-x-6>*+* {
+    margin-left: 1.5rem;
+    /* 24px on larger screens */
   }
 }
 
@@ -220,7 +347,7 @@
 
 .input:focus {
   border-color: rgb(var(--color-primary));
-  box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 /* Professional button styles */
@@ -231,7 +358,7 @@ button[type="submit"] {
   border-radius: 0.5rem;
   font-weight: 600;
   transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-  box-shadow: 0 2px 8px 0 rgba(59,130,246,0.08);
+  box-shadow: 0 2px 8px 0 rgba(59, 130, 246, 0.08);
 }
 
 .btn-primary,
@@ -245,14 +372,14 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: rgb(var(--color-primary-hover));
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 4px 16px 0 rgba(59,130,246,0.12);
+  box-shadow: 0 4px 16px 0 rgba(59, 130, 246, 0.12);
 }
 
 /* Dashboard Navbar Styles */
 .navbar {
   width: 100%;
   background: rgb(var(--color-white));
-  box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -300,19 +427,23 @@ button[type="submit"]:hover {
 
 
 /* add new user form css */
-/* From Uiverse.io by Yaya12085 */ 
+/* From Uiverse.io by Yaya12085 */
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 500px; /* Increased from 350px */
+  max-width: 500px;
+  /* Increased from 350px */
   width: 100%;
   background-color: #fff;
-  padding: 30px; /* Increased padding for better spacing */
+  padding: 30px;
+  /* Increased padding for better spacing */
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Enhanced shadow for depth */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  /* Enhanced shadow for depth */
   position: relative;
-  margin: 0 auto; /* Center the form */
+  margin: 0 auto;
+  /* Center the form */
 }
 
 .title {
@@ -327,7 +458,8 @@ button[type="submit"]:hover {
   margin-bottom: 10px;
 }
 
-.title::before,.title::after {
+.title::before,
+.title::after {
   position: absolute;
   content: "";
   height: 16px;
@@ -349,7 +481,8 @@ button[type="submit"]:hover {
   animation: pulse 1s linear infinite;
 }
 
-.message, .signin {
+.message,
+.signin {
   color: rgba(88, 87, 87, 0.822);
   font-size: 14px;
 }
@@ -369,7 +502,8 @@ button[type="submit"]:hover {
 .flex {
   display: flex;
   width: 100%;
-  gap: 12px; /* Slightly increased gap */
+  gap: 12px;
+  /* Slightly increased gap */
 }
 
 .form label {
@@ -380,23 +514,27 @@ button[type="submit"]:hover {
 
 .form label .input {
   width: 100%;
-  padding: 14px 12px; /* Slightly increased padding */
+  padding: 14px 12px;
+  /* Slightly increased padding */
   outline: 0;
   border: 1px solid rgba(15, 23, 36, 0.06);
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.18s, box-shadow 0.18s;
-  background: transparent; /* default: let theme decide */
-  box-shadow: none; /* remove 3D/inset look */
+  background: transparent;
+  /* default: let theme decide */
+  box-shadow: none;
+  /* remove 3D/inset look */
 }
 
 .form label .input:focus {
   border-color: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.06); /* subtle focus ring */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.06);
+  /* subtle focus ring */
   outline: none;
 }
 
-.form label .input + span {
+.form label .input+span {
   position: absolute;
   left: 12px;
   top: 15px;
@@ -416,42 +554,49 @@ button[type="submit"]:hover {
 }
 
 :root.dark .form label .input {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255, 255, 255, 0.03);
   color: #e6eef8;
-  border-color: rgba(255,255,255,0.06);
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
 /* Global flat input styles to remove any '3D' or heavy black borders */
-input, textarea, select {
+input,
+textarea,
+select {
   border-radius: 8px;
-  border: 1px solid rgba(15,23,36,0.06);
+  border: 1px solid rgba(15, 23, 36, 0.06);
   background: transparent;
   box-shadow: none;
 }
 
-:root.light input, :root.light textarea, :root.light select {
+:root.light input,
+:root.light textarea,
+:root.light select {
   color: #0b0b0b;
-  border-color: rgba(15,23,36,0.06);
+  border-color: rgba(15, 23, 36, 0.06);
 }
 
-:root.dark input, :root.dark textarea, :root.dark select {
-  background: rgba(255,255,255,0.03);
+:root.dark input,
+:root.dark textarea,
+:root.dark select {
+  background: rgba(255, 255, 255, 0.03);
   color: #e6eef8;
-  border-color: rgba(255,255,255,0.06);
+  border-color: rgba(255, 255, 255, 0.06);
 }
 
-.form label .input:placeholder-shown + span {
+.form label .input:placeholder-shown+span {
   top: 15px;
   font-size: 0.9em;
 }
 
-.form label .input:focus + span,.form label .input:valid + span {
+.form label .input:focus+span,
+.form label .input:valid+span {
   top: -8px;
   font-size: 0.7em;
   font-weight: 600;
 }
 
-.form label .input:valid + span {
+.form label .input:valid+span {
   color: green;
 }
 
@@ -541,12 +686,12 @@ input, textarea, select {
     font-size: 0.9rem;
     padding: 12px 8px;
   }
-  
+
   .user-card-table td {
     padding: 12px 8px;
     font-size: 0.9rem;
   }
-  
+
   .user-card-table td span {
     font-size: 0.8rem;
     padding: 3px 10px;
@@ -560,4 +705,113 @@ input, textarea, select {
   background: linear-gradient(180deg, #DCF9E0 0%, #FFFFFF 30.21%);
   box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
   border-radius: 16px;
+}
+
+/* =========================================================
+   GLOBAL INPUT TEXT COLOR ENFORCEMENT
+   Ensures all inputs across the entire app are readable.
+   ========================================================= */
+
+/* Light Mode: Always Black/Dark Text */
+:root.light input,
+:root.light textarea,
+:root.light select,
+html.light input,
+html.light textarea,
+html.light select,
+body.light input,
+body.light textarea,
+body.light select,
+.light input,
+.light textarea,
+.light select {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+:root.light select option,
+html.light select option,
+body.light select option,
+.light select option {
+  background: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Dark Mode: Always White Text */
+:root.dark input,
+:root.dark textarea,
+:root.dark select,
+html.dark input,
+html.dark textarea,
+html.dark select,
+body.dark input,
+body.dark textarea,
+body.dark select,
+.dark input,
+.dark textarea,
+.dark select {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+:root.dark select option,
+html.dark select option,
+body.dark select option,
+.dark select option {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* -----------------------------------------
+   AUTOFILL BACKGROUND FIXES 
+   Prevents browser autofill from flashing
+   a white background over inputs, preserving
+   transparency and theme background colors.
+   ----------------------------------------- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+textarea:-webkit-autofill {
+  /* This delays the background color change of autofill by 5000s */
+  transition: background-color 5000s ease-in-out 0s !important;
+  background-color: transparent !important;
+}
+
+:root.light input:-webkit-autofill,
+:root.light textarea:-webkit-autofill,
+:root.light select:-webkit-autofill {
+  -webkit-text-fill-color: #000000 !important;
+}
+
+:root.dark input:-webkit-autofill,
+:root.dark textarea:-webkit-autofill,
+:root.dark select:-webkit-autofill {
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* -----------------------------------------
+   DASHBOARD STATS LIGHT MODE OVERRIDES
+   Ensures text inside dashboard sub-cards 
+   is dark and visible in light mode.
+   ----------------------------------------- */
+:root.light .department-card, 
+:root.light .order-card,
+:root.light .stat-card,
+:root.light .stat-value,
+:root.light .stat-desc,
+:root.light .stat-label,
+:root.light .stat-number,
+:root.light .stat-body,
+:root.light .stat-content {
+   color: #111827 !important;
+}
+
+/* Ensure stats counters titles and counts have appropriate styling */
+:root.light .stat-label,
+:root.light .stat-number {
+   color: #111827 !important;
 }

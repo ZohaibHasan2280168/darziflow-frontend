@@ -2,11 +2,26 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/reqInterceptor";
-import Navbar from "../../components/layout/Navbar";
 import RolePieChart from "../../components/charts/RolePieChart";
 import { useAuth } from "../../components/context/AuthContext";
 import DashboardLoader from "../../components/ui/Loader";
 import MustChangePasswordModal from "../../components/modals/MustChangePasswordModal";
+
+// Move initial stats outside component to avoid recreating on each render
+const initialUserStats = [
+  { name: "Admin", value: 0, backendKey: "ADMIN", color: "rgb(0, 136, 254)" },
+  { name: "Client", value: 0, backendKey: "CLIENT", color: "rgb(0, 196, 159)" },
+  { name: "QC Member", value: 0, backendKey: "QC_MEMBER", color: "rgb(255, 187, 40)" },
+  { name: "Department Head", value: 0, backendKey: "DEPT_HEAD", color: "rgb(168, 85, 247)" },
+];
+
+const initialOrderStats = [
+  { name: "Draft", value: 0, color: "rgb(148, 163, 184)" },
+  { name: "Docs Pending", value: 0, color: "rgb(245, 158, 11)" },
+  { name: "Ready to Start", value: 0, color: "rgb(16, 185, 129)" },
+  { name: "In Progress", value: 0, color: "rgb(59, 130, 246)" },
+  { name: "Completed", value: 0, color: "rgb(139, 92, 246)" },
+];
 
 export default function Dashboard() {
   const { user, mustChangePassword } = useAuth();
@@ -78,7 +93,7 @@ export default function Dashboard() {
         setDepartmentCount(departments.length);
 
         // Fetch orders data
-        const ordersRes = await api.get("/orders");
+        const ordersRes = await api.get("/order");
         const orders = ordersRes.data?.orders || [];
 
         // Calculate order status counts
@@ -106,9 +121,8 @@ export default function Dashboard() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [navigate]);
 
-  // Navigation handlers
   const handleUserRoleClick = (roleDisplayName) => {
     const urlRoleSlug = roleDisplayName.toLowerCase().replace(/\s+/g, '_');
     navigate(`/users/role/${urlRoleSlug}`);
@@ -119,7 +133,6 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="dashboard-container">
-        <Navbar />
         <div className="dashboard-content">
           <DashboardLoader label="Loading dashboard data..." />
         </div>
@@ -133,9 +146,8 @@ export default function Dashboard() {
         <MustChangePasswordModal onContinue={() => navigate("/profile")} />
       )}
 
-      <Navbar />
-
       <div className="dashboard-content">
+        <div className="boxed-pattern" />
         {/* Welcome Header */}
         <div className="dashboard-header">
           <h1>Welcome back, {user.name || user.email}!</h1>
@@ -208,15 +220,11 @@ export default function Dashboard() {
             
             <div className="legend-container">
               {userStats.map((stat, idx) => (
-                <div
-                  key={stat.name}
-                  className="legend-item clickable"
-                 >
+                <div key={stat.name} className="legend-item clickable" onClick={() => handleUserRoleClick(stat.name)}>
                   <div className="legend-color" style={{ backgroundColor: stat.color || "#888" }}></div>
                   <div className="legend-text">
                     <span className="legend-name">{stat.name}</span>
-                    <span className="legend-value">
-                      </span>
+                    <span className="legend-value"></span>
                   </div>
                 </div>
               ))}
@@ -235,7 +243,7 @@ export default function Dashboard() {
           <div className="chart-card">
             <div className="chart-header">
               <h2>Orders Status</h2>
-              </div>
+            </div>
             
             <div className="chart-container">
               <RolePieChart data={orderStats} />
@@ -243,10 +251,7 @@ export default function Dashboard() {
             
             <div className="legend-container">
               {orderStats.map((stat, idx) => (
-                <div
-                  key={stat.name}
-                  className="legend-item clickable"
-                  >
+                <div key={stat.name} className="legend-item clickable">
                   <div className="legend-color" style={{ backgroundColor: stat.color || "#888" }}></div>
                   <div className="legend-text">
                     <span className="legend-name">{stat.name}</span>
@@ -269,7 +274,7 @@ export default function Dashboard() {
           <div className="chart-card">
             <div className="chart-header">
               <h2>Departments Overview</h2>
-               </div>
+            </div>
             
             <div className="chart-container">
               <RolePieChart data={departmentStats} />
@@ -277,10 +282,7 @@ export default function Dashboard() {
             
             <div className="legend-container">
               {departmentStats.map((stat, idx) => (
-                <div
-                  key={stat.name}
-                  className="legend-item clickable"
-                >
+                <div key={stat.name} className="legend-item clickable">
                   <div className="legend-color" style={{ backgroundColor: stat.color || "#888" }}></div>
                   <div className="legend-text">
                     <span className="legend-name">{stat.name}</span>
@@ -304,16 +306,18 @@ export default function Dashboard() {
       </div>
 
       <style jsx>{`
+        /* Global theme variables se values uthayi hain */
         .dashboard-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-          color: #fff;
+          background: var(--main-bg);
+          color: var(--text-primary);
         }
 
         .dashboard-content {
           max-width: 1400px;
           margin: 0 auto;
           padding: 2rem;
+          position: relative; /* enable absolute overlay from boxed-pattern */
         }
 
         .dashboard-header {
@@ -324,15 +328,12 @@ export default function Dashboard() {
           font-size: 2.5rem;
           font-weight: 700;
           margin: 0;
-          background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: var(--text-primary);
         }
 
         .dashboard-subtitle {
           font-size: 1.1rem;
-          color: #94a3b8;
+          color: var(--text-secondary);
           margin-top: 0.5rem;
         }
 
@@ -344,9 +345,8 @@ export default function Dashboard() {
         }
 
         .summary-card {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: var(--card-bg);
+          border: 1px solid var(--border-light);
           border-radius: 16px;
           padding: 1.5rem;
           display: flex;
@@ -354,12 +354,14 @@ export default function Dashboard() {
           gap: 1.25rem;
           transition: all 0.3s ease;
           cursor: pointer;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .summary-card:hover {
           transform: translateY(-4px);
+          background: var(--card-hover-bg);
           border-color: rgba(59, 130, 246, 0.4);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .summary-icon {
@@ -393,8 +395,8 @@ export default function Dashboard() {
 
         .summary-content h3 {
           font-size: 1rem;
-          font-weight: 500;
-          color: #94a3b8;
+          font-weight: 600;
+          color: var(--text-secondary);
           margin: 0 0 0.5rem 0;
           text-transform: uppercase;
           letter-spacing: 0.5px;
@@ -404,15 +406,12 @@ export default function Dashboard() {
           font-size: 2.5rem;
           font-weight: 700;
           margin: 0;
-          background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: var(--text-primary);
         }
 
         .summary-label {
           font-size: 0.875rem;
-          color: #64748b;
+          color: var(--text-muted);
           margin: 0.25rem 0 0 0;
         }
 
@@ -424,17 +423,17 @@ export default function Dashboard() {
         }
 
         .chart-card {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: var(--card-bg);
+          border: 1px solid var(--border-light);
           border-radius: 16px;
           padding: 1.5rem;
           transition: all 0.3s ease;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .chart-card:hover {
           border-color: rgba(59, 130, 246, 0.2);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .chart-header {
@@ -443,22 +442,14 @@ export default function Dashboard() {
           align-items: center;
           margin-bottom: 1.5rem;
           padding-bottom: 1rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          border-bottom: 1px solid var(--border-light);
         }
 
         .chart-header h2 {
           font-size: 1.25rem;
           font-weight: 600;
           margin: 0;
-        }
-
-        .total-count {
-          font-size: 0.875rem;
-          color: #94a3b8;
-          background: rgba(255, 255, 255, 0.05);
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: var(--text-primary);
         }
 
         .chart-container {
@@ -487,7 +478,7 @@ export default function Dashboard() {
         }
 
         .legend-item.clickable:hover {
-          background-color: rgba(255, 255, 255, 0.05);
+          background-color: var(--card-hover-bg);
         }
 
         .legend-color {
@@ -506,12 +497,12 @@ export default function Dashboard() {
 
         .legend-name {
           font-size: 0.875rem;
-          color: #e2e8f0;
+          color: var(--text-primary);
         }
 
         .legend-value {
           font-size: 0.875rem;
-          color: #94a3b8;
+          color: var(--text-muted);
           font-weight: 500;
         }
 
@@ -537,71 +528,14 @@ export default function Dashboard() {
         }
 
         .action-btn.primary {
-          background: linear-gradient(135deg, #3b82f6, #2563eb);
+          background: #3b82f6;
           color: white;
         }
 
         .action-btn.primary:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-
-        .action-btn.secondary {
-          background: transparent;
-          color: #94a3b8;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .action-btn.secondary:hover {
-          background: rgba(255, 255, 255, 0.05);
-          border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .quick-actions {
-          margin-top: 2rem;
-          padding-top: 2rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .quick-actions h2 {
-          font-size: 1.5rem;
-          font-weight: 600;
-          margin-bottom: 1.5rem;
-          color: #e2e8f0;
-        }
-
-        .actions-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 1rem;
-        }
-
-        .quick-action-btn {
-          padding: 1.25rem;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          color: #e2e8f0;
-          font-weight: 500;
-          font-size: 0.95rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-          text-align: center;
-        }
-
-        .quick-action-btn:hover {
-          background: rgba(59, 130, 246, 0.1);
-          border-color: rgba(59, 130, 246, 0.3);
-          transform: translateY(-2px);
-          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .quick-action-btn svg {
-          color: #94a3b8;
+          background: #2563eb;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .error-message {
@@ -618,26 +552,18 @@ export default function Dashboard() {
           .dashboard-content {
             padding: 1rem;
           }
-
           .dashboard-header h1 {
             font-size: 2rem;
           }
-
           .stats-summary,
           .charts-grid {
             grid-template-columns: 1fr;
           }
-
           .charts-grid {
             gap: 1rem;
           }
-
           .chart-card {
             padding: 1.25rem;
-          }
-
-          .actions-grid {
-            grid-template-columns: 1fr;
           }
         }
 
@@ -646,16 +572,13 @@ export default function Dashboard() {
             flex-direction: column;
             text-align: center;
           }
-
           .summary-icon {
             width: 48px;
             height: 48px;
           }
-
           .chart-actions {
             flex-direction: column;
           }
-
           .legend-text {
             flex-direction: column;
             align-items: flex-start;

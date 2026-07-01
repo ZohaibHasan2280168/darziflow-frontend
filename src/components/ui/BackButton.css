@@ -1,0 +1,36 @@
+.shared-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shared-back-button:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.shared-back-button svg {
+  color: inherit;
+}
+
+:root.light .shared-back-button {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+:root.dark .shared-back-button {
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  border-color: var(--border-light);
+}

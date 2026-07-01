@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../../components/layout/Navbar";
 import { useAuth } from "../../../components/context/AuthContext";
 import { useAlert } from '../../../components/ui/AlertProvider';
 import api from "../../../services/reqInterceptor";
@@ -85,7 +84,6 @@ export default function RoleUserList() {
 
     return (
         <div className="users-container">
-            <Navbar />
             <div className="users-content">
                 <div className="users-header">
                     <div className="header-content">
@@ -205,9 +203,13 @@ export default function RoleUserList() {
                 .header-title {
                     font-size: 2rem;
                     font-weight: 700;
-                    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
+                    color: var(--text-primary);
+                    -webkit-text-stroke: 1px var(--text-primary);
+                    text-shadow: 
+                        -1px -1px 0 var(--body-bg),  
+                         1px -1px 0 var(--body-bg),
+                        -1px  1px 0 var(--body-bg),
+                         1px  1px 0 var(--body-bg);
                 }
 
                 .header-subtitle {

@@ -1,173 +1,10 @@
 // CheckpointItem.jsx
 import { useState } from 'react';
-import { FiCheckCircle, FiPlus, FiEye, FiDownload, FiImage, FiVideo, FiFileText, FiUpload, FiSend, FiClock, FiChevronDown, FiChevronUp, FiUser, FiMessageSquare, FiFile } from 'react-icons/fi';
-import { toast } from 'react-hot-toast';
-import CheckpointReview from './CheckpointReview';
+import { useEffect } from 'react';
+import { FiCheckCircle, FiChevronDown, FiChevronUp, FiClock, FiUser, FiMessageSquare } from 'react-icons/fi';
+// toast removed; parent handles toasts
 
-const AdminSubmissionForm = ({ 
-  checkpoint, 
-  operationId, 
-  orderId, 
-  onSubmit,
-  onCancel 
-}) => {
-  const [submissionText, setSubmissionText] = useState('');
-  const [submissionFiles, setSubmissionFiles] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setSubmissionFiles(files);
-  };
-
-  const handleSubmit = async () => {
-    if (!submissionText.trim() && submissionFiles.length === 0) {
-      toast.error('Please provide submission notes or files');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await onSubmit(checkpoint._id, operationId, submissionText, submissionFiles);
-      setSubmissionText('');
-      setSubmissionFiles([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="admin-submission-form">
-      <div className="form-header">
-        <h4>Admin Submission</h4>
-        <p className="form-subtitle">Upload files/text for this checkpoint</p>
-      </div>
-      
-      <div className="form-group">
-        <label className="form-label">Submission Notes:</label>
-        <textarea
-          value={submissionText}
-          onChange={(e) => setSubmissionText(e.target.value)}
-          placeholder="Enter submission notes..."
-          className="form-textarea"
-          rows={4}
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Upload Files (Multiple allowed):</label>
-        <div className="file-upload-area">
-          <label className="file-upload-label">
-            <FiUpload size={20} />
-            <span>Choose Files</span>
-            <input
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              className="file-input"
-              accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.mp4,.mov,.webm"
-            />
-          </label>
-          {submissionFiles.length > 0 && (
-            <div className="selected-files">
-              <p className="files-count">{submissionFiles.length} file(s) selected</p>
-              <ul className="files-list">
-                {submissionFiles.map((file, index) => (
-                  <li key={index} className="file-item">
-                    <FiFileText size={14} />
-                    <span>{file.name}</span>
-                    <span className="file-size">({Math.round(file.size / 1024)} KB)</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="form-actions">
-        <button
-          className="action-btn submit-btn"
-          onClick={handleSubmit}
-          disabled={loading || (!submissionText.trim() && submissionFiles.length === 0)}
-        >
-          <FiSend size={16} />
-          <span>{loading ? 'Submitting...' : 'Submit as Admin'}</span>
-        </button>
-        <button
-          className="action-btn cancel-btn"
-          onClick={onCancel}
-          disabled={loading}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// FIXED: Updated getFileIcon function to handle file objects
-const getFileIcon = (file) => {
-  // Handle null/undefined
-  if (!file) {
-    return <FiFile size={20} />;
-  }
-
-  let fileUrl = null;
-
-  // If it's a string, use it directly
-  if (typeof file === "string") {
-    fileUrl = file;
-  } 
-  // If it's an object with url property (like from Cloudinary)
-  else if (file?.url && typeof file.url === "string") {
-    fileUrl = file.url;
-  }
-  // If it's an object with fileUrl property
-  else if (file?.fileUrl && typeof file.fileUrl === "string") {
-    fileUrl = file.fileUrl;
-  }
-  else {
-    // If we can't extract a URL, return default icon
-    return <FiFile size={20} />;
-  }
-
-  // Check by file extension
-  if (/\.(jpeg|jpg|gif|png|webp|bmp|svg)$/i.test(fileUrl)) {
-    return <FiImage size={20} />;
-  }
-  if (/\.(mp4|webm|mov|avi|mkv)$/i.test(fileUrl)) {
-    return <FiVideo size={20} />;
-  }
-  // Check by resource type for Cloudinary URLs
-  if (fileUrl.includes('/image/upload/')) {
-    return <FiImage size={20} />;
-  }
-  if (fileUrl.includes('/video/upload/')) {
-    return <FiVideo size={20} />;
-  }
-  
-  return <FiFileText size={20} />;
-};
-
-// Helper function for downloads
-const handleDownload = async (url, fileName) => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = fileName || 'document';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(blobUrl);
-    toast.success('Download started');
-  } catch (error) {
-    toast.error('Download failed');
-  }
-};
+// Helper: simple history timeline stays
 
 // History Timeline Component
 const HistoryTimeline = ({ history }) => {
@@ -251,49 +88,42 @@ const CheckpointItem = ({
   checkpoint,
   operationId,
   orderId,
-  onApprove,
-  onReject,
   onFinalApprove,
-  onAdminSubmit,
   onPreviewFile,
-  isAdminSubmitting,
-  onAdminSubmittingToggle
 }) => {
   const [showHistory, setShowHistory] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Prevent background scroll and layout shift when modal is open
+  useEffect(() => {
+    if (showConfirm) {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      // lock body scroll and preserve scrollbar space to avoid layout shift
+      document.body.style.overflow = 'hidden';
+      if (scrollBarWidth > 0) document.body.style.paddingRight = `${scrollBarWidth}px`;
+      // add modal-open class to root to disable background hover/interaction
+      document.documentElement.classList.add('modal-open');
+    } else {
+      // restore
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      document.documentElement.classList.remove('modal-open');
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      document.documentElement.classList.remove('modal-open');
+    };
+  }, [showConfirm]);
 
   const getCheckpointStatusColor = (status) => {
-    const colors = {
-      SUBMITTED: 'status-submitted',
-      QC_APPROVED: 'status-qc-approved',
-      COMPLETED: 'status-completed',
-      APPROVED: 'status-approved',
-      REJECTED: 'status-rejected',
-      PENDING: 'status-pending',
-      QC_REJECTED: 'status-rejected',
-    };
-    return colors[status] || 'status-pending';
+    return status === 'COMPLETED' ? 'status-completed' : 'status-pending';
   };
 
   const getStatusBadgeVariant = (status) => {
-    const variants = {
-      SUBMITTED: 'badge-yellow',
-      QC_APPROVED: 'badge-blue',
-      COMPLETED: 'badge-green',
-      QC_REJECTED: 'badge-red',
-      REJECTED: 'badge-red',
-      PENDING: 'badge-gray',
-    };
-    return variants[status] || 'badge-gray';
-  };
-
-  // Helper function to get file name from URL or object
-  const getFileName = (file) => {
-    if (typeof file === 'string') {
-      return file.split('/').pop();
-    } else if (file?.url) {
-      return file.url.split('/').pop();
-    }
-    return 'File';
+    return status === 'COMPLETED' ? 'badge-green' : 'badge-gray';
   };
 
   return (
@@ -308,102 +138,11 @@ const CheckpointItem = ({
         </div>
         <div className="checkpoint-meta">
           <span className={`status-badge ${getStatusBadgeVariant(checkpoint.status)}`}>
-            {checkpoint.status}
+            {checkpoint.status === 'COMPLETED' ? 'Completed' : 'Pending'}
           </span>
-          {checkpoint.qcRequired && (
-            <span className="qc-badge">QC Required</span>
-          )}
         </div>
       </div>
-      
-      {/* Submission Display Section */}
-      {(checkpoint.status === 'SUBMITTED' || checkpoint.status === 'QC_APPROVED' || checkpoint.status === 'COMPLETED') && (
-        <div className="submission-display">
-          {checkpoint.submissionText && (
-            <div className="submission-text-content">
-              <h4 className="submission-text-label">Submission Notes</h4>
-              <p className="submission-text">
-                {checkpoint.submissionText}
-              </p>
-            </div>
-          )}
-          
-          {checkpoint.submissionFiles && checkpoint.submissionFiles.length > 0 && (
-            <div className="submission-files-display">
-              <h4 className="submission-files-label">Submitted Files</h4>
-              <div className="files-grid">
-                {checkpoint.submissionFiles.map((file, index) => (
-                  <div key={index} className="file-card">
-                    <div className="file-icon">
-                      {getFileIcon(file)}
-                    </div>
-                    <div className="file-info">
-                      <p className="file-name">{getFileName(file)}</p>
-                      <div className="file-actions">
-                        <button
-                          className="file-action-btn view-btn"
-                          onClick={() => {
-                            // Pass the file object or URL to preview
-                            const previewFile = typeof file === 'string' ? file : file.url;
-                            onPreviewFile(previewFile);
-                          }}
-                        >
-                          <FiEye size={14} />
-                          <span>View</span>
-                        </button>
-                        <button
-                          className="file-action-btn download-btn"
-                          onClick={() => {
-                            const fileUrl = typeof file === 'string' ? file : file.url;
-                            handleDownload(fileUrl, `checkpoint-${checkpoint.name}-${index}`);
-                          }}
-                        >
-                          <FiDownload size={14} />
-                          <span>Download</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
-      {/* Admin Submission Button for PENDING/REJECTED status */}
-      {(checkpoint.status === 'PENDING' || checkpoint.status === 'REJECTED' || checkpoint.status === 'QC_REJECTED') && (
-        <div className="admin-submission-section">
-          {isAdminSubmitting ? (
-            <AdminSubmissionForm
-              checkpoint={checkpoint}
-              operationId={operationId}
-              orderId={orderId}
-              onSubmit={onAdminSubmit}
-              onCancel={onAdminSubmittingToggle}
-            />
-          ) : (
-            <button
-              className="admin-submit-btn"
-              onClick={onAdminSubmittingToggle}
-            >
-              <FiPlus size={14} />
-              <span>Admin: Upload Submission</span>
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Checkpoint Review Section */}
-      <CheckpointReview
-        checkpoint={checkpoint}
-        operationId={operationId}
-        orderId={orderId}
-        onApprove={onApprove}
-        onReject={onReject}
-        onFinalApprove={onFinalApprove}
-        onPreview={onPreviewFile}
-      />
 
       {/* History Audit Trail Section */}
       {checkpoint.history && checkpoint.history.length > 0 && (

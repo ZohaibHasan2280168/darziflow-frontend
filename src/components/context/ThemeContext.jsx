@@ -14,7 +14,11 @@ export const ThemeProvider = ({ children }) => {
 
   // Update HTML body class & localStorage
   useEffect(() => {
-    document.documentElement.className = theme; // or document.body
+    // set classes safely so we don't clobber other classes
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+    document.body.classList.remove('light', 'dark');
+    document.body.classList.add(theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
 

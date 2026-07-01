@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 
-const CheckpointReview = ({ 
-  checkpoint, 
-  operationId, 
-  orderId, 
-  onApprove, 
+const CheckpointReview = ({
+  checkpoint,
+  operationId,
+  orderId,
+  onApprove,
   onReject,
   onFinalApprove,
-  onPreview 
+  onPreview
 }) => {
   const [rejectComment, setRejectComment] = useState('');
   const [showRejectInput, setShowRejectInput] = useState(false);
@@ -25,21 +25,14 @@ const CheckpointReview = ({
     }
   };
 
-  const handleFinalApprove = async () => {
-    setLoading(true);
-    try {
-      await onFinalApprove(checkpoint._id, operationId);
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleReject = async () => {
     if (!rejectComment.trim()) {
       toast.error('Please provide a rejection comment');
       return;
     }
-    
+
     setLoading(true);
     try {
       await onReject(checkpoint._id, operationId, rejectComment);
@@ -50,7 +43,7 @@ const CheckpointReview = ({
     }
   };
 
-  const shouldShowSubmission = checkpoint.status === 'SUBMITTED' || checkpoint.status === 'QC_APPROVED';
+  const shouldShowSubmission = checkpoint.status === 'SUBMITTED';
 
   if (!shouldShowSubmission) return null;
 
@@ -58,8 +51,8 @@ const CheckpointReview = ({
     <div className="checkpoint-review-section">
       <div className="review-section-header">
         <h4>Review Submission</h4>
-        <span className={`review-badge ${checkpoint.status === 'QC_APPROVED' ? 'qc-approved-badge' : 'submitted-badge'}`}>
-          {checkpoint.status === 'QC_APPROVED' ? 'QC Approved - Awaiting Final Approval' : 'Awaiting QC Review'}
+        <span className="review-badge submitted-badge">
+          Awaiting QC Review
         </span>
       </div>
 
@@ -74,7 +67,7 @@ const CheckpointReview = ({
             >
               Approve QC
             </button>
-            
+
             <div className="reject-section">
               {showRejectInput ? (
                 <div className="reject-input-group">
@@ -116,15 +109,6 @@ const CheckpointReview = ({
               )}
             </div>
           </>
-        ) : checkpoint.status === 'QC_APPROVED' ? (
-          <button
-            className="action-btn final-approve-btn"
-            onClick={handleFinalApprove}
-            disabled={loading}
-          >
-            <FiCheckCircle size={16} />
-            <span>Mark as COMPLETED</span>
-          </button>
         ) : null}
       </div>
     </div>

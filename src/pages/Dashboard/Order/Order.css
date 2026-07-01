@@ -1,26 +1,5 @@
 /* OrderDetailPage.css */
 
-/* Color Palette */
-:root {
-  --bg-dark: #080a12;
-  --bg-darker: #0f1119;
-  --bg-card: #111827;
-  --bg-card-hover: #1a1f35;
-  --border-subtle: #1f2937;
-  --border-light: #374151;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --accent-blue: #3b82f6;
-  --accent-blue-light: #60a5fa;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-red: #ef4444;
-  --accent-purple: #8b5cf6;
-  --accent-cyan: #06b6d4;
-  --accent-pink: #ec4899;
-}
-
 /* Reset & Base Styles */
 * {
   margin: 0;
@@ -35,7 +14,7 @@ body {
 /* Main Container */
 .order-detail-wrapper {
   min-height: 100vh;
-  background: var(--bg-dark);
+  background: var(--main-bg);
   color: var(--text-primary);
   padding: 40px;
   position: relative;
@@ -169,8 +148,8 @@ body {
 }
 
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -180,8 +159,8 @@ body {
 }
 
 .stat-card:hover {
-  border-color: var(--accent-blue);
-  background: var(--bg-card-hover);
+  border-color: rgb(var(--color-primary));
+  background: var(--card-hover-bg);
   transform: translateY(-4px);
 }
 
@@ -196,8 +175,8 @@ body {
 }
 
 .stat-icon.category-icon {
-  background: rgba(59, 130, 246, 0.15);
-  color: var(--accent-blue);
+  background: rgba(var(--color-primary), 0.15);
+  color: rgb(var(--color-primary));
 }
 
 .stat-icon.price-icon {
@@ -477,6 +456,50 @@ body {
   gap: 6px;
   transition: all 0.2s ease;
   text-transform: capitalize;
+}
+
+/* Review actions container (checkpoint actions) */
+.review-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  justify-content: center; /* center action buttons */
+}
+
+/* Final Approve button: compact, centered, themed */
+.action-btn.final-approve-btn {
+  flex: 0 0 auto; /* don't stretch */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  min-width: 160px;
+  max-width: 260px;
+  background: linear-gradient(90deg, var(--accent-purple, #6b21a8), var(--accent-blue, #2563eb));
+  color: #fff;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 22px rgba(37,99,235,0.14);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  white-space: nowrap;
+}
+.action-btn.final-approve-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.action-btn.final-approve-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(37,99,235,0.18); }
+
+/* Use calmer tone in dark mode if needed */
+:root.dark .action-btn.final-approve-btn,
+html.dark .action-btn.final-approve-btn,
+body.dark .action-btn.final-approve-btn {
+  box-shadow: 0 10px 26px rgba(2,6,23,0.6);
+}
+
+/* Small screens: allow button to shrink but keep padding */
+@media (max-width: 420px) {
+  .action-btn.final-approve-btn { min-width: 0; padding: 9px 14px; font-size: 14px; }
 }
 
 .action-btn:disabled {
@@ -1662,6 +1685,172 @@ body {
   padding: 24px;
   min-height: 400px;
 }
+
+/* Confirmation Modal for Final Approve */
+.confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1400;
+  background: rgba(2,6,23,0.75); /* fallback */
+  pointer-events: auto; /* capture pointer so underlying page doesn't react */
+  overflow: hidden; /* prevent underlying scroll while modal open */
+  width: 100vw; /* full viewport to avoid layout shifts */
+  height: 100vh;
+  top: 0;
+  left: 0;
+  touch-action: none;
+}
+
+/* Respect app theme when dark/light classes or variables are present */
+:root.dark .confirm-modal-overlay,
+html.dark .confirm-modal-overlay,
+body.dark .confirm-modal-overlay {
+  background: rgba(2,6,23,0.75) !important;
+}
+
+:root.light .confirm-modal-overlay,
+html.light .confirm-modal-overlay,
+body.light .confirm-modal-overlay {
+  background: rgba(0,0,0,0.25) !important;
+}
+
+.confirm-modal {
+  width: 100%;
+  max-width: 460px;
+  background: var(--card-bg, #0b1220);
+  color: var(--text-primary, #e6eef8);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow, 0 18px 40px rgba(2,6,23,0.7));
+  padding: 20px 22px;
+  /* Fix center positioning and avoid layout shifts */
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  border: 1px solid var(--border-light, rgba(255,255,255,0.04));
+  max-height: 80vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure explicit theme overrides if app toggles dark/light via html/body classes */
+:root.light .confirm-modal,
+html.light .confirm-modal,
+body.light .confirm-modal {
+  background: var(--card-bg, #ffffff) !important;
+  color: var(--text-primary, #111827) !important;
+  border: 1px solid var(--border-light, rgba(17,24,39,0.06)) !important;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.08) !important;
+}
+
+:root.dark .confirm-modal,
+html.dark .confirm-modal,
+body.dark .confirm-modal {
+  background: var(--card-bg, rgba(255,255,255,0.03)) !important;
+  color: var(--text-primary, #e6eef8) !important;
+  border: 1px solid var(--border-light, rgba(255,255,255,0.04)) !important;
+  box-shadow: var(--card-shadow, 0 18px 40px rgba(2,6,23,0.7)) !important;
+}
+
+/* When modal is open, prevent background hover/interaction to avoid visual jitter */
+body.modal-open .department-card,
+body.modal-open .operation-card,
+body.modal-open .checkpoint-item,
+body.modal-open .document-card,
+body.modal-open .dept-tab,
+body.modal-open .doc-header,
+body.modal-open .department-header {
+  pointer-events: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Remove hover/transform effects on background while modal open */
+body.modal-open .department-card:hover,
+body.modal-open .operation-card:hover,
+body.modal-open .document-card:hover,
+body.modal-open .dept-tab:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Reduce transitions which can cause visible movement */
+body.modal-open .department-card,
+body.modal-open .operation-card,
+body.modal-open .document-card,
+body.modal-open .checkpoint-item {
+  transition: none !important;
+}
+
+.confirm-modal-header { margin-bottom: 8px; }
+.confirm-modal-title { font-size: 18px; margin: 0; font-weight: 600; }
+.confirm-modal-body { padding: 14px 0; font-size: 14px; color: var(--text-muted); }
+.confirm-modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+
+.btn-confirm {
+  /* primary red button like sample */
+  background: #ef4444;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  min-width: 92px;
+}
+.btn-confirm:hover { background: #dc2626; }
+.btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-cancel {
+  /* Default: follow variables; dark will override below */
+  background: transparent;
+  color: var(--text-primary, #e6eef8);
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+}
+.btn-cancel:hover { background: rgba(255,255,255,0.03); }
+
+/* Dark mode outlined cancel for visibility */
+:root.dark .confirm-modal .btn-cancel,
+html.dark .confirm-modal .btn-cancel,
+body.dark .confirm-modal .btn-cancel {
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  color: var(--text-secondary, #bcd4f6) !important;
+}
+
+/* Light mode: white filled cancel button */
+:root.light .confirm-modal .btn-cancel,
+html.light .confirm-modal .btn-cancel,
+body.light .confirm-modal .btn-cancel {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15,23,42,0.06) !important;
+}
+
+/* Final Approve button style override to avoid full-width */
+.final-approve-btn {
+  width: auto !important;
+  padding: 10px 18px;
+  min-width: 140px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(139,92,246,0.08));
+  color: var(--text-primary);
+  border: 1px solid rgba(255,255,255,0.04);
+  display: inline-block;
+  text-align: center;
+}
+.final-approve-btn:hover { box-shadow: 0 6px 18px rgba(99,102,241,0.12); }
 
 .preview-image {
   max-width: 100%;

@@ -1,16 +1,27 @@
-// Centralized API base that works with both Vite and CRA env formats
-let viteUrl;
-try {
-  // Access import.meta.env inside try/catch to avoid parser issues in non-Vite environments
-  viteUrl = import.meta && import.meta.env && import.meta.env.VITE_API_BASE_URL;
-} catch (e) {
-  // import.meta may not exist in some environments — fall back to undefined
-  viteUrl = undefined;
-}
+// constants.js
+const getBaseUrl = () => {
+  let url;
 
-const processUrl = (typeof process !== 'undefined' && process.env)
-  ? (process.env.REACT_APP_API_BASE_URL || process.env.VITE_API_BASE_URL)
-  : undefined;
+  // Check for Vite
+  if (import.meta && import.meta.env && (import.meta.env.VITE_AZURE_BASE_URL || import.meta.env.VITE_API_BASE_URL)) {
+    url = import.meta.env.VITE_AZURE_BASE_URL || import.meta.env.VITE_API_BASE_URL;
+  }
+  // Check for Create React App
+  else if (process.env && (process.env.REACT_APP_AZURE_BASE_URL || process.env.REACT_APP_API_BASE_URL)) {
+    url = process.env.REACT_APP_AZURE_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+  }
+  // Check for process.env.VITE (sometimes used in hybrid setups)
+  else if (process.env && (process.env.VITE_AZURE_BASE_URL || process.env.VITE_API_BASE_URL)) {
+    url = process.env.VITE_AZURE_BASE_URL || process.env.VITE_API_BASE_URL;
+  }
 
-export const API_BASE = processUrl || viteUrl || 'https://darziflow-backend.onrender.com/api';
+  // Fallback if not configured or resolved as string 'undefined'
+  if (!url || url === "undefined") {
+    return 'https://darziflowbackend-buagfcfpfveadmgm.centralindia-01.azurewebsites.net/api';
+  }
+
+  return url;
+};
+
+export const API_BASE = getBaseUrl();
 export default API_BASE;

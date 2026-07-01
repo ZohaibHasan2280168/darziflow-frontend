@@ -2,33 +2,261 @@
 /* ORDERS LIST PAGE     */
 /* ==================== */
 
-/* CSS Variables */
-:root {
-  --ol-bg-primary: #0a0c14;
-  --ol-bg-card: #111827;
-  --ol-bg-elevated: #1a1f2e;
-  --ol-bg-hover: #1e2536;
-  --ol-border: rgba(255, 255, 255, 0.06);
-  --ol-border-hover: rgba(255, 255, 255, 0.12);
-  --ol-text-primary: #f8fafc;
-  --ol-text-secondary: #cbd5e1;
-  --ol-text-muted: #64748b;
-  --ol-accent-blue: #3b82f6;
-  --ol-accent-blue-light: #60a5fa;
-  --ol-accent-emerald: #10b981;
-  --ol-accent-amber: #f59e0b;
-  --ol-accent-purple: #8b5cf6;
-  --ol-accent-red: #ef4444;
-  --ol-accent-cyan: #06b6d4;
+/* Modal - theme-aware overrides to ensure visibility in light and dark modes */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(64px + 20px) 24px 24px 24px;
+  z-index: 1400;
+  background: rgba(2, 6, 23, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
 }
+
+:root.light .modal-backdrop {
+  background: rgba(15, 23, 42, 0.06);
+  backdrop-filter: blur(8px) saturate(110%);
+}
+
+.modal-container {
+  width: min(1100px, 94%);
+  max-height: calc(100vh - (var(--navbar-height, 64px) + 120px));
+  overflow: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure modal form controls always inherit readable text color regardless of other global rules */
+.modal-container input,
+.modal-container textarea,
+.modal-container select,
+.modal-container .form-input,
+.modal-container .form-textarea,
+.modal-container .combo-input {
+  color: var(--text-primary) !important;
+  background: var(--card-bg) !important;
+  caret-color: var(--text-primary) !important;
+}
+
+.modal-container input::placeholder,
+.modal-container textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+:root.light .modal-container {
+  background: #ffffff;
+  /* ensure white form background in light mode */
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+/* stronger side shadows to separate modal from page */
+.modal-container {
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.08), 0 2px 8px rgba(2, 6, 23, 0.04);
+  /* slightly higher stacking so it sits above header shadow */
+  position: relative;
+  z-index: 1401;
+}
+
+/* Dark mode: make modal border and inputs more visible against dark background */
+:root.dark .modal-container {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(11, 15, 23, 0.85);
+}
+
+:root.dark .modal-form .form-input,
+:root.dark .modal-form .combo-input,
+:root.dark .modal-form .form-textarea,
+:root.dark .modal-form select {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+}
+
+/* Make the modal icon and step icons pop with accent color */
+.modal-icon svg,
+.step-circle svg {
+  color: var(--ol-accent-blue);
+}
+
+/* Ensure modal close button is clearly visible above header */
+.modal-close {
+  z-index: 1110;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 20px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.modal-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.modal-close {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Form controls inside modal */
+.modal-form .form-input,
+.modal-form .combo-input,
+.modal-form .form-textarea,
+.modal-form select {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+/* Input with leading icon (used for date, selects, etc.) */
+.modal-form .input-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-form .input-with-icon .input-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.modal-form .input-with-icon .form-input.with-icon,
+.modal-form .input-with-icon select {
+  flex: 1;
+  margin: 0;
+}
+
+.modal-form .form-input::placeholder,
+.modal-form .combo-input::placeholder,
+.modal-form .form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.modal-form .form-input.error,
+.modal-form .combo-input.error,
+.modal-form .form-textarea.error {
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.modal-body {
+  padding: 18px 22px;
+  padding-bottom: calc(var(--modal-footer-height, 72px) + 32px);
+  /* ensure bottom controls are not clipped */
+}
+
+.modal-footer {
+  --footer-pad: 14px;
+  padding: 14px 22px 22px 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--border-light);
+  position: sticky;
+  bottom: 0;
+  height: var(--modal-footer-height, 72px);
+  align-items: center;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), var(--card-bg));
+  backdrop-filter: blur(4px);
+  z-index: 1402;
+}
+
+/* Ensure form controls and labels use theme text colors */
+:root.light .modal-form .form-label,
+:root.light .modal-form .form-input,
+:root.light .modal-form .combo-input,
+:root.light .modal-form .form-textarea,
+:root.light .modal-form select {
+  color: var(--text-primary);
+}
+
+:root.dark .modal-form .form-label,
+:root.dark .modal-form .form-input,
+:root.dark .modal-form .combo-input,
+:root.dark .modal-form .form-textarea,
+:root.dark .modal-form select {
+  color: var(--text-primary);
+}
+
+/* Make textarea description tall enough to be visible */
+.modal-form .form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+}
+
+.modal-form .form-input::placeholder,
+.modal-form .form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.modal-container .apply-btn,
+.modal-container .btn-save {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-container .btn-cancel,
+.modal-container .btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Ensure scrollbars in modal are visible and match theme */
+.modal-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-container::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.25);
+  border-radius: 6px;
+}
+
 
 /* Page Container */
 .orders-page {
   min-height: 100vh;
-  background: var(--ol-bg-primary);
+  background: var(--body-bg);
   padding: 32px 40px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--ol-text-primary);
+  color: var(--text-primary);
 }
 
 /* Header */
@@ -49,9 +277,9 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--ol-bg-card);
-  border: 1px solid var(--ol-border);
-  color: var(--ol-text-secondary);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,9 +288,9 @@
 }
 
 .back-button:hover {
-  background: var(--ol-bg-elevated);
-  border-color: var(--ol-border-hover);
-  color: var(--ol-text-primary);
+  background: var(--card-hover-bg);
+  border-color: var(--border-default);
+  color: var(--text-primary);
 }
 
 .page-title {
@@ -70,7 +298,7 @@
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--ol-text-primary), var(--ol-text-secondary));
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -78,7 +306,7 @@
 
 .page-subtitle {
   font-size: 14px;
-  color: var(--ol-text-muted);
+  color: var(--text-muted);
   margin: 4px 0 0 0;
 }
 
@@ -87,7 +315,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, var(--ol-accent-blue), #2563eb);
+  background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-primary-hover)));
   border: none;
   border-radius: 12px;
   color: white;
@@ -95,7 +323,7 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 14px rgba(var(--color-primary), 0.3);
 }
 
 .create-btn:hover {
@@ -140,10 +368,21 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-.stat-total::before { background: linear-gradient(90deg, var(--ol-accent-blue), var(--ol-accent-cyan)); }
-.stat-ready::before { background: linear-gradient(90deg, var(--ol-accent-emerald), #34d399); }
-.stat-docs::before { background: linear-gradient(90deg, var(--ol-accent-amber), #fbbf24); }
-.stat-production::before { background: linear-gradient(90deg, var(--ol-accent-purple), #a78bfa); }
+.stat-total::before {
+  background: linear-gradient(90deg, var(--ol-accent-blue), var(--ol-accent-cyan));
+}
+
+.stat-ready::before {
+  background: linear-gradient(90deg, var(--ol-accent-emerald), #34d399);
+}
+
+.stat-docs::before {
+  background: linear-gradient(90deg, var(--ol-accent-amber), #fbbf24);
+}
+
+.stat-production::before {
+  background: linear-gradient(90deg, var(--ol-accent-purple), #a78bfa);
+}
 
 .stat-icon-wrap {
   width: 50px;
@@ -155,10 +394,25 @@
   flex-shrink: 0;
 }
 
-.stat-total .stat-icon-wrap { background: rgba(59, 130, 246, 0.15); color: var(--ol-accent-blue-light); }
-.stat-ready .stat-icon-wrap { background: rgba(16, 185, 129, 0.15); color: var(--ol-accent-emerald); }
-.stat-docs .stat-icon-wrap { background: rgba(245, 158, 11, 0.15); color: var(--ol-accent-amber); }
-.stat-production .stat-icon-wrap { background: rgba(139, 92, 246, 0.15); color: var(--ol-accent-purple); }
+.stat-total .stat-icon-wrap {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--ol-accent-blue-light);
+}
+
+.stat-ready .stat-icon-wrap {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--ol-accent-emerald);
+}
+
+.stat-docs .stat-icon-wrap {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--ol-accent-amber);
+}
+
+.stat-production .stat-icon-wrap {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--ol-accent-purple);
+}
 
 .stat-body {
   display: flex;
@@ -359,6 +613,16 @@
 }
 
 /* Status Badges */
+.status-exists {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+}
+
+.status-missing {
+  background: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+}
+
 .status-badge {
   display: inline-flex;
   padding: 6px 12px;
@@ -477,7 +741,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==================== */
@@ -507,17 +773,76 @@
   flex-direction: column;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   animation: modalSlideIn 0.3s ease;
+  background: var(--card-bg);
+  /* solid background so controls don't blur underlying inputs */
+  /* remove blur so description field remains readable */
 }
 
 .modal-container.modal-lg {
   max-width: 720px;
 }
 
+/* Stronger rule to ensure input text is dark in light mode (overrides inherited styles) */
+:root.light .modal-form .form-input,
+:root.light .modal-form .combo-input,
+:root.light .modal-form .form-textarea,
+:root.light .modal-form select,
+:root.light .modal-form input,
+:root.light .modal-form textarea {
+  color: var(--text-primary) !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-light) !important;
+}
+
+/* Extra-high specificity fallback: ensure any input/select/textarea inside modal uses dark text in light mode */
+:root.light .modal-container input,
+:root.light .modal-container textarea,
+:root.light .modal-container select,
+:root.light .modal-container .form-input,
+:root.light .modal-container .combo-input,
+:root.light .modal-container .form-textarea,
+html.light .modal-container input,
+html.light .modal-container textarea,
+html.light .modal-container select,
+html.light .modal-container .form-input,
+html.light .modal-container .combo-input,
+html.light .modal-container .form-textarea,
+body.light .modal-container input,
+body.light .modal-container textarea,
+body.light .modal-container select,
+body.light .modal-container .form-input,
+body.light .modal-container .combo-input,
+body.light .modal-container .form-textarea {
+  color: var(--text-primary) !important;
+  background: var(--card-bg) !important;
+  caret-color: var(--text-primary) !important;
+}
+
+:root.light .modal-container input::placeholder,
+:root.light .modal-container textarea::placeholder,
+html.light .modal-container input::placeholder,
+html.light .modal-container textarea::placeholder,
+body.light .modal-container input::placeholder,
+body.light .modal-container textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Buttons should be opaque so they don't blend with form content */
+.modal-footer .btn,
+.modal-footer .apply-btn,
+.modal-footer .btn-save,
+.modal-footer .btn-cancel {
+  backdrop-filter: none !important;
+  background-clip: padding-box;
+}
+
+
 @keyframes modalSlideIn {
   from {
     opacity: 0;
     transform: translateY(20px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -534,103 +859,117 @@
 
 .modal-title-group {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  gap: 14px;
 }
 
 .modal-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ol-accent-blue-light);
-  flex-shrink: 0;
 }
 
 .modal-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--ol-text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .modal-subtitle {
   font-size: 13px;
-  color: var(--ol-text-muted);
-  margin: 4px 0 0 0;
+  color: var(--text-muted);
 }
 
 .modal-close {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: var(--ol-bg-elevated);
-  border: 1px solid var(--ol-border);
-  color: var(--ol-text-muted);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
 .modal-close:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--ol-accent-red);
-  border-color: rgba(239, 68, 68, 0.3);
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
-/* Step Progress Indicator */
+/* Step Progress Bar */
 .step-progress {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 24px;
-  background: var(--ol-bg-primary);
-  border-bottom: 1px solid var(--ol-border);
-  gap: 8px;
+  padding: 20px 40px;
+  background: var(--bg-darker);
+  border-bottom: 1px solid var(--border-light);
+  gap: 10px;
 }
 
 .step-item {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
-  cursor: default;
+  gap: 10px;
   position: relative;
 }
 
-.step-item.completed {
-  cursor: pointer;
-}
-
 .step-circle {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: var(--ol-bg-elevated);
-  border: 2px solid var(--ol-border);
+  background: var(--bg-surface);
+  border: 2px solid var(--border-default);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ol-text-muted);
+  font-weight: 600;
+  font-size: 13px;
   transition: all 0.3s ease;
-  flex-shrink: 0;
+  z-index: 2;
+}
+
+.step-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.step-line {
+  position: absolute;
+  left: 32px;
+  right: -10px;
+  top: 50%;
+  height: 2px;
+  background: var(--border-default);
+  transform: translateY(-50%);
+  z-index: 1;
 }
 
 .step-item.active .step-circle {
-  background: linear-gradient(135deg, var(--ol-accent-blue), #2563eb);
-  border-color: var(--ol-accent-blue);
-  color: white;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  border-color: #6366f1;
+  background: #6366f1;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.step-item.active .step-label {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .step-item.completed .step-circle {
-  background: var(--ol-accent-emerald);
-  border-color: var(--ol-accent-emerald);
-  color: white;
+  border-color: #10b981;
+  background: #10b981;
+  color: #fff;
 }
 
 .step-label {
@@ -656,9 +995,9 @@
   margin: 0 4px;
 }
 
-.step-item.completed + .step-item .step-line,
+.step-item.completed+.step-item .step-line,
 .step-item.completed .step-line {
-  background: var(--ol-accent-emerald);
+  background: #10b981;
 }
 
 .modal-form {
@@ -671,13 +1010,13 @@
 .modal-body {
   padding: 24px;
   overflow-y: auto;
-  flex: 1;
-  max-height: 50vh;
+  max-height: 55vh;
 }
 
-/* Form Step Styles */
 .form-step {
-  animation: fadeIn 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 @keyframes fadeIn {
@@ -685,6 +1024,7 @@
     opacity: 0;
     transform: translateX(10px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -700,7 +1040,7 @@
   border-bottom: 1px solid var(--ol-border);
 }
 
-.step-header > svg {
+.step-header>svg {
   color: var(--ol-accent-blue);
   margin-top: 2px;
   flex-shrink: 0;
@@ -723,30 +1063,94 @@
   margin-bottom: 24px;
 }
 
-.form-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ol-text-secondary);
-  margin-bottom: 8px;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.form-label .required {
-  color: var(--ol-accent-red);
+.form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.required {
+  color: #ef4444;
 }
 
 .form-input,
-.form-select,
-.form-textarea {
+.form-textarea,
+.form-select {
   width: 100%;
-  padding: 14px 16px;
-  background: var(--ol-bg-elevated);
-  border: 1px solid var(--ol-border);
-  border-radius: 12px;
-  color: #f1f5f9;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-primary);
   font-size: 14px;
-  transition: all 0.2s ease;
-  -webkit-text-fill-color: #f1f5f9;
+  transition: all 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Overrides: ensure modal starts below navbar and sequence uses page scrollbar only */
+
+/* Keep modal below navbar and avoid nested/extra scrollbars */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start !important;
+  /* lift modal slightly by reducing top padding */
+  padding: calc(var(--navbar-height, 64px) - 30px) 24px 1px 24px !important;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* Make modal container sit clearly below navbar */
+.modal-container {
+  margin-top: calc(var(--navbar-height, 64px) - 26px) !important;
+  /* slightly increase height so bottom area becomes visible */
+  height: calc(100vh - var(--navbar-height, 64px) - 4px) !important;
+  max-height: calc(100vh - var(--navbar-height, 64px) - 4px) !important;
+  overflow: visible !important;
+}
+
+/* Remove inner scrollbar from sequence list so only modal/page scroll is used */
+.workflow-sequence .sequence-list,
+.sequence-list {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Make the select show dropdown arrow and rounded pill look like AddUser UI */
+.modal-form .form-select {
+  border-radius: 14px;
+  padding: 12px 44px 12px 16px;
+  /* room for arrow */
+  background-image: linear-gradient(45deg, transparent 50%, rgba(0, 0, 0, 0.04) 50%), linear-gradient(135deg, rgba(0, 0, 0, 0.04) 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 6px), calc(100% - 10px) calc(50% - 6px);
+  background-size: 8px 8px, 8px 8px;
+  background-repeat: no-repeat;
+}
+
+/* Ensure modal content doesn't get hidden under navbar on small screens */
+@media (max-width: 1024px) {
+  .modal-backdrop {
+    padding-top: calc(var(--navbar-height, 64px) + 12px);
+  }
+
+  .modal-container {
+    max-width: 92%;
+  }
 }
 
 .form-input::placeholder,
@@ -760,13 +1164,7 @@
   color: #f1f5f9;
 }
 
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-  outline: none;
-  border-color: var(--ol-accent-blue);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
+
 
 .form-input.error,
 .form-select.error {
@@ -781,12 +1179,11 @@
 }
 
 .error-message {
+  color: #ef4444;
+  font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ol-accent-red);
-  margin-top: 6px;
+  gap: 4px;
 }
 
 /* Input with Icon */
@@ -807,49 +1204,33 @@
   padding-left: 46px;
 }
 
-/* Input Combo (Currency + Amount) */
+/* Combo inputs for currency metrics */
 .input-combo {
   display: flex;
-  align-items: stretch;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .combo-prefix {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 16px;
-  min-width: 90px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.08));
-  border: 1px solid var(--ol-border);
-  border-right: none;
-  border-radius: 12px 0 0 12px;
-  color: #93c5fd;
+  padding: 0 12px;
+  background: var(--bg-darker);
+  border: none;
+  border-right: 1px solid var(--border-default);
+  color: var(--text-secondary);
   font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  -webkit-text-fill-color: #93c5fd;
-  transition: all 0.2s ease;
-}
-
-.combo-prefix:focus {
-  outline: none;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.15));
-}
-
-.combo-prefix option {
-  background: #1e293b;
-  color: #f1f5f9;
 }
 
 .combo-input {
   flex: 1;
-  padding: 14px 16px;
-  background: var(--ol-bg-elevated);
-  border: 1px solid var(--ol-border);
-  border-radius: 0 12px 12px 0;
-  color: #f1f5f9;
-  font-size: 14px;
-  -webkit-text-fill-color: #f1f5f9;
+  border: none;
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.combo-input:focus {
+  outline: none;
 }
 
 .combo-input::placeholder {
@@ -857,11 +1238,6 @@
   -webkit-text-fill-color: #64748b;
 }
 
-.combo-input:focus {
-  outline: none;
-  border-color: var(--ol-accent-blue);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
 
 .combo-input.error {
   border-color: var(--ol-accent-red);
@@ -889,21 +1265,9 @@
   transition: all 0.2s ease;
 }
 
-.garment-type-btn:hover {
-  border-color: var(--ol-border-hover);
-  background: var(--ol-bg-hover);
-}
 
-.garment-type-btn.selected {
-  border-color: var(--ol-accent-blue);
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--ol-accent-blue-light);
-}
 
-.garment-label {
-  font-size: 12px;
-  font-weight: 600;
-}
+
 
 /* Client Preview Card */
 .client-preview-card {
@@ -999,7 +1363,7 @@
   opacity: 0.7;
 }
 
-.sequence-item {
+  {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -1316,41 +1680,45 @@
   flex: 1;
 }
 
+/* FIXED ADDER ROW: Prevents buttons from cutting off */
 .adder-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
 }
 
-.adder-row input,
-.adder-row select {
+.adder-row .form-input,
+.adder-row .form-select {
   flex: 1;
-  padding: 12px 14px;
-  background: var(--ol-bg-elevated);
-  border: 1px solid var(--ol-border);
-  border-radius: 10px;
-  color: var(--ol-text-primary);
-  font-size: 14px;
+  min-width: 0;
+  /* Prevents text overflow breaking layouts */
 }
 
-.add-btn {
+.adder-row .add-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 10px 18px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 18px;
-  background: var(--ol-accent-blue);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+  transition: background 0.2s;
 }
 
-.add-btn:hover {
-  background: #2563eb;
+.adder-row .add-btn:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.adder-row .add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Sequence Container */
@@ -1372,15 +1740,111 @@
   padding: 12px;
 }
 
-.sequence-item {
+.sequence-item,
+.document-upload-card-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+/* Polished select and dropdown styles to match Add User UI */
+.modal-form .form-select,
+.adder-row select {
+  padding: 12px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+  transition: all 0.18s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.modal-form .form-select:focus,
+.adder-row select:focus {
+  outline: none;
+  border-color: var(--ol-accent-blue);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+}
+
+/* Make the add row layout more balanced on small widths */
+.adder-row {
+  align-items: center;
+}
+
+/* Sequence action buttons (move up/down, remove) - polished */
+.sequence-actions,
+.doc-upload-action-hub {
+  display: flex;
+  gap: 6px;
+}
+
+.sequence-actions .sequence-move,
+.sequence-actions .sequence-remove {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background: var(--ol-bg-elevated);
   border: 1px solid var(--ol-border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  margin-bottom: 8px;
+  color: var(--ol-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.sequence-actions .sequence-move:hover,
+.sequence-actions .sequence-remove:hover {
+  background: var(--ol-bg-hover);
+  color: var(--text-primary);
+  border-color: var(--ol-border-hover);
+  transform: translateY(-2px);
+}
+
+.sequence-actions button,
+.doc-row-purge {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.sequence-actions button:hover,
+.doc-row-purge:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.sequence-actions .sequence-remove {
+  border-color: rgba(239, 68, 68, 0.12);
+}
+
+.sequence-actions .sequence-remove:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--ol-accent-red);
+  border-color: rgba(239, 68, 68, 0.28);
+}
+
+/* Make department name more prominent */
+.sequence-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Ensure the sequence card uses smoother corners */
+.sequence-list .sequence-item {
+  border-radius: 12px;
 }
 
 .sequence-item:last-child {
@@ -1453,6 +1917,27 @@
   color: var(--ol-accent-blue-light);
 }
 
+.doc-type-badge {
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+  font-weight: 600;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+/* Suggestion fields auto audit */
+.field-suggestion-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 .doc-tag svg {
   cursor: pointer;
   color: var(--ol-accent-red);
@@ -1464,36 +1949,32 @@
   opacity: 1;
 }
 
-/* Modal Footer */
+/* Footer layout logic */
 .modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-light);
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 20px 24px;
-  background: var(--ol-bg-primary);
-  border-top: 1px solid var(--ol-border);
 }
 
-.footer-left,
-.footer-right {
+.footer-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.btn-secondary {
+.footer-right {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: var(--ol-bg-elevated);
-  border: 1px solid var(--ol-border);
-  border-radius: 10px;
-  color: var(--ol-text-secondary);
-  font-weight: 600;
-  font-size: 14px;
+  gap: 12px;
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
@@ -1502,15 +1983,12 @@
 }
 
 .btn-ghost {
-  padding: 12px 20px;
   background: transparent;
-  border: none;
-  border-radius: 10px;
-  color: var(--ol-text-muted);
-  font-weight: 600;
-  font-size: 14px;
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .btn-ghost:hover {
@@ -1519,19 +1997,15 @@
 }
 
 .btn-primary {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, var(--ol-accent-blue), #2563eb);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
 }
 
 .btn-primary:hover {
@@ -1539,13 +2013,12 @@
   transform: translateY(-1px);
 }
 
-.btn-primary.btn-success {
-  background: linear-gradient(135deg, var(--ol-accent-emerald), #059669);
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+.btn-success {
+  background: #10b981;
 }
 
-.btn-primary.btn-success:hover {
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+.btn-success:hover {
+  background: #059669;
 }
 
 .btn-primary.btn-create {
@@ -1626,6 +2099,7 @@
 }
 
 @media (max-width: 480px) {
+
   .orders-table th:nth-child(2),
   .orders-table td:nth-child(2) {
     display: none;
@@ -1760,8 +2234,10 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   animation: modalSlideIn 0.3s ease;
   /* FIX: Make modal height dynamic */
-  max-height: 85vh; /* Reduced from 90vh for better breathing room */
-  min-height: 400px; /* Minimum height */
+  max-height: 85vh;
+  /* Reduced from 90vh for better breathing room */
+  min-height: 400px;
+  /* Minimum height */
 }
 
 .modal-container.modal-lg {
@@ -1773,6 +2249,7 @@
     opacity: 0;
     transform: translateY(20px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1787,7 +2264,8 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0; /* Crucial for flexbox scrolling */
+  min-height: 0;
+  /* Crucial for flexbox scrolling */
   overflow: hidden;
 }
 
@@ -1795,9 +2273,11 @@
   padding: 24px;
   /* FIX: Make body flexible with auto height */
   flex: 1;
-  min-height: 0; /* Crucial for flexbox scrolling */
+  min-height: 0;
+  /* Crucial for flexbox scrolling */
   overflow-y: auto;
-  max-height: none !important; /* Remove fixed max-height */
+  max-height: none !important;
+  /* Remove fixed max-height */
   display: flex;
   flex-direction: column;
 }
@@ -1805,7 +2285,8 @@
 .form-step {
   /* FIX: Make form step flexible */
   flex: 1;
-  min-height: 0; /* Allow shrinking */
+  min-height: 0;
+  /* Allow shrinking */
   display: flex;
   flex-direction: column;
   animation: fadeIn 0.3s ease;
@@ -1816,6 +2297,7 @@
     opacity: 0;
     transform: translateX(10px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -1827,8 +2309,10 @@
 /* ==================== */
 
 .form-group {
-  margin-bottom: 20px; /* Reduced from 24px for more compact layout */
-  flex-shrink: 0; /* Prevent form groups from shrinking */
+  margin-bottom: 20px;
+  /* Reduced from 24px for more compact layout */
+  flex-shrink: 0;
+  /* Prevent form groups from shrinking */
 }
 
 /* Make sure all inputs are visible */
@@ -1844,12 +2328,14 @@
   font-size: 14px;
   transition: all 0.2s ease;
   -webkit-text-fill-color: #f1f5f9;
-  box-sizing: border-box; /* Prevent overflow */
+  box-sizing: border-box;
+  /* Prevent overflow */
 }
 
 /* Reference Name Input Specific */
 .form-input[type="text"] {
-  min-width: 100%; /* Ensure full width */
+  min-width: 100%;
+  /* Ensure full width */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1865,26 +2351,42 @@
 /* GARMENT TYPE GRID - Fix for more compact layout */
 /* ==================== */
 
+/* Garment Grid selection */
 .garment-type-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px; /* Reduced from 12px */
-  margin-bottom: 8px; /* Add spacing below */
+  gap: 12px;
 }
 
 .garment-type-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px; /* Reduced from 8px */
-  padding: 12px 8px; /* Reduced from 16px 12px */
-  background: var(--ol-bg-elevated);
-  border: 2px solid var(--ol-border);
-  border-radius: 12px;
-  color: var(--ol-text-muted);
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-darker);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 12px; /* Smaller font */
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.garment-type-btn:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-hover);
+}
+
+.garment-type-btn.selected {
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366f1;
+}
+
+.garment-label {
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* ==================== */
@@ -1895,7 +2397,8 @@
 .input-with-icon input[type="date"] {
   color: var(--ol-text-primary);
   padding-right: 1rem;
-  min-height: 48px; /* Consistent height */
+  min-height: 48px;
+  /* Consistent height */
 }
 
 .input-with-icon input[type="date"]::-webkit-calendar-picker-indicator {
@@ -1949,9 +2452,20 @@
 /* ==================== */
 
 /* Make sequence and documents sections scrollable if needed */
-.workflow-sequence .sequence-list,
-.documents-container .docs-list {
-  max-height: 200px; /* Limit height */
+.sequence-list,
+.docs-list {
+  max-height: 200px;
+  /* Limit height */
+  overflow-y: auto;
+}
+
+.workflow-sequence,
+.documents-container {
+  background: var(--bg-darker);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  padding: 14px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -1961,11 +2475,13 @@
 
 /* Create Order Modal - taller due to extra field */
 .create-order-modal .modal-container {
-  max-height: 88vh; /* Slightly taller for create */
+  max-height: 88vh;
+  /* Slightly taller for create */
 }
 
 .create-order-modal .form-step {
-  gap: 16px; /* Slightly more spacing */
+  gap: 16px;
+  /* Slightly more spacing */
 }
 
 /* Edit Order Modal - can be slightly shorter */
@@ -1974,7 +2490,8 @@
 }
 
 .edit-order-modal .form-step {
-  gap: 14px; /* Slightly less spacing */
+  gap: 14px;
+  /* Slightly less spacing */
 }
 
 /* ==================== */
@@ -1983,27 +2500,28 @@
 
 @media (max-width: 768px) {
   .modal-container {
-    max-height: 90vh; /* More height on mobile */
+    max-height: 90vh;
+    /* More height on mobile */
   }
-  
+
   .modal-body {
     padding: 20px 16px;
   }
-  
+
   .form-group {
     margin-bottom: 16px;
   }
-  
+
   .garment-type-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
-  
+
   .step-header {
     margin-bottom: 20px;
     padding-bottom: 16px;
   }
-  
+
   .create-order-summary .summary-grid,
   .edit-order-summary .summary-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -2015,27 +2533,28 @@
     max-height: 92vh;
     border-radius: 16px;
   }
-  
+
   .modal-body {
     padding: 16px 12px;
   }
-  
+
   .form-group {
     margin-bottom: 14px;
   }
-  
+
   .garment-type-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .create-order-summary .summary-grid,
   .edit-order-summary .summary-grid {
     grid-template-columns: 1fr;
   }
-  
+
   /* Adjust date input for mobile */
   .input-with-icon input[type="date"] {
-    font-size: 13px; /* Smaller font on mobile */
+    font-size: 13px;
+    /* Smaller font on mobile */
   }
 }
 
@@ -2049,24 +2568,24 @@
     max-height: 85vh;
     min-height: 350px;
   }
-  
+
   .modal-body {
     padding: 16px 20px;
   }
-  
+
   .form-group {
     margin-bottom: 14px;
   }
-  
+
   .step-header {
     margin-bottom: 16px;
     padding-bottom: 12px;
   }
-  
+
   .step-header h3 {
     font-size: 16px;
   }
-  
+
   .step-header p {
     font-size: 12px;
   }
@@ -2078,20 +2597,20 @@
     max-height: 82vh;
     min-height: 300px;
   }
-  
+
   .modal-body {
     padding: 12px 16px;
   }
-  
+
   .form-group {
     margin-bottom: 12px;
   }
-  
+
   .garment-type-btn {
     padding: 10px 6px;
     font-size: 11px;
   }
-  
+
   .form-input,
   .form-select,
   .form-textarea {
@@ -2100,3 +2619,426 @@
   }
 }
 
+.inline-loader-text {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== */
+/* CUSTOM UI ADJUSTMENTS */
+/* ==================== */
+
+/* 1) Professional dropdown / selects */
+.modal-form .form-select,
+.modal-form select,
+.modal-form .form-input[type="select"] {
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+  transition: all 0.18s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.modal-form .form-select:focus,
+.modal-form select:focus {
+  border-color: rgba(99, 102, 241, 0.9);
+  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.12);
+  outline: none;
+}
+
+/* 2) Align select + add button in adder rows / department input areas */
+.adder-row,
+.input-with-prefix,
+.document-upload-card-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adder-row .form-select,
+.document-upload-card-row .form-select,
+.input-with-prefix .form-select {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* allow shrinking and prevent horizontal overflow */
+}
+
+.adder-row .add-btn,
+.document-upload-card-row .doc-upload-action-hub,
+.input-with-prefix .add-btn {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+/* 3) Department/tag styling — pill-like, stylish */
+.tags-container .doc-tag,
+.doc-tag {
+  background: linear-gradient(90deg, #6366f1 0%, #06b6d4 100%);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.12);
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.doc-tag svg {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 4) Document upload / doc-type row: prevent horizontal scroll and push button right */
+.docs-list,
+.sequence-list {
+  overflow-x: hidden;
+  /* remove horizontal scroll */
+}
+
+.document-upload-card-row {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.document-upload-card-row .form-select {
+  max-width: calc(100% - 140px);
+  /* reserve space for action buttons */
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.doc-upload-action-hub {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+/* 5) Make "Create Order Blueprint" button permanently styled blue */
+.btn-primary.btn-create,
+.create-order-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.18);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.btn-primary.btn-create:hover,
+.create-order-blue:hover {
+  transform: translateY(0);
+  box-shadow: 0 12px 36px rgba(79, 70, 229, 0.22);
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+}
+
+/* Ensure responsive behavior: prevent elements from forcing horizontal scroll */
+.modal-form .form-group,
+.document-upload-card-row,
+.adder-row {
+  min-width: 0;
+}
+
+/* Stronger, component-scoped fixes targeting real JSX classes */
+/* Style the select in adder rows to be rounded, taller and centered */
+.modal-container .adder-row .form-select,
+.modal-container .adder-row select {
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  background: var(--card-bg) !important;
+  border: 1px solid rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06) !important;
+  margin: 0 !important;
+}
+
+/* Ensure add button aligns vertically with select and same height */
+.modal-container .adder-row .add-btn {
+  height: 44px !important;
+  padding: 0 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Prevent select default sharp corners on some browsers */
+.modal-container .adder-row select::-ms-expand {
+  display: none;
+}
+
+/* Refactored Sequence List to match Blueprint Grid Layout */
+.modal-container .sequence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  overflow: visible !important;
+}
+
+.modal-container .sequence-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 8px !important;
+}
+
+.modal-container .sequence-num {
+  flex: 0 0 auto;
+  font-weight: 800;
+  color: var(--text-primary) !important;
+  font-size: 14px;
+}
+
+.modal-container .sequence-name {
+  flex: 0 1 auto;
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%) !important;
+  color: #ffffff !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: auto !important;
+  /* Pushes the actions to the far right */
+}
+
+.modal-container .sequence-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Documents area: ensure left content shrinks and actions stay visible */
+.modal-container .docs-upload-master-grid,
+.modal-container .docs-list {
+  overflow-x: hidden !important;
+}
+
+.modal-container .document-upload-card-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-container .document-upload-card-row .doc-meta-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.modal-container .document-upload-card-row .doc-upload-action-hub {
+  flex: 0 0 auto;
+}
+
+.modal-container .doc-type-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #06b6d4 0%, #6366f1 100%);
+  color: #fff;
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+/* Ensure add/input share available space: reserve button width */
+.modal-container .adder-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+}
+
+.modal-container .adder-row .form-select,
+.modal-container .adder-row .form-input {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.modal-container .adder-row .add-btn {
+  flex: 0 0 auto !important;
+  width: 110px !important;
+  white-space: nowrap !important;
+}
+
+/* Also handle the doc-type adder (input + button) */
+.modal-container .form-step .adder-row .form-input {
+  flex: 1 1 auto !important;
+}
+
+/* Remove any horizontal scrollbar artifacts in docs input */
+.modal-container .modal-body,
+.modal-container .docs-upload-master-grid,
+.modal-container .docs-list {
+  overflow-x: hidden !important;
+}
+
+/* Stronger department pill styling */
+.modal-container .sequence-name {
+  background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%) !important;
+  color: #ffffff !important;
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+}
+
+/* Professional Select UI for ALL selects in modal (Dept, QC, etc) */
+.modal-container select.form-select,
+.modal-container .adder-row select {
+  border-radius: 12px !important;
+  padding: 12px 36px 12px 16px !important;
+  /* Extra padding right for arrow */
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-container select.form-select:hover {
+  border-color: var(--accent-blue) !important;
+}
+
+/* Hide native select arrow on webkit/ms to avoid visual glitches */
+.modal-container select::-ms-expand {
+  display: none !important;
+}
+
+/* FIX: Input with Icon text color & background */
+.modal-form .input-with-icon {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 8px !important;
+  padding-left: 16px !important;
+  height: 44px !important;
+  overflow: hidden;
+}
+
+.modal-form .input-with-icon .input-icon {
+  flex: 0 0 auto !important;
+  color: var(--text-muted) !important;
+  position: static !important;
+  transform: none !important;
+}
+
+.modal-form .input-with-icon .form-input.with-icon {
+  flex: 1 1 auto !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  outline: none !important;
+}
+
+/* Make Create Order Blueprint button permanently blue and prevent hover swap */
+.modal-container .btn-primary.btn-success,
+.modal-container .btn-primary.btn-success:focus,
+.modal-container .btn-primary.btn-success:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.18) !important;
+  transform: none !important;
+  border: none !important;
+}
+
+/* =========================================================
+   LIGHT MODE FORCED FIXES FOR MODAL 
+   Guarantees that text, inputs, and stepper are perfectly 
+   visible in light mode by overriding any inherited colors.
+   ========================================================= */
+:root.light .modal-container .form-input,
+:root.light .modal-container select,
+:root.light .modal-container textarea,
+:root.light .modal-container input,
+:root.light .modal-form .input-with-icon .form-input.with-icon {
+  color: #0f172a !important;
+  /* Force dark text in light mode */
+}
+
+:root.light .modal-container .step-circle {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+:root.light .modal-container .step-label {
+  color: #475569 !important;
+}
+
+:root.light .modal-container .step-item.active .step-circle {
+  background: #6366f1 !important;
+  border-color: #6366f1 !important;
+  color: #ffffff !important;
+}
+
+:root.light .modal-container .step-item.active .step-label {
+  color: #0f172a !important;
+}
+
+:root.light .modal-container .step-item.completed .step-circle {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+:root.light .modal-container .step-item.completed .step-label {
+  color: #10b981 !important;
+}
+
+/* Also ensure placeholders are visible */
+:root.light .modal-container input::placeholder,
+:root.light .modal-container textarea::placeholder {
+  color: #94a3b8 !important;
+}

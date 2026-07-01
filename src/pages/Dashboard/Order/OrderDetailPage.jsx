@@ -44,7 +44,7 @@ const OrderDetailPage = () => {
   const [documentLoading, setDocumentLoading] = useState(false);
   const [activeDeptIndex, setActiveDeptIndex] = useState(0);
   const [checkpointPreview, setCheckpointPreview] = useState(null);
-  const [adminSubmittingCheckpoint, setAdminSubmittingCheckpoint] = useState(null);
+  
 
   const statusColor = {
     UPLOADED: 'status-uploaded',
@@ -55,7 +55,7 @@ const OrderDetailPage = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      const res = await api.get(`/orders/${orderId}`);
+      const res = await api.get(`/order/${orderId}`);
       const orderData = res.data.order || res.data;
       setOrder(orderData);
       setLoading(false);
@@ -69,88 +69,21 @@ const OrderDetailPage = () => {
     fetchOrderDetails();
   }, [orderId]);
 
-  // API Functions for Checkpoint Management (from admin later for qc)
-  const handleApproveCheckpoint = async (checkpointId, operationId) => {
-    try {
-      await api.patch(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/approve`
-      );
-      toast.success('Checkpoint QC approved successfully');
-      fetchOrderDetails();
-    } catch (err) {
-      toast.error('Failed to approve checkpoint');
-      throw err;
-    }
-  };
-
-  //admin reject checkpoint later for qc
-  const handleRejectCheckpoint = async (checkpointId, operationId, comment) => {
-    try {
-      await api.patch(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/reject`,
-        { comment }
-      );
-      toast.success('Checkpoint rejected');
-      fetchOrderDetails();
-    } catch (err) {
-      toast.error('Failed to reject checkpoint');
-      throw err;
-    }
-  };
-
-  //final approve checkpoint by admin
+  //final approve checkpoint (new API integration)
   const handleFinalApproveCheckpoint = async (checkpointId, operationId) => {
     try {
       await api.patch(
-        `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/final-approve`
+        `/checkpoints/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/final-approve`
       );
-      toast.success('Checkpoint marked as COMPLETED');
+      toast.success('Department Final Approved');
       fetchOrderDetails();
     } catch (err) {
-      toast.error('Failed to finalize checkpoint');
+      toast.error('Failed to finalize department');
       throw err;
     }
   };
 
-const handleAdminSubmitCheckpoint = async (
-  checkpointId,
-  operationId,
-  submissionText,
-  files
-) => {
-
-  try {
-
-    const uploadedFiles = [];
-
-    for (const file of files) {
-      const result = await uploadToCloudinary(
-        file,
-        orderId,
-        "checkpoint"
-      );
-
-      uploadedFiles.push(result);
-    }
-
-    await api.post(
-      `/orders/${orderId}/workflow/${operationId}/checkpoints/${checkpointId}/submit`,
-      {
-        submissionText,
-        files: uploadedFiles
-      }
-    );
-
-    toast.success("Admin submission successful");
-    setAdminSubmittingCheckpoint(null);
-    fetchOrderDetails();
-
-  } catch (err) {
-    toast.error("Failed to submit checkpoint");
-    throw err;
-  }
-
-};
+// NOTE: Department-head/admin submission flows removed per new requirements.
 
 const handleFileUpload = async (e, docType) => {
 
@@ -168,7 +101,7 @@ const handleFileUpload = async (e, docType) => {
     );
 
     await api.post(
-      `/orders/${orderId}/prerequisites/${docType}`,
+      `/workflow/${orderId}/prerequisites/${docType}`,
       uploaded
     );
 
@@ -208,7 +141,7 @@ const handleFileUpload = async (e, docType) => {
     setActionLoading(true);
     try {
       await api.patch(
-        `/orders/${orderId}/prerequisite/${docType}/${action}`
+        `/workflow/${orderId}/prerequisite/${docType}/${action}`
       );
       toast.success(`Document ${action === 'approve' ? 'approved' : 'rejected'}`);
       fetchOrderDetails();
@@ -276,7 +209,7 @@ const handleFileUpload = async (e, docType) => {
           <button
             className="start-btn"
             onClick={() =>
-              api.put(`/orders/${orderId}/start-workflow`).then(fetchOrderDetails)
+              api.put(`/workflow/${orderId}/start-workflow`).then(fetchOrderDetails)
             }
           >
             <Zap size={16} />
@@ -347,6 +280,16 @@ const handleFileUpload = async (e, docType) => {
             <div className="stat-content">
               <span className="stat-label">Due Date</span>
               <span className="stat-value stat-date">{formatDate(order?.dueDate)}</span>
+            </div>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-icon qc-icon">
+              <CheckCircle2 size={20} />
+            </div>
+            <div className="stat-content">
+              <span className="stat-label">QC Member</span>
+              <span className="stat-value">{order?.qcMember?.name || 'Not Assigned'}</span>
             </div>
           </div>
         </div>
@@ -511,14 +454,9 @@ const handleFileUpload = async (e, docType) => {
           workflow={order.workflow}
           activeDeptIndex={activeDeptIndex}
           onDeptTabChange={setActiveDeptIndex}
-          orderId={orderId}
-          onApproveCheckpoint={handleApproveCheckpoint}
-          onRejectCheckpoint={handleRejectCheckpoint}
+          orderId={order._id}
           onFinalApproveCheckpoint={handleFinalApproveCheckpoint}
-          onAdminSubmitCheckpoint={handleAdminSubmitCheckpoint}
-          onPreviewFile={setCheckpointPreview}
-          adminSubmittingCheckpoint={adminSubmittingCheckpoint}
-          onAdminSubmittingChange={setAdminSubmittingCheckpoint}
+          onPreviewFile={(file) => setCheckpointPreview(file)}
         />
       )}
     </div>

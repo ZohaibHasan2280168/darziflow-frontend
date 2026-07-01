@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FiLayers, FiGrid, FiActivity, FiCheckSquare, FiChevronDown, FiChevronUp, FiClock } from 'react-icons/fi';
+import { FiLayers, FiGrid, FiActivity, FiCheckSquare, FiChevronDown, FiChevronUp, FiClock, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import CheckpointItem from './CheckpointItem';
-import {getFileIcon} from '../../../../utils/fileUtils';
+import { useAuth } from '../../../../components/context/AuthContext';
 
 
 const WorkflowSection = ({
@@ -9,15 +9,12 @@ const WorkflowSection = ({
   activeDeptIndex,
   onDeptTabChange,
   orderId,
-  onApproveCheckpoint,
-  onRejectCheckpoint,
   onFinalApproveCheckpoint,
-  onAdminSubmitCheckpoint,
   onPreviewFile,
-  adminSubmittingCheckpoint,
-  onAdminSubmittingChange
 }) => {
+  const { user } = useAuth();
   const [expandedOperations, setExpandedOperations] = useState({});
+  const [isProcessing, setIsProcessing] = useState(false);
   
   // Get status style
   const getStatusStyle = (status) => {
@@ -86,6 +83,34 @@ const WorkflowSection = ({
     return { completed, total, percentage };
   };
 
+  const allOperationsCompleted = activeDept?.operations?.every(op => op.status === 'COMPLETED') || false;
+  
+  let lastOperationId = null;
+  let lastCheckpointId = null;
+  
+  if (activeDept?.operations?.length > 0) {
+    const lastOp = activeDept.operations[activeDept.operations.length - 1];
+    lastOperationId = lastOp._id;
+    if (lastOp.checkpoints?.length > 0) {
+      lastCheckpointId = lastOp.checkpoints[lastOp.checkpoints.length - 1]._id;
+    }
+  }
+
+  const showFinalApprove = user?.role === 'ADMIN' && 
+                           allOperationsCompleted && 
+                           activeDept?.status === 'IN_PROGRESS' && 
+                           lastOperationId && lastCheckpointId;
+
+  const handleDepartmentFinalApprove = async () => {
+    if (!window.confirm("Are you sure you want to grant final approval for this department?")) return;
+    setIsProcessing(true);
+    try {
+      await onFinalApproveCheckpoint(lastCheckpointId, lastOperationId);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   return (
     <div className="segment-section workflow-section">
       <div className="segment-header">
@@ -102,7 +127,7 @@ const WorkflowSection = ({
       <div className="dept-tabs">
         {workflow.map((dept, index) => (
           <button
-            key={dept._id?.$oid || index}
+            key={dept._id || index}
             className={`dept-tab ${index === activeDeptIndex ? 'active' : ''}`}
             onClick={() => onDeptTabChange(index)}
           >
@@ -126,8 +151,8 @@ const WorkflowSection = ({
                 </div>
                 <div className="department-details">
                   <h3 className="department-name">{activeDept.departmentName}</h3>
-                  <span className="department-id" title={activeDept.departmentId?.$oid}>
-                    ID: {truncateId(activeDept.departmentId?.$oid)}
+                  <span className="department-id" title={activeDept.departmentId}>
+                    ID: {truncateId(activeDept.departmentId)}
                   </span>
                 </div>
               </div>
@@ -144,7 +169,7 @@ const WorkflowSection = ({
                   const isExpanded = expandedOperations[operationIndex];
                   
                   return (
-                    <div key={operation._id?.$oid} className="operation-card">
+                    <div key={operation._id} className="operation-card">
                       {/* Operation Header - Clickable for Expansion */}
                       <div 
                         className="operation-header expandable"
@@ -192,24 +217,14 @@ const WorkflowSection = ({
                           </div>
                           <div className="checkpoints-list">
                             {operation.checkpoints.map((checkpoint) => (
-                              <CheckpointItem
-                                key={checkpoint._id?.$oid}
-                                checkpoint={checkpoint}
-                                operationId={operation._id}
-                                orderId={orderId}
-                                onApprove={onApproveCheckpoint}
-                                onReject={onRejectCheckpoint}
-                                onFinalApprove={onFinalApproveCheckpoint}
-                                onAdminSubmit={onAdminSubmitCheckpoint}
-                                onPreviewFile={onPreviewFile}
-                                isAdminSubmitting={adminSubmittingCheckpoint === `${operation._id}-${checkpoint._id}`}
-                                onAdminSubmittingToggle={() => onAdminSubmittingChange(
-                                  adminSubmittingCheckpoint === `${operation._id}-${checkpoint._id}` 
-                                    ? null 
-                                    : `${operation._id}-${checkpoint._id}`
-                                )}
-                                getFileIcon={getFileIcon} // Add this line to pass the function
-                              />
+                                <CheckpointItem
+                                  key={checkpoint._id}
+                                  checkpoint={checkpoint}
+                                  operationId={operation._id}
+                                  orderId={orderId}
+                                  onFinalApprove={onFinalApproveCheckpoint}
+                                  onPreviewFile={onPreviewFile}
+                                />
                             ))}
                           </div>
                         </div>
@@ -217,6 +232,25 @@ const WorkflowSection = ({
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* Final Approve Button (Admin Only, when all ops are completed) */}
+            {showFinalApprove && (
+              <div className="department-final-approve-section" style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 5px 0', color: '#0f172a' }}>Department Completed</h4>
+                  <p style={{ margin: '0', fontSize: '13px', color: '#64748b' }}>All operations have passed QC. Grant final approval to send to the client.</p>
+                </div>
+                <button 
+                  className="action-btn final-approve-btn"
+                  onClick={handleDepartmentFinalApprove}
+                  disabled={isProcessing}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#8b5cf6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' }}
+                >
+                  <FiCheckCircle size={16} />
+                  {isProcessing ? 'Processing...' : 'Final Approve Department'}
+                </button>
               </div>
             )}
           </div>

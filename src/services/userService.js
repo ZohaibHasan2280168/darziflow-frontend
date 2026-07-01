@@ -1,20 +1,8 @@
-import axios from "axios";
+import api from "../services/reqInterceptor.js";
 
-//const API_URL = "https://darziflow-backend.onrender.com/api/users/";
-const API_URL = "http://localhost:5000/api/auth"; // adjust if deployed
-
-// Get token from localStorage
-const getToken = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return user?.token;
-};
-
-// Get all users (admin only, for example)
+// Get all users (admin only)
 const getUsers = async () => {
-  const token = getToken();
-  const response = await axios.get(API_URL, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const response = await api.get("/users");
   return response.data;
 };
 

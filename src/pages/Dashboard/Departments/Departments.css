@@ -1,39 +1,33 @@
-/* Departments.css - Fixed with specific selectors */
+/* Departments.css - Theme Support */
 .departments-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1a202c 100%);
-  color: #fff;
+  background: var(--main-bg);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-/* Force white text for ALL elements inside departments container */
-.departments-container,
 .departments-container * {
-  color: #ffffff !important;
+  color: inherit;
 }
 
-/* But allow placeholders to be lighter */
 .departments-container ::placeholder {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
-/* Specifically target filter select dropdown text */
 .departments-container .filter-select,
 .departments-container .filter-select option {
-  color: #ffffff !important;
+  color: var(--text-primary);
 }
 
-/* Force dark background for dropdown options */
 .departments-container .filter-select option {
-  background: #1a202c !important;
-  color: #ffffff !important;
+  background: var(--card-bg);
+  color: var(--text-primary);
 }
 
-/* For all select elements within departments */
 .departments-container select,
 .departments-container select option {
-  background: transparent !important;
-  color: #ffffff !important;
+  background: transparent;
+  color: var(--text-primary);
 }
 
 .departments-content {
@@ -49,7 +43,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .header-left {
@@ -59,35 +53,36 @@
 }
 
 .back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 10px;
-  color: #94a3b8 !important;
+  color: var(--text-secondary);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff !important;
+  background: var(--card-hover-bg);
+  border-color: var(--border-default);
+  color: var(--text-primary);
 }
 
 .page-title {
   font-size: 2.25rem;
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
 }
 
 .page-subtitle {
   font-size: 0.95rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   margin: 0.5rem 0 0 0;
 }
 
@@ -122,8 +117,8 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 1.25rem;
   display: flex;
@@ -133,9 +128,9 @@
 }
 
 .stat-card:hover {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: var(--border-default);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
 .stat-icon {
@@ -175,7 +170,7 @@
 
 .stat-label {
   font-size: 0.85rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -184,21 +179,27 @@
 .stat-number {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #fff !important;
+  color: var(--text-primary);
   margin-top: 0.25rem;
 }
 
 /* Filters Bar - SPECIFIC FIXES HERE */
 .filters-bar {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1.5rem;
   align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 22px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
 }
 
 .search-wrapper {
   flex: 1;
-  max-width: 400px;
+  min-width: 260px;
   position: relative;
 }
 
@@ -207,93 +208,114 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8 !important;
+  color: var(--text-secondary);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.875rem 1rem 0.875rem 3rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  color: #ffffff !important; /* Force white text */
+  padding: 0.95rem 1rem 0.95rem 3rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-primary);
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
 
+.search-input:hover,
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-light);
+  box-shadow: 0 0 0 1px rgba(147, 197, 253, 0.3);
+  background: var(--card-hover-bg);
 }
 
 .search-input::placeholder {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
+.filter-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Make the filters-bar the single pill container and keep inner elements transparent
+   to avoid the double-pill appearance in dark mode. */
 .filter-select-wrapper {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  color: #94a3b8 !important;
-}
-
-.filter-select-wrapper svg {
-  flex-shrink: 0;
-  color: #94a3b8 !important;
-}
-
-/* FIXED: Filter select text color */
-.filter-select {
+  padding: 0; /* remove inner pill padding so outer .filters-bar shapes the container */
   background: transparent;
   border: none;
-  color: #ffffff !important; /* White text for the selected option */
+  border-radius: 12px;
+  color: var(--text-primary);
+  position: relative;
+  min-width: 220px;
+  transition: all 0.18s ease;
+}
+
+/* Funnel icon color: use text-secondary so it's visible in light and dark */
+.filter-select-wrapper svg {
+  flex-shrink: 0;
+  color: var(--text-secondary) !important;
+}
+
+.filter-select {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-primary) !important;
   font-size: 0.95rem;
   cursor: pointer;
   outline: none;
-  min-width: 120px;
+  min-width: 130px;
+  width: 100%;
+  padding-right: 0.5rem;
+  line-height: 1.4;
+  text-align: left !important;
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
+  background-image: none !important; /* remove global arrow inside page-specific select */
+  box-shadow: none !important;
 }
 
-/* FIXED: Dropdown options styling */
 .filter-select option {
-  background: #1a202c !important; /* Dark background */
-  color: #ffffff !important; /* White text */
+  background: var(--card-bg);
+  color: var(--text-primary);
   padding: 0.5rem;
+}
+
+.filter-select::-ms-expand {
+  display: none;
 }
 
 /* Main Card */
 .main-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
 }
 
 .table-header {
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .table-title h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #fff !important;
+  color: var(--text-primary);
 }
 
 .table-subtitle {
   font-size: 0.875rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   margin-top: 0.25rem;
   display: block;
 }
@@ -309,7 +331,7 @@
 }
 
 .departments-table thead {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-bg);
 }
 
 .departments-table th {
@@ -317,10 +339,10 @@
   text-align: left;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #94a3b8 !important;
+  color: var(--text-muted) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .dept-info-col { width: 40%; }
@@ -329,7 +351,7 @@
 .members-col { width: 20%; }
 
 .dept-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-light);
   transition: all 0.2s ease;
 }
 
@@ -338,7 +360,7 @@
 }
 
 .dept-row.clickable:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--card-hover-bg);
 }
 
 .departments-table td {
@@ -374,13 +396,13 @@
 
 .dept-name {
   font-weight: 600;
-  color: #fff !important;
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .dept-description {
   font-size: 0.85rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -401,16 +423,57 @@
 
 .head-name {
   font-weight: 500;
-  color: #fff !important;
+  color: var(--text-primary) !important;
 }
+
+/* Minimal custom dropdown used in filters */
+.custom-dropdown-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 240px; /* match Users dropdown width */
+}
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--dropdown-bg, var(--card-bg));
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.dropdown-trigger .chev { margin-left: 6px; opacity: 0.9; }
+.dropdown-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  z-index: 50; /* align with Users z-index */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.dropdown-options { max-height: 220px; overflow-y: auto; padding: 0.25rem 0; display:flex; flex-direction:column; }
+.dropdown-option { padding: 0.5rem 1rem; cursor: pointer; color: var(--text-primary); display:flex; align-items:center; gap:0.5rem; }
+.dropdown-option:hover { background: var(--card-hover-bg); }
 
 .head-email {
   font-size: 0.8rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
 .no-head {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   font-style: italic;
   font-size: 0.9rem;
 }
@@ -429,13 +492,13 @@
 
 .status-badge.ACTIVE {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981 !important;
+  color: rgb(var(--color-accent-emerald));
   border-color: rgba(16, 185, 129, 0.3);
 }
 
 .status-badge.INACTIVE {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444 !important;
+  color: rgb(var(--color-accent-red));
   border-color: rgba(239, 68, 68, 0.3);
 }
 
@@ -448,11 +511,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
 }
 
 .members-count svg {
-  color: #60a5fa !important;
+  color: rgb(var(--color-primary));
 }
 
 /* Empty State */
@@ -469,19 +532,19 @@
 }
 
 .empty-icon {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   opacity: 0.5;
 }
 
 .empty-state h4 {
   margin: 0;
-  color: #fff !important;
+  color: var(--text-primary);
   font-size: 1.1rem;
 }
 
 .empty-state p {
   margin: 0;
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   font-size: 0.9rem;
   max-width: 300px;
 }
@@ -531,7 +594,7 @@
 }
 
 .loading-state p {
-  color: #94a3b8 !important;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -548,11 +611,11 @@
 
 .error-icon {
   font-size: 3rem;
-  color: #f87171 !important;
+  color: rgb(var(--color-accent-red));
 }
 
 .error-state p {
-  color: #f87171 !important;
+  color: rgb(var(--color-accent-red));
   margin: 0;
   max-width: 400px;
 }
@@ -562,7 +625,7 @@
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 8px;
-  color: #60a5fa !important;
+  color: rgb(var(--color-primary));
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
