@@ -350,7 +350,6 @@ export default function ChatPage() {
 
     const socket = io(BASE_URL, {
       auth: { token },
-      transports: ["websocket"],
     });
     socketRef.current = socket;
 
