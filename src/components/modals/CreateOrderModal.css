@@ -1363,7 +1363,7 @@ body.light .modal-container textarea::placeholder {
   opacity: 0.7;
 }
 
-  {
+.sequence-item {
   display: flex;
   align-items: center;
   gap: 14px;

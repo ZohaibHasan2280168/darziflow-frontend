@@ -27,7 +27,7 @@ import {
 import "./ChatPage.css";
 
 /* ─── constants ───────────────────────────────────────────── */
-let _apiBaseUrl = process.env.REACT_APP_AZURE_BASE_URL || process.env.REACT_APP_API_BASE_URL;
+let _apiBaseUrl = import.meta.env.VITE_AZURE_BASE_URL || import.meta.env.VITE_API_BASE_URL;
 if (!_apiBaseUrl || _apiBaseUrl === "undefined") {
   console.warn("API Base URL was missing or 'undefined' in environment variables.");
   _apiBaseUrl = "";

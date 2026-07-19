@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Vite ya CRA dono mein se jo available ho wo utha lega
 let BASE_URL = (import.meta && import.meta.env && (import.meta.env.VITE_AZURE_BASE_URL || import.meta.env.VITE_API_BASE_URL)) ||
-  (process.env && (process.env.REACT_APP_AZURE_BASE_URL || process.env.REACT_APP_API_BASE_URL));
+  (import.meta.env && (import.meta.env.VITE_AZURE_BASE_URL || import.meta.env.VITE_API_BASE_URL));
 
 // Guard against missing, empty, or literally "undefined" string config
 if (!BASE_URL || BASE_URL === "undefined") {
@@ -52,7 +52,7 @@ api.interceptors.response.use(
     // If it's a network/server error and we haven't already retried
     if ((isNetworkError || isServerError) && config && !config._retry) {
       let FALLBACK_URL = (import.meta && import.meta.env && import.meta.env.VITE_LOCAL_BASE_URL) ||
-        (process.env && process.env.REACT_APP_LOCAL_BASE_URL);
+        (import.meta.env && import.meta.env.VITE_LOCAL_BASE_URL);
 
       if (FALLBACK_URL) {
         const formattedFallbackUrl = FALLBACK_URL.endsWith('/') ? FALLBACK_URL : `${FALLBACK_URL}/`;
