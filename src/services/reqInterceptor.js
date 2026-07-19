@@ -6,8 +6,8 @@ let BASE_URL = (import.meta && import.meta.env && (import.meta.env.VITE_AZURE_BA
 
 // Guard against missing, empty, or literally "undefined" string config
 if (!BASE_URL || BASE_URL === "undefined") {
-  BASE_URL = "https://darziflowbackend-buagfcfpfveadmgm.centralindia-01.azurewebsites.net/api";
-  console.warn("API Base URL was missing or 'undefined'. Falling back to live Azure backend: " + BASE_URL);
+  BASE_URL = "";
+  console.warn("API Base URL was missing or 'undefined' in environment variables.");
 }
 
 const api = axios.create({
@@ -18,6 +18,9 @@ const api = axios.create({
 // REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
+    // Add header to bypass ngrok browser warning
+    config.headers["ngrok-skip-browser-warning"] = "69420";
+
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
@@ -39,7 +42,36 @@ api.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
+  async (error) => {
+    const config = error.config;
+
+    // Determine if the error is due to network issues or server being down
+    const isNetworkError = !error.response || error.code === 'ERR_NETWORK';
+    const isServerError = error.response && error.response.status >= 500;
+
+    // If it's a network/server error and we haven't already retried
+    if ((isNetworkError || isServerError) && config && !config._retry) {
+      let FALLBACK_URL = (import.meta && import.meta.env && import.meta.env.VITE_LOCAL_BASE_URL) ||
+        (process.env && process.env.REACT_APP_LOCAL_BASE_URL);
+
+      if (FALLBACK_URL) {
+        const formattedFallbackUrl = FALLBACK_URL.endsWith('/') ? FALLBACK_URL : `${FALLBACK_URL}/`;
+
+        if (config.baseURL !== formattedFallbackUrl) {
+          config._retry = true;
+          console.warn(`Primary backend failed. Switching to fallback URL: ${formattedFallbackUrl}`);
+
+          // Update the default baseURL for future requests
+          api.defaults.baseURL = formattedFallbackUrl;
+          // Update the current request's baseURL
+          config.baseURL = formattedFallbackUrl;
+
+          // Retry the request
+          return api(config);
+        }
+      }
+    }
+
     if (error.response?.status === 401) {
       localStorage.removeItem("accessToken");
       delete api.defaults.headers.common["Authorization"];

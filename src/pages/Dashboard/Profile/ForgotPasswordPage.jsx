@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
 
     try {
       setLoading(true);
-      const BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+      const BASE = process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_AZURE_BASE_URL || "";
       const res = await fetch(`${BASE}/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -1,0 +1,530 @@
+/* ============================== */
+/* ORDER REQUEST DETAIL PAGE      */
+/* ============================== */
+
+.oreq-detail-page {
+  min-height: 100vh;
+  background: var(--body-bg);
+  padding: 32px 40px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+}
+
+/* Detail Header */
+.oreq-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+.oreq-detail-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.oreq-detail-header-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.oreq-detail-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.oreq-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.oreq-detail-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Convert button */
+.oreq-convert-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgb(var(--color-accent-emerald)), #34d399);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+}
+
+.oreq-convert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.oreq-convert-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.oreq-proposal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-primary-hover)));
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+
+.oreq-proposal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Two-column layout */
+.oreq-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Card */
+.oreq-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.oreq-card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.oreq-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+}
+
+.oreq-card-body {
+  padding: 24px;
+}
+
+/* Original Request Info */
+.oreq-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.oreq-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oreq-info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.oreq-info-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.oreq-info-value {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.oreq-info-value.description-text {
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* Reference Files */
+.oreq-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.oreq-file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--card-hover-bg);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.oreq-file-item:hover {
+  background: var(--input-bg);
+  border-color: var(--border-default);
+}
+
+.oreq-file-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.12);
+  color: rgb(var(--color-primary));
+  flex-shrink: 0;
+}
+
+.oreq-file-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-all;
+  flex: 1;
+}
+
+.oreq-file-link {
+  font-size: 12px;
+  color: rgb(var(--color-primary));
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.oreq-file-link:hover {
+  color: rgb(var(--color-primary-hover));
+  text-decoration: underline;
+}
+
+/* Proposals Timeline */
+.oreq-timeline {
+  position: relative;
+  padding-left: 28px;
+}
+
+.oreq-timeline::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgb(var(--color-primary)), rgb(var(--color-accent-purple)), var(--border-light));
+  border-radius: 2px;
+}
+
+.oreq-timeline-item {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.oreq-timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.oreq-timeline-dot {
+  position: absolute;
+  left: -28px;
+  top: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.oreq-timeline-dot.admin {
+  background: rgba(59, 130, 246, 0.2);
+  border: 2px solid rgb(var(--color-primary));
+}
+
+.oreq-timeline-dot.client {
+  background: rgba(139, 92, 246, 0.2);
+  border: 2px solid rgb(var(--color-accent-purple));
+}
+
+.oreq-timeline-dot-inner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.oreq-timeline-dot.admin .oreq-timeline-dot-inner {
+  background: rgb(var(--color-primary));
+}
+
+.oreq-timeline-dot.client .oreq-timeline-dot-inner {
+  background: rgb(var(--color-accent-purple));
+}
+
+.oreq-timeline-card {
+  background: var(--card-hover-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 18px;
+  transition: all 0.2s ease;
+}
+
+.oreq-timeline-card:hover {
+  border-color: var(--border-default);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.oreq-timeline-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.oreq-timeline-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.oreq-timeline-author span {
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.oreq-timeline-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.oreq-timeline-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.oreq-timeline-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.oreq-timeline-detail-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.oreq-timeline-detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.oreq-timeline-remarks {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--input-bg);
+  border-radius: 8px;
+  border-left: 3px solid rgb(var(--color-primary));
+}
+
+.oreq-timeline-remarks p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.oreq-timeline-files {
+  margin-top: 12px;
+}
+
+.oreq-timeline-files-title {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 8px;
+}
+
+/* Empty timeline */
+.oreq-timeline-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.oreq-timeline-empty svg {
+  display: block;
+  margin: 0 auto 10px;
+  opacity: 0.4;
+}
+
+/* Detail Loader */
+.oreq-detail-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--text-muted);
+  gap: 12px;
+}
+
+/* Status flow sidebar */
+.oreq-status-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.oreq-status-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.oreq-status-step.active {
+  border-color: rgb(var(--color-primary));
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.oreq-status-step.completed {
+  border-color: rgb(var(--color-accent-emerald));
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.oreq-status-step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--card-hover-bg);
+  color: var(--text-muted);
+}
+
+.oreq-status-step.active .oreq-status-step-icon {
+  background: rgba(59, 130, 246, 0.15);
+  color: rgb(var(--color-primary));
+}
+
+.oreq-status-step.completed .oreq-status-step-icon {
+  background: rgba(16, 185, 129, 0.15);
+  color: rgb(var(--color-accent-emerald));
+}
+
+.oreq-status-step-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.oreq-status-step.active .oreq-status-step-text {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.oreq-status-step.completed .oreq-status-step-text {
+  color: rgb(var(--color-accent-emerald));
+}
+
+/* Required Docs tags */
+.oreq-docs-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.oreq-doc-tag {
+  display: inline-flex;
+  padding: 4px 10px;
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(var(--color-primary));
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .oreq-detail-page {
+    padding: 24px 20px;
+  }
+
+  .oreq-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .oreq-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .oreq-detail-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .oreq-detail-header-actions {
+    justify-content: flex-end;
+  }
+
+  .oreq-timeline-details {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,519 @@
+/* ==================== */
+/* ORDER REQUESTS PAGE  */
+/* ==================== */
+
+/* Page Container */
+.oreq-page {
+  min-height: 100vh;
+  background: var(--body-bg);
+  padding: 32px 40px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+}
+
+/* Header */
+.oreq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.oreq-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.oreq-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  min-width: 96px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.oreq-back-button:hover {
+  background: var(--card-hover-bg);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.oreq-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.oreq-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 4px 0 0 0;
+}
+
+.oreq-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgb(var(--color-primary)), rgb(var(--color-primary-hover)));
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+
+.oreq-create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Stats Row */
+.oreq-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.oreq-stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.oreq-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+}
+
+.oreq-stat-card:hover {
+  border-color: var(--border-default);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.oreq-stat-total::before { background: linear-gradient(90deg, rgb(var(--color-primary)), rgb(var(--color-accent-cyan))); }
+.oreq-stat-pending-admin::before { background: linear-gradient(90deg, rgb(var(--color-accent-amber)), #fbbf24); }
+.oreq-stat-pending-client::before { background: linear-gradient(90deg, rgb(var(--color-accent-purple)), #a78bfa); }
+.oreq-stat-converted::before { background: linear-gradient(90deg, rgb(var(--color-accent-emerald)), #34d399); }
+
+.oreq-stat-icon-wrap {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.oreq-stat-total .oreq-stat-icon-wrap { background: rgba(59, 130, 246, 0.15); color: rgb(var(--color-primary)); }
+.oreq-stat-pending-admin .oreq-stat-icon-wrap { background: rgba(245, 158, 11, 0.15); color: rgb(var(--color-accent-amber)); }
+.oreq-stat-pending-client .oreq-stat-icon-wrap { background: rgba(139, 92, 246, 0.15); color: rgb(var(--color-accent-purple)); }
+.oreq-stat-converted .oreq-stat-icon-wrap { background: rgba(16, 185, 129, 0.15); color: rgb(var(--color-accent-emerald)); }
+
+.oreq-stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oreq-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.oreq-stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+/* Filters Bar */
+.oreq-filters-bar {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.oreq-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.oreq-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.oreq-search-input {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.oreq-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.oreq-search-input:focus {
+  outline: none;
+  border-color: rgb(var(--color-primary));
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.oreq-filter-group {
+  display: flex;
+  gap: 12px;
+}
+
+/* Custom Dropdown */
+.oreq-dropdown-container {
+  position: relative;
+}
+
+.oreq-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.oreq-dropdown-trigger:hover {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.oreq-dropdown-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  background: var(--dropdown-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  z-index: 100;
+  animation: oreqDropdownFadeIn 0.15s ease;
+}
+
+@keyframes oreqDropdownFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.oreq-dropdown-option {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.oreq-dropdown-option:hover {
+  background: var(--card-hover-bg);
+  color: var(--text-primary);
+}
+
+/* Table */
+.oreq-table-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.oreq-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.oreq-table thead tr {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.05));
+  border-bottom: 1px solid var(--border-light);
+}
+
+.oreq-table th {
+  padding: 16px 24px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.oreq-table th.oreq-actions-col {
+  text-align: right;
+}
+
+.oreq-table td {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.oreq-table-row {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.oreq-table-row:hover {
+  background: var(--card-hover-bg);
+}
+
+.oreq-table-row:last-child td {
+  border-bottom: none;
+}
+
+/* Request info cell */
+.oreq-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.oreq-name {
+  font-weight: 600;
+  color: rgb(var(--color-primary));
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+.oreq-table-row:hover .oreq-name {
+  color: rgb(var(--color-primary-hover));
+}
+
+.oreq-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.oreq-type-badge {
+  display: inline-flex;
+  padding: 6px 12px;
+  background: rgba(139, 92, 246, 0.12);
+  color: rgb(var(--color-accent-purple));
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.oreq-due-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Status Badges */
+.oreq-status-badge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border: 1px solid;
+}
+
+.oreq-status-pending-admin {
+  background: rgba(245, 158, 11, 0.12);
+  color: rgb(var(--color-accent-amber));
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.oreq-status-pending-client {
+  background: rgba(139, 92, 246, 0.12);
+  color: rgb(var(--color-accent-purple));
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.oreq-status-converted {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.oreq-status-canceled {
+  background: rgba(239, 68, 68, 0.12);
+  color: rgb(var(--color-accent-red));
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.oreq-status-default {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--text-muted);
+  border-color: rgba(100, 116, 139, 0.2);
+}
+
+/* Actions */
+.oreq-actions-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.oreq-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.oreq-action-btn.oreq-view-btn {
+  background: rgba(59, 130, 246, 0.1);
+  color: rgb(var(--color-primary));
+}
+
+.oreq-action-btn.oreq-view-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+  transform: scale(1.05);
+}
+
+.oreq-action-btn.oreq-delete-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(var(--color-accent-red));
+}
+
+.oreq-action-btn.oreq-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.05);
+}
+
+/* Empty state */
+.oreq-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.oreq-empty-state svg {
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.oreq-empty-state span {
+  display: block;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Loader */
+.oreq-loader {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-light);
+  border-top-color: rgb(var(--color-primary));
+  border-radius: 50%;
+  animation: oreqSpin 0.7s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes oreqSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .oreq-page {
+    padding: 24px 20px;
+  }
+
+  .oreq-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .oreq-filters-bar {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .oreq-filter-group {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .oreq-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .oreq-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .oreq-table th,
+  .oreq-table td {
+    padding: 12px 16px;
+  }
+}

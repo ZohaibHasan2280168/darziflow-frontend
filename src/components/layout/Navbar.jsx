@@ -16,7 +16,8 @@ import {
   FiSun,
   FiMoon,
   FiMessageSquare,
-  FiImage
+  FiImage,
+  FiFileText
 } from "react-icons/fi";
 
 import "./Navbar.css";
@@ -218,6 +219,14 @@ const Navbar = () => {
                   onClick={() => handleNavigation("/orderlist")}
                 >
                   <FiShoppingCart />
+                </button>
+
+                <button
+                  className="side-item"
+                  title="Order Requests"
+                  onClick={() => handleNavigation("/order-requests")}
+                >
+                  <FiFileText />
                 </button>
 
                 <button

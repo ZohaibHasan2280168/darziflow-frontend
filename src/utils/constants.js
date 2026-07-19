@@ -17,7 +17,8 @@ const getBaseUrl = () => {
 
   // Fallback if not configured or resolved as string 'undefined'
   if (!url || url === "undefined") {
-    return 'https://darziflowbackend-buagfcfpfveadmgm.centralindia-01.azurewebsites.net/api';
+    console.warn("API Base URL was missing or 'undefined' in environment variables.");
+    return "";
   }
 
   return url;

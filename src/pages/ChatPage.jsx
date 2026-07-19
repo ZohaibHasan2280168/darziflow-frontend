@@ -29,9 +29,10 @@ import "./ChatPage.css";
 /* ─── constants ───────────────────────────────────────────── */
 let _apiBaseUrl = process.env.REACT_APP_AZURE_BASE_URL || process.env.REACT_APP_API_BASE_URL;
 if (!_apiBaseUrl || _apiBaseUrl === "undefined") {
-  _apiBaseUrl = "https://darziflowbackend-buagfcfpfveadmgm.centralindia-01.azurewebsites.net/api";
+  console.warn("API Base URL was missing or 'undefined' in environment variables.");
+  _apiBaseUrl = "";
 }
-const BASE_URL = _apiBaseUrl.replace("/api", "").replace(/\/$/, "");
+const BASE_URL = _apiBaseUrl ? _apiBaseUrl.replace("/api", "").replace(/\/$/, "") : "";
 const MSG_LIMIT = 30;
 
 const VOICE_MIME_CANDIDATES = [

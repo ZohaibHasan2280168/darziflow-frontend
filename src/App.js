@@ -28,6 +28,9 @@ import UpdateDepartments from "./pages/Dashboard/Departments/UpdateDepartmentsPa
 import OrdersList from "./pages/Dashboard/Order/OrdersPage";
 import Order from "./pages/Dashboard/Order/OrderDetailPage";
 
+import OrderRequestsPage from "./pages/Dashboard/OrderRequest/OrderRequestsPage";
+import OrderRequestDetailPage from "./pages/Dashboard/OrderRequest/OrderRequestDetailPage";
+
 import CarouselManagement from "./pages/Dashboard/Carousel/CarouselManagement";
 
 import OperationAdd from "./pages/Dashboard/Departments/Operations/OperationAddPage";
@@ -286,6 +289,24 @@ function App() {
                     element={
                       <ProtectedRoute allowedRoles={["MODERATOR"]}>
                         <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/order-requests"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN", "MODERATOR", "CLIENT"]}>
+                        <OrderRequestsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/order-requests/:id"
+                    element={
+                      <ProtectedRoute allowedRoles={["ADMIN", "MODERATOR", "CLIENT"]}>
+                        <OrderRequestDetailPage />
                       </ProtectedRoute>
                     }
                   />
